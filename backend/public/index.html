@@ -1062,6 +1062,34 @@
       }
     });
 
+    async function restoreSavedWebPatientSession() {
+      const savedUserStr = localStorage.getItem('wb_client_user');
+      const savedItemsStr = localStorage.getItem('wb_protocol_items');
+      if (savedUserStr) {
+        try {
+          const user = JSON.parse(savedUserStr);
+          const items = savedItemsStr ? JSON.parse(savedItemsStr) : [];
+          const res = await fetch('/api/auth/restore-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              id: user.id,
+              name: user.name,
+              dob: user.dob,
+              email: user.email,
+              goal: user.goal,
+              symptoms: user.symptoms,
+              items: items
+            })
+          });
+          const data = await res.json();
+          if (data.success && data.client) {
+            currentClientUser = data.client;
+          }
+        } catch (e) { console.error("Restore web session error:", e); }
+      }
+    }
+
     async function performPatientLogin(name, dob, goal = '', symptoms = '') {
       if (!name || !dob) {
         alert("Please enter Full Name and Date of Birth.");
@@ -1076,6 +1104,7 @@
         const data = await res.json();
         if (data.success && data.client) {
           currentClientUser = data.client;
+          localStorage.setItem('wb_client_user', JSON.stringify(data.client));
           switchTab('client');
           loadClientDashboard(data.client.id);
           loadPractitionerDashboard();
@@ -1104,8 +1133,10 @@
     });
 
     // Initial Load & Start Polling
-    loadPractitionerDashboard();
-    startAutoPolling();
+    restoreSavedWebPatientSession().then(() => {
+      loadPractitionerDashboard();
+      startAutoPolling();
+    });
   </script>
 </body>
 </html>

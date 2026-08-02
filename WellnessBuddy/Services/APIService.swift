@@ -77,25 +77,65 @@ public class APIService: ObservableObject {
     }
     
     /// Client Login via Name & DOB
-    public func loginClientWithDob(name: String, dob: String, completion: @escaping (ClientProfile?) -> Void) {
-        let payload = ["name": name, "dob": dob]
+    /// Restores patient profile, name, DOB, and assigned protocol items to server upon app launch/reconnect
+    public func restoreSessionOnServer(
+        client: ClientProfile,
+        protocolItems: [ProtocolItem] = [],
+        completion: @escaping (ClientProfile?, [ProtocolItem]) -> Void
+    ) {
+        let itemsPayload = protocolItems.map { item -> [String: Any] in
+            return [
+                "id": item.id.uuidString,
+                "name": item.name,
+                "brand": item.brand,
+                "category": item.category.rawValue,
+                "dosageValue": item.dosageValue,
+                "dosageUnit": item.dosageUnit.rawValue,
+                "timingSchedule": item.timingSchedule.rawValue,
+                "frequencyDescription": item.frequencyDescription,
+                "intervalHours": item.intervalHoursCalculated,
+                "practitionerNotes": item.practitionerNotes,
+                "totalServingsRemaining": item.totalServingsRemaining,
+                "maxServings": item.maxServings,
+                "fullscriptRefillUrl": item.fullscriptRefillUrl ?? "https://us.fullscript.com/welcome/lvitti/signup"
+            ]
+        }
+        
+        let payload: [String: Any] = [
+            "id": client.id,
+            "name": client.name,
+            "dob": client.dob ?? "Not specified",
+            "email": client.email,
+            "goal": client.goal ?? "",
+            "symptoms": client.symptoms ?? "None reported",
+            "practitionerNote": client.practitionerNote ?? "",
+            "items": itemsPayload
+        ]
+        
         guard let bodyData = try? JSONSerialization.data(withJSONObject: payload) else {
-            completion(nil)
+            completion(nil, [])
             return
         }
         
-        performRequest(endpoint: "/api/auth/login-client", method: "POST", bodyData: bodyData) { data in
+        performRequest(endpoint: "/api/auth/restore-session", method: "POST", bodyData: bodyData) { data in
             guard let data = data else {
-                DispatchQueue.main.async { completion(nil) }
+                DispatchQueue.main.async { completion(client, protocolItems) }
                 return
             }
             
             do {
-                let decoded = try JSONDecoder().decode(LoginClientResponse.self, from: data)
-                DispatchQueue.main.async { completion(decoded.client) }
+                if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+                   let success = json["success"] as? Bool, success {
+                    if let rawProtoData = try? JSONSerialization.data(withJSONObject: json["protocolItems"] ?? []),
+                       let items = try? JSONDecoder().decode([ProtocolItem].self, from: rawProtoData) {
+                        DispatchQueue.main.async { completion(client, items) }
+                        return
+                    }
+                }
+                DispatchQueue.main.async { completion(client, protocolItems) }
             } catch {
-                print("Decode error: \(error)")
-                DispatchQueue.main.async { completion(nil) }
+                print("Restore decode error: \(error)")
+                DispatchQueue.main.async { completion(client, protocolItems) }
             }
         }
     }

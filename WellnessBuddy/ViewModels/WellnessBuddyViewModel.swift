@@ -69,6 +69,20 @@ public class WellnessBuddyViewModel: ObservableObject {
         defaults.set(client.practitionerNote ?? "", forKey: "wb_active_client_practitioner_note")
     }
     
+    private func persistProtocolItemsLocally(_ items: [ProtocolItem]) {
+        if let data = try? JSONEncoder().encode(items) {
+            UserDefaults.standard.set(data, forKey: "wb_saved_protocol_items")
+        }
+    }
+
+    private func loadLocallyPersistedProtocolItems() -> [ProtocolItem] {
+        if let data = UserDefaults.standard.data(forKey: "wb_saved_protocol_items"),
+           let items = try? JSONDecoder().decode([ProtocolItem].self, from: data) {
+            return items
+        }
+        return []
+    }
+
     public func restoreSessionIfAvailable() {
         let defaults = UserDefaults.standard
         if defaults.bool(forKey: "wb_is_logged_in"),
@@ -94,8 +108,21 @@ public class WellnessBuddyViewModel: ObservableObject {
             self.activeClientProfile = restoredProfile
             self.isLoggedIn = true
             
-            fetchLiveProtocol()
-            fetchDoseLogs()
+            let localItems = loadLocallyPersistedProtocolItems()
+            if !localItems.isEmpty {
+                self.currentProtocol.items = localItems
+            }
+            
+            // Restore patient profile & pills to server live so server & practitioner studio get re-populated after deploy!
+            APIService.shared.restoreSessionOnServer(client: restoredProfile, protocolItems: localItems) { [weak self] client, items in
+                guard let self = self else { return }
+                if !items.isEmpty {
+                    self.currentProtocol.items = items
+                    self.persistProtocolItemsLocally(items)
+                }
+                self.fetchLiveProtocol()
+                self.fetchDoseLogs()
+            }
         }
     }
     
@@ -108,6 +135,7 @@ public class WellnessBuddyViewModel: ObservableObject {
         defaults.removeObject(forKey: "wb_active_client_email")
         defaults.removeObject(forKey: "wb_active_client_goal")
         defaults.removeObject(forKey: "wb_active_client_practitioner_note")
+        defaults.removeObject(forKey: "wb_saved_protocol_items")
     }
     
     public func fetchDoseLogs() {
@@ -153,6 +181,7 @@ public class WellnessBuddyViewModel: ObservableObject {
                 self.lastKnownItemCount = liveProto.items.count
                 self.lastKnownPractitionerNote = liveProto.practitionerNoteToClient
                 self.currentProtocol = liveProto
+                self.persistProtocolItemsLocally(liveProto.items)
                 self.evaluateAndScheduleReminders()
             }
         }

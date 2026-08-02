@@ -185,6 +185,65 @@ const server = http.createServer(async (req, res) => {
     return sendJson(res, 401, { success: false, message: "Invalid credentials. Enter your Full Name & Date of Birth to log in or register." });
   }
 
+  // 2b. RESTORE SESSION & SYNC CLIENT PROFILE & PROTOCOL ON APP OPEN
+  if (pathname === '/api/auth/restore-session' && method === 'POST') {
+    const body = await getJsonBody(req);
+    const { id, name, dob, email, goal, symptoms, practitionerNote, items } = body;
+    
+    if (!name) {
+      return sendJson(res, 400, { success: false, message: "Missing client name" });
+    }
+    
+    const clientId = id || ("cli_" + Date.now());
+    let client = db.clients.find(c => c.id === clientId || (c.name.toLowerCase().trim() === name.toLowerCase().trim() && c.dob === dob));
+    
+    if (!client) {
+      client = {
+        id: clientId,
+        name: name,
+        dob: dob || "Not specified",
+        email: email || `${name.toLowerCase().replace(/\s+/g, '.')}@wellnessclient.com`,
+        password: "password123",
+        goal: goal || "Optimize energy, cellular health & recovery",
+        symptoms: symptoms || "None reported",
+        currentSupplements: "None",
+        registeredAt: new Date().toISOString(),
+        streakDays: 0,
+        adherenceRate: 100,
+        practitionerNote: practitionerNote || "Waiting for your practitioner to prescribe your custom protocol."
+      };
+      db.clients.unshift(client);
+    } else {
+      if (dob && dob !== "Not specified") client.dob = dob;
+      if (goal) client.goal = goal;
+      if (symptoms) client.symptoms = symptoms;
+    }
+    
+    // Restore protocol items if provided and server currently has none for this client
+    if (items && Array.isArray(items) && items.length > 0) {
+      if (!db.protocols[client.id] || db.protocols[client.id].length === 0) {
+        db.protocols[client.id] = items.map(item => ({
+          id: item.id || ("supp_" + Date.now() + "_" + Math.random().toString(36).substr(2, 4)),
+          name: item.name,
+          brand: item.brand || "Practitioner Direct",
+          category: item.category || "Supplement",
+          dosageValue: parseFloat(item.dosageValue) || 1,
+          dosageUnit: normalizeUnit(item.dosageUnit),
+          timingSchedule: item.timingSchedule || "Empty Stomach",
+          frequencyDescription: item.frequencyDescription || "Daily",
+          intervalHours: parseIntervalHours(item),
+          practitionerNotes: item.practitionerNotes || "Take as directed.",
+          totalServingsRemaining: item.totalServingsRemaining !== undefined ? item.totalServingsRemaining : 30,
+          maxServings: item.maxServings || 30,
+          fullscriptRefillUrl: item.fullscriptRefillUrl || "https://us.fullscript.com/welcome/lvitti/signup"
+        }));
+      }
+    }
+    
+    saveDb();
+    return sendJson(res, 200, { success: true, client, protocolItems: db.protocols[client.id] || [] });
+  }
+
   // 3. PRACTITIONER LOGIN
   if (pathname === '/api/auth/login-practitioner' && method === 'POST') {
     const body = await getJsonBody(req);
