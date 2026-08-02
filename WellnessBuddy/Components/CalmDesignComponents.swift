@@ -214,3 +214,35 @@ public struct PillDoneAnimationButton: View {
     }
 }
 
+/// Aesthetic Wellness Buddy Blue/Green Gradient Circle Logo
+public struct WellnessBuddyLogoView: View {
+    public var size: CGFloat
+    
+    public init(size: CGFloat = 38) {
+        self.size = size
+    }
+    
+    public var body: some View {
+        ZStack {
+            Circle()
+                .fill(
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            Color.paletteSage,
+                            Color.paletteOcean
+                        ]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .frame(width: size, height: size)
+                .shadow(color: Color.paletteOcean.opacity(0.3), radius: size * 0.15, x: 0, y: size * 0.08)
+            
+            Text("wb")
+                .font(.system(size: size * 0.44, weight: .bold, design: .rounded))
+                .foregroundColor(.white)
+                .offset(y: -size * 0.02)
+        }
+    }
+}
+

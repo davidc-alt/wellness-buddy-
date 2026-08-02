@@ -271,8 +271,9 @@
 
   <!-- APP HEADER -->
   <header class="app-header">
-    <div class="brand">
-      🌿 Wellness <span>Buddy</span>
+    <div class="brand" style="display: flex; align-items: center; gap: 10px;">
+      <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #5C8B7D 0%, #2F6B87 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 15px; font-family: system-ui, -apple-system, sans-serif; box-shadow: 0 4px 10px rgba(47, 107, 135, 0.25); letter-spacing: -0.5px;">wb</div>
+      <div>Wellness <span>Buddy</span></div>
       <span class="brand-badge">PRACTITIONER STUDIO</span>
     </div>
 
@@ -705,15 +706,17 @@
       const items = data.protocol.items || [];
       currentProtocolItems = items;
 
-      // Update PDF status in practitioner studio
+      // Update PDF status in practitioner studio safely
       const pdfStatusEl = document.getElementById('practitionerPdfStatus');
       const btnDeletePdfEl = document.getElementById('btnDeletePdf');
-      if (data.protocol.pdfUrl) {
-        pdfStatusEl.innerHTML = `✅ Prescribed: <a href="${data.protocol.pdfUrl}" target="_blank" style="color: var(--ocean-blue); font-weight: 800; text-decoration: underline;">${data.protocol.pdfName || 'Protocol Document'}</a>`;
-        btnDeletePdfEl.classList.remove('hidden');
-      } else {
-        pdfStatusEl.innerText = "No PDF protocol uploaded";
-        btnDeletePdfEl.classList.add('hidden');
+      if (pdfStatusEl) {
+        if (data.protocol && data.protocol.pdfUrl) {
+          pdfStatusEl.innerHTML = `✅ Prescribed: <a href="${data.protocol.pdfUrl}" target="_blank" style="color: var(--ocean-blue); font-weight: 800; text-decoration: underline;">${data.protocol.pdfName || 'Protocol Document'}</a>`;
+          if (btnDeletePdfEl) btnDeletePdfEl.classList.remove('hidden');
+        } else {
+          pdfStatusEl.innerText = "No PDF protocol uploaded";
+          if (btnDeletePdfEl) btnDeletePdfEl.classList.add('hidden');
+        }
       }
 
       document.getElementById('practitionerProtocolList').innerHTML = items.length === 0 

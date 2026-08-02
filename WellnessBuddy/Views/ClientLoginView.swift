@@ -22,16 +22,8 @@ public struct ClientLoginView: View {
             Spacer()
             
             // Header Logo & Branding
-            VStack(spacing: 8) {
-                ZStack {
-                    Circle()
-                        .fill(Color.paletteDark)
-                        .frame(width: 64, height: 64)
-                    
-                    Text("WB")
-                        .font(.system(size: 24, weight: .black, design: .rounded))
-                        .foregroundColor(.white)
-                }
+            VStack(spacing: 12) {
+                WellnessBuddyLogoView(size: 64)
                 
                 Text("Wellness Buddy")
                     .font(.system(size: 28, weight: .bold, design: .rounded))
