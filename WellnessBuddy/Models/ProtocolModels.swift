@@ -162,8 +162,8 @@ public struct ProtocolItem: Identifiable, Codable, Hashable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        if let idString = try? container.decode(String.self, forKey: .id), let uuid = UUID(uuidString: idString) {
-            self.id = uuid
+        if let idString = try? container.decode(String.self, forKey: .id) {
+            self.id = idString.toStableUUID
         } else {
             self.id = UUID()
         }
@@ -291,5 +291,32 @@ public struct ActiveReminderState: Codable, Identifiable {
         self.isSnoozed = isSnoozed
         self.snoozeMinutes = snoozeMinutes
         self.isDismissed = isDismissed
+    }
+}
+
+extension String {
+    public var toStableUUID: UUID {
+        if let uuid = UUID(uuidString: self) {
+            return uuid
+        }
+        var hash: UInt64 = 5381
+        for byte in self.utf8 {
+            hash = ((hash << 5) &+ hash) &+ UInt64(byte)
+        }
+        var bytes = [UInt8](repeating: 0, count: 16)
+        for i in 0..<16 {
+            let shift = (i % 8) * 8
+            bytes[i] = UInt8((hash >> shift) & 0xFF)
+        }
+        bytes[6] = (bytes[6] & 0x0F) | 0x40
+        bytes[8] = (bytes[8] & 0x3F) | 0x80
+        
+        let tuple: uuid_t = (
+            bytes[0], bytes[1], bytes[2], bytes[3],
+            bytes[4], bytes[5], bytes[6], bytes[7],
+            bytes[8], bytes[9], bytes[10], bytes[11],
+            bytes[12], bytes[13], bytes[14], bytes[15]
+        )
+        return UUID(uuid: tuple)
     }
 }

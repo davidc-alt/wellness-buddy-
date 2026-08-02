@@ -33,6 +33,10 @@ public class WellnessBuddyViewModel: ObservableObject {
     
     private var pollTimer: AnyCancellable?
     
+    private var lastKnownItemCount: Int = 0
+    private var lastKnownPractitionerNote: String = ""
+    private var notifiedDueItemIds: Set<UUID> = []
+    
     public init() {
         // Default clean state with NO fake items!
         self.currentProtocol = PractitionerProtocol(
@@ -47,6 +51,7 @@ public class WellnessBuddyViewModel: ObservableObject {
         self.activeReminder = nil
         self.doseLogs = []
         
+        NotificationService.shared.requestAuthorization()
         restoreSessionIfAvailable()
         startLivePolling()
     }
@@ -110,6 +115,7 @@ public class WellnessBuddyViewModel: ObservableObject {
         APIService.shared.fetchDoseLogs(for: activeClientId) { [weak self] logs in
             guard let self = self else { return }
             self.doseLogs = logs
+            self.evaluateAndScheduleReminders()
         }
     }
     
@@ -130,6 +136,21 @@ public class WellnessBuddyViewModel: ObservableObject {
         
         APIService.shared.fetchProtocol(for: activeClientId) { [weak self] liveProto in
             guard let self = self, let liveProto = liveProto else { return }
+            
+            // Detect practitioner updates to protocol or guidance note
+            if self.lastKnownItemCount > 0 {
+                if liveProto.items.count > self.lastKnownItemCount || liveProto.practitionerNoteToClient != self.lastKnownPractitionerNote {
+                    NotificationService.shared.sendDirectNotification(
+                        title: "🌿 Prescription Updated",
+                        subtitle: "Practitioner Luba Vitti",
+                        body: "Your practitioner has updated your prescribed supplement protocol and guidance notes."
+                    )
+                    self.triggerToast("🌿 Prescription updated live by Practitioner Luba Vitti!")
+                }
+            }
+            
+            self.lastKnownItemCount = liveProto.items.count
+            self.lastKnownPractitionerNote = liveProto.practitionerNoteToClient
             self.currentProtocol = liveProto
             self.evaluateAndScheduleReminders()
         }
@@ -196,9 +217,27 @@ public class WellnessBuddyViewModel: ObservableObject {
                     isSnoozed: false
                 )
             }
+            
+            // Send local notification for due pill if not already notified for this cycle
+            if !notifiedDueItemIds.contains(dueItem.id) {
+                NotificationService.shared.sendDirectNotification(
+                    identifier: dueItem.id.uuidString,
+                    title: "⏰ Time for \(dueItem.name)",
+                    subtitle: "\(dueItem.dosageValue.cleanString) \(dueItem.dosageUnit.rawValue) • \(dueItem.timingSchedule.rawValue)",
+                    body: dueItem.practitionerNotes.isEmpty ? "Take as directed by Practitioner Luba Vitti." : dueItem.practitionerNotes
+                )
+                notifiedDueItemIds.insert(dueItem.id)
+            }
         } else {
             // All due doses have been logged! Hide in-app banner until next dose time
             self.activeReminder = nil
+        }
+        
+        // Clear notification tracking for items that are no longer due
+        for item in currentProtocol.items {
+            if !isDoseDue(for: item) {
+                notifiedDueItemIds.remove(item.id)
+            }
         }
     }
     

@@ -85,6 +85,24 @@ public class NotificationService: NSObject, UNUserNotificationCenterDelegate, Ob
         }
     }
     
+    public func sendDirectNotification(identifier: String = UUID().uuidString, title: String, subtitle: String = "", body: String) {
+        let content = UNMutableNotificationContent()
+        content.title = title
+        if !subtitle.isEmpty { content.subtitle = subtitle }
+        content.body = body
+        content.sound = UNNotificationSound.default
+        content.categoryIdentifier = "WELLNESS_REMINDER_CATEGORY"
+        
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1.0, repeats: false)
+        let request = UNNotificationRequest(identifier: "direct_\(identifier)", content: content, trigger: trigger)
+        
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("Error sending notification: \(error.localizedDescription)")
+            }
+        }
+    }
+    
     public func cancelReminder(for itemId: UUID) {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["reminder_\(itemId.uuidString)"])
     }

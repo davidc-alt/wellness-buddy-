@@ -196,8 +196,8 @@ public class APIService: ObservableObject {
                     
                     let timing = TimingSchedule(rawValue: apiItem.timingSchedule) ?? .emptyStomach
                     let status = DoseStatus(rawValue: apiItem.status) ?? .completed
-                    let itemId = apiItem.itemId != nil ? (UUID(uuidString: apiItem.itemId!) ?? UUID()) : UUID()
-                    let id = UUID(uuidString: apiItem.id.replacingOccurrences(of: "log_", with: "")) ?? UUID()
+                    let itemId = apiItem.itemId != nil ? apiItem.itemId!.toStableUUID : UUID()
+                    let id = apiItem.id.toStableUUID
                     
                     return DoseLogEntry(
                         id: id,
