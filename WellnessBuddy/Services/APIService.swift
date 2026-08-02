@@ -339,6 +339,7 @@ public struct ClientProfile: Codable, Identifiable {
     public var dob: String?
     public var email: String
     public var goal: String?
+    public var symptoms: String?
     public var practitionerNote: String?
 }
 
