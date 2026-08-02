@@ -173,6 +173,18 @@ public class APIService: ObservableObject {
         performRequest(endpoint: "/api/dose-log", method: "POST", bodyData: bodyData) { _ in }
     }
     
+    private static let isoFormatter: ISO8601DateFormatter = {
+        let f = ISO8601DateFormatter()
+        f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return f
+    }()
+    
+    private static let isoFormatterFallback: ISO8601DateFormatter = {
+        let f = ISO8601DateFormatter()
+        f.formatOptions = [.withInternetDateTime]
+        return f
+    }()
+
     /// Fetch dose logs live from backend API for active logged in client
     public func fetchDoseLogs(for clientId: String, completion: @escaping ([DoseLogEntry]) -> Void) {
         performRequest(endpoint: "/api/dose-log/\(clientId)", method: "GET") { data in
@@ -183,15 +195,9 @@ public class APIService: ObservableObject {
             
             do {
                 let decoded = try JSONDecoder().decode(DoseLogListResponse.self, from: data)
-                let isoFormatter = ISO8601DateFormatter()
-                isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-                
-                let isoFormatterFallback = ISO8601DateFormatter()
-                isoFormatterFallback.formatOptions = [.withInternetDateTime]
-                
                 let entries: [DoseLogEntry] = decoded.doseLogs.compactMap { apiItem in
-                    let date = isoFormatter.date(from: apiItem.timestamp) 
-                            ?? isoFormatterFallback.date(from: apiItem.timestamp) 
+                    let date = APIService.isoFormatter.date(from: apiItem.timestamp) 
+                            ?? APIService.isoFormatterFallback.date(from: apiItem.timestamp) 
                             ?? Date()
                     
                     let timing = TimingSchedule(rawValue: apiItem.timingSchedule) ?? .emptyStomach

@@ -119,14 +119,13 @@ public class WellnessBuddyViewModel: ObservableObject {
         }
     }
     
-    /// Periodically poll server every 3 seconds while logged in so new practitioner prescriptions pop up automatically!
+    /// Periodically poll server every 5 seconds while logged in so new practitioner prescriptions pop up automatically!
     public func startLivePolling() {
-        pollTimer = Timer.publish(every: 3.0, on: .main, in: .common)
+        pollTimer = Timer.publish(every: 5.0, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in
                 guard let self = self, self.isLoggedIn, !self.activeClientId.isEmpty else { return }
                 self.fetchLiveProtocol()
-                self.evaluateAndScheduleReminders()
             }
     }
     
@@ -137,22 +136,25 @@ public class WellnessBuddyViewModel: ObservableObject {
         APIService.shared.fetchProtocol(for: activeClientId) { [weak self] liveProto in
             guard let self = self, let liveProto = liveProto else { return }
             
-            // Detect practitioner updates to protocol or guidance note
-            if self.lastKnownItemCount > 0 {
-                if liveProto.items.count > self.lastKnownItemCount || liveProto.practitionerNoteToClient != self.lastKnownPractitionerNote {
-                    NotificationService.shared.sendDirectNotification(
-                        title: "🌿 Prescription Updated",
-                        subtitle: "Practitioner Luba Vitti",
-                        body: "Your practitioner has updated your prescribed supplement protocol and guidance notes."
-                    )
-                    self.triggerToast("🌿 Prescription updated live by Practitioner Luba Vitti!")
+            // Only mutate state and trigger SwiftUI view updates if the protocol actually changed!
+            if self.currentProtocol != liveProto {
+                // Detect practitioner updates to protocol or guidance note
+                if self.lastKnownItemCount > 0 {
+                    if liveProto.items.count > self.lastKnownItemCount || liveProto.practitionerNoteToClient != self.lastKnownPractitionerNote {
+                        NotificationService.shared.sendDirectNotification(
+                            title: "🌿 Prescription Updated",
+                            subtitle: "Practitioner Luba Vitti",
+                            body: "Your practitioner has updated your prescribed supplement protocol and guidance notes."
+                        )
+                        self.triggerToast("🌿 Prescription updated live by Practitioner Luba Vitti!")
+                    }
                 }
+                
+                self.lastKnownItemCount = liveProto.items.count
+                self.lastKnownPractitionerNote = liveProto.practitionerNoteToClient
+                self.currentProtocol = liveProto
+                self.evaluateAndScheduleReminders()
             }
-            
-            self.lastKnownItemCount = liveProto.items.count
-            self.lastKnownPractitionerNote = liveProto.practitionerNoteToClient
-            self.currentProtocol = liveProto
-            self.evaluateAndScheduleReminders()
         }
     }
     

@@ -233,7 +233,7 @@ public enum DoseStatus: String, Codable {
 }
 
 /// Full protocol prescribed by a practitioner to a client
-public struct PractitionerProtocol: Identifiable, Codable {
+public struct PractitionerProtocol: Identifiable, Codable, Equatable {
     public var id: UUID
     public var title: String
     public var practitionerName: String
@@ -274,7 +274,7 @@ public struct PractitionerProtocol: Identifiable, Codable {
 }
 
 /// Active Reminder State for Persistent On-Screen Alert
-public struct ActiveReminderState: Codable, Identifiable {
+public struct ActiveReminderState: Codable, Identifiable, Equatable {
     public var id: UUID
     public var item: ProtocolItem
     public var schedule: TimingSchedule
@@ -303,20 +303,13 @@ extension String {
         for byte in self.utf8 {
             hash = ((hash << 5) &+ hash) &+ UInt64(byte)
         }
-        var bytes = [UInt8](repeating: 0, count: 16)
-        for i in 0..<16 {
-            let shift = (i % 8) * 8
-            bytes[i] = UInt8((hash >> shift) & 0xFF)
-        }
-        bytes[6] = (bytes[6] & 0x0F) | 0x40
-        bytes[8] = (bytes[8] & 0x3F) | 0x80
+        let hex1 = String(format: "%08x", UInt32(hash & 0xFFFFFFFF))
+        let hex2 = String(format: "%04x", UInt16((hash >> 32) & 0xFFFF))
+        let hex3 = String(format: "%04x", UInt16((hash >> 16) & 0xFFFF))
+        let hex4 = String(format: "%04x", UInt16(hash & 0xFFFF))
+        let hex5 = String(format: "%012x", hash)
         
-        let tuple: uuid_t = (
-            bytes[0], bytes[1], bytes[2], bytes[3],
-            bytes[4], bytes[5], bytes[6], bytes[7],
-            bytes[8], bytes[9], bytes[10], bytes[11],
-            bytes[12], bytes[13], bytes[14], bytes[15]
-        )
-        return UUID(uuid: tuple)
+        let uuidStr = "\(hex1)-\(hex2)-4\(hex3.suffix(3))-\(hex4.suffix(4))-\(hex5.suffix(12))"
+        return UUID(uuidString: uuidStr) ?? UUID()
     }
 }
