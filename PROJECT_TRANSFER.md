@@ -1,154 +1,112 @@
-# 🌿 Wellness Buddy — Complete Project Transfer & Handoff Document
+# 🌿 Wellness Buddy — Project Handoff & Technical Documentation
 
-> **System Overview**: Wellness Buddy is an end-to-end integrative wellness platform and supplement reminder system for health practitioners and clients. It connects a Node.js backend server (deployed live on Render), a responsive web studio/portal, and a native SwiftUI iOS app.
-
----
-
-## 📍 1. Key Repository & Environment Details
-
-- **GitHub Repository**: [`https://github.com/davidc-alt/wellness-buddy-.git`](https://github.com/davidc-alt/wellness-buddy-.git) (`main` branch)
-- **Local Working Directory**: `/Users/davidbondarescu/WellnessBuddy`
-- **Live Deployed Web Application**: [`https://wellness-buddy-vduz.onrender.com`](https://wellness-buddy-vduz.onrender.com)
-- **Backend Entry File**: `backend/server.js` (runs live on `http://localhost:3000` & Render)
-- **Web Frontend**: `backend/public/index.html` (Web Studio & Patient Portal)
-- **iOS Application**: `WellnessBuddy/` (SwiftUI iOS app targeting iOS 16+)
-- **Xcode Generator Script**: `python3 generate_xcodeproj.py`
+> **Project Name**: Wellness Buddy  
+> **Repository**: [https://github.com/davidc-alt/wellness-buddy-.git](https://github.com/davidc-alt/wellness-buddy-.git) (`main` branch)  
+> **Local Directory**: `/Users/davidbondarescu/WellnessBuddy`  
+> **Live Web Application**: [https://wellness-buddy-vduz.onrender.com](https://wellness-buddy-vduz.onrender.com)  
+> **Last Updated**: August 2026  
 
 ---
 
-## 🎨 2. Design System & Palette
+## 📍 1. Repository & Local Setup Overview
 
-- **Sage Muted**: `#5C8B7D` (`Color.paletteSage`)
-- **Deep Ocean Slate**: `#2F6B87` (`Color.paletteOcean`)
-- **Cool Muted Silver**: `#A7B0B4` (`Color.paletteSilver`)
-- **Soft Light Grey Background**: `#EDEFF0` (`Color.paletteSoftBg`)
-- **Dark Charcoal Accent**: `#354047` (`Color.paletteDark`)
-- **Card Aesthetics**: 24pt rounded pure white minimalist cards with subtle elevation (`.calmCardStyle`).
-
----
-
-## ⚙️ 3. Key Business Rules & Enforced System Behaviors
-
-1. **Practitioner Identity & Fullscript Integration**:
-   - Primary practitioner name is **`Practitioner Luba Vitti`** / **`Dr. Luba Vitti Integrative Health`** across all backend API responses, web views, and iOS app displays.
-   - Fullscript dispensary URL code: `https://fullscript.com/dispensary/dr-luba-vitti`.
-
-2. **Persistent App Login & Multi-User Support**:
-   - Session data is persisted in `UserDefaults` (`wb_is_logged_in`, `wb_active_client_id`, `wb_active_client_name`, `wb_active_client_dob`, `wb_active_client_goal`).
-   - Closing and reopening the app automatically restores the user's login state and live protocols without asking for credentials again.
-   - Each mobile device stores its own local `UserDefaults` session, allowing concurrent logins across different phones connecting to the live backend server.
-
-3. **Clean Initial Login Inputs**:
-   - Input fields in `ClientLoginView.swift` and `index.html` start completely empty (`""`) with dynamic placeholders (`Last Name First Name` and `MM-DD-YYYY`) that disappear instantly as soon as the user enters their first letter.
-
-4. **Clean Protocol Defaults**:
-   - New patients start with a completely empty protocol (`items: []`). Never auto-add random supplements.
-
-5. **"Done" Pill Micro-Animation**:
-   - Tapping "Done" on any pill card triggers a 360° checkmark seal rotation, particle sparkle explosion, scale pulse, and tactile haptic feedback (`PillDoneAnimationButton`).
-
-6. **Dynamic Consecutive-Day Streak Counter**:
-   - Dynamic streak calculation (`currentStreakDays` in `WellnessBuddyViewModel.swift`) counts actual consecutive calendar days with completed doses fetched live from backend `/api/dose-log/:clientId`.
-
-7. **Live Backend Heartbeat & Auto-Sync**:
-   - `server.js` runs a self-ping heartbeat loop (`/api/ping`) every 8 minutes to prevent Render free-tier cold-start container resets.
-   - `APIService.swift` connects directly to `https://wellness-buddy-vduz.onrender.com` with a 30s timeout and automatic background retry loop.
-   - `index.html` features a `🟢 LIVE SYNC ACTIVE` status badge and an instant `visibilitychange` window focus auto-sync listener.
-
-8. **Expanded Supplement Timing Schedules**:
-   - 🌅 `Empty Stomach` (On Empty Stomach / Morning Wake-Up)
-   - 🍳 `With Breakfast` (With Breakfast)
-   - 🥗 `With Meal` (With Meals)
-   - 🥪 `With Lunch` (With Lunch)
-   - 🥩 `With Dinner` (With Dinner)
-   - ☕ `Mid-Day` (Mid-Day / Afternoon)
-   - 🏋️ `Pre-Workout` (Pre-Workout)
-   - ⚡ `Post-Workout` (Post-Workout)
-   - 🌙 `Before Bed` (Before Bed / Nighttime)
-
-9. **App Login Branding**:
-   - `ClientLoginView.swift` displays circle logo with bold text **`WB`**.
-
-10. **Web Patient Portal Testing Badge**:
-    - Patient Login tab on the web portal features a prominent `⚠️ FOR TESTING PURPOSES ONLY` badge.
-
----
-
-## 📡 4. Core Backend REST API Endpoints (`server.js`)
-
-| Method | Endpoint | Description |
+| Component | Path / Detail | Function |
 | :--- | :--- | :--- |
-| `GET` | `/api/ping` | Live health check & keep-alive ping |
-| `POST` | `/api/auth/register-client` | Registers a new patient with Name, DOB, Goal |
-| `POST` | `/api/auth/login-client` | Authenticates patient with Name and DOB |
-| `GET` | `/api/practitioner/clients` | Fetches full patient roster with adherence metrics & streak |
-| `POST` | `/api/practitioner/reset` | Resets roster to 0 patients |
-| `DELETE` | `/api/practitioner/delete-client/:clientId` | Deletes patient profile, protocol, and logs |
-| `GET` | `/api/protocol/:clientId` | Returns prescribed protocol stack & practitioner note |
-| `POST` | `/api/practitioner/assign-protocol/:clientId` | Prescribes/updates supplement items or guidance note |
-| `DELETE` | `/api/practitioner/delete-protocol-item/:clientId/:itemId` | Removes prescribed supplement from patient protocol |
-| `POST` | `/api/dose-log` | Records dose completion (`Done` or `Wait`) |
-| `GET` | `/api/dose-log/:clientId` | Fetches dose logs for calculating adherence streak |
+| **Backend Entry** | `backend/server.js` | Node.js HTTP server managing JSON persistence (`data.json`), REST APIs, and client/practitioner live state. |
+| **Web Frontend** | `backend/public/index.html` | Practitioner Studio & Patient Web Portal with real-time live sync and full protocol management. |
+| **iOS Project** | `WellnessBuddy/` | Native SwiftUI application for iOS 16+ supporting patient tracking, push notifications, and live sync. |
+| **Xcode Generator** | `generate_xcodeproj.py` | Python script to deterministically regenerate `WellnessBuddy.xcodeproj/project.pbxproj`. |
+| **Handoff Document** | `PROJECT_TRANSFER.md` | Authoritative handoff documentation. |
 
 ---
 
-## 📂 5. Key Codebase Files Map
+## 🎨 2. Design System & Brand Palette
 
-```
-/Users/davidbondarescu/WellnessBuddy/
-├── backend/
-│   ├── server.js              # Node.js REST API & heartbeat server
-│   ├── data.json              # File-backed JSON database
-│   └── public/
-│       └── index.html         # Responsive Web Studio & Patient Portal (Live Sync Active)
-├── WellnessBuddy/
-│   ├── WellnessBuddyApp.swift # iOS App entry point & TabView container
-│   ├── Info.plist             # App configuration & ATS permissions
-│   ├── Models/
-│   │   └── ProtocolModels.swift # Data models (ProtocolItem, TimingSchedule, DoseLogEntry, etc.)
-│   ├── Services/
-│   │   ├── APIService.swift   # Live HTTP network client with 30s timeout & retry engine
-│   │   ├── NotificationService.swift # Local push notifications for due doses
-│   │   └── FullscriptService.swift   # Fullscript store integration for Dr. Luba Vitti
-│   ├── ViewModels/
-│   │   └── WellnessBuddyViewModel.swift # App state, UserDefaults persistence & live auto-polling
-│   └── Views/
-│       ├── ClientLoginView.swift      # Client auth screen (WB logo, clean placeholders)
-│       ├── ClientDashboardView.swift  # Protocol dashboard, streak & PillDoneAnimationButton
-│       ├── PractitionerDashboardView.swift # Practitioner studio in iOS app
-│       ├── SupplementTrackerView.swift# Timing schedule breakdown view
-│       ├── ComplianceStatsView.swift  # Live adherence charts & 7-day progress grid
-│       ├── FullscriptPortalView.swift # Dr. Luba Vitti Fullscript dispensary portal
-│       └── PersistentReminderBannerView.swift # Pinned top reminder alert
-├── generate_xcodeproj.py      # Python script to regenerate project.pbxproj
-├── PROJECT_TRANSFER.md        # Project handoff documentation
-└── README.md                  # Project repository documentation
-```
+Wellness Buddy uses a calm, integrative health design system with curated HSL color tokens and custom glassmorphic components:
+
+- **Sage Muted Green**: `#5C8B7D` (`Color.paletteSage`)
+- **Deep Ocean Slate Blue**: `#2F6B87` (`Color.paletteOcean`)
+- **Cool Muted Silver**: `#A7B0B4` (`Color.paletteSilver`)
+- **Soft Light Grey**: `#EDEFF0` (`Color.paletteSoftBg`)
+- **Dark Charcoal Text**: `#354047` (`Color.paletteDark`)
+- **Official Brand Emblem**: Blue/Green gradient circle (`#5C8B7D` to `#2F6B87`) with modern centered white **"wb"** typography (`WellnessBuddyLogoView`).
 
 ---
 
-## 🚀 6. Developer Quick Commands
+## 🚀 3. Core Features & Capabilities
 
-### Run Backend Locally
+### 🩺 A. Practitioner Studio (Web & App)
+1. **Prescription Management**:
+   - Add new supplements/peptides with specific dosage, units (`caps`, `mg`, `mcg`, `IU`, `mL`, `sprays`), timing schedule (`Empty Stomach`, `With Breakfast`, `With Meal`, `Pre-Workout`, `Before Bed`), and practitioner notes.
+   - **Repeat Intervals**: Assign dose frequency intervals (4h, 6h, 8h, 12h, 24h, 48h).
+   - **Edit Prescribed Items**: Click `✏️ Edit` on any prescribed supplement to update dosage, brand, interval, or notes in place.
+   - **⚡ Quick Stack Preset**: 1-Tap prescription of common protocols (*NAD+ Liposomal Concentrate*, *BPC-157 Oral Supplement*, *Liposomal Vitamin D3 + K2*).
+2. **Clean Default State & Roster Management**:
+   - Starts cleanly with 0 default patients (`clients: []` in `data.json`).
+   - Practitioners can delete individual patients (`🗑️`) or clear the roster (`Clear Roster (0 Patients)`).
+
+### 📱 B. Patient Experience (iOS & Web Portal)
+1. **Dynamic Pill Status & Card Badges**:
+   - Displays real-time countdown timer to next dose (e.g., *"Next in 5h 30m"*).
+   - When dose is due, card switches to **DUE NOW** badge, active banner pops up, and **Done** & **Wait** buttons appear.
+   - Tapping **Done** logs the dose, hides the pop-up banner, hides the "Done" button, and displays a `✓ Dose Completed` seal badge until the next dose interval arrives.
+2. **Push & In-App Notifications**:
+   - Sends automated local push notifications when a pill is due or when a practitioner updates a prescription.
+   - Prompts for notification permissions on launch/login with an in-app "Enable Notifications" card.
+3. **Fullscript External Dispensary Link**:
+   - Tapping **Refill** or **1-Tap Refill** opens `https://us.fullscript.com/welcome/lvitti/signup` directly in external Safari via `UIApplication.shared.open(...)`.
+4. **Session Auto-Restore & Server Re-Sync**:
+   - When a patient opens the app after a server restart or fresh deploy, the app automatically calls `/api/auth/restore-session`.
+   - Restores patient profile (Name, DOB, Goal, Symptoms) and assigned supplement stack to `data.json` and updates the Practitioner Studio roster live!
+
+---
+
+## ⚡ 4. Technical Architecture & Performance Optimizations
+
+1. **Redundant Re-Render Prevention**:
+   - `PractitionerProtocol` and `ActiveReminderState` conform to `Equatable`.
+   - `fetchLiveProtocol()` checks `if self.currentProtocol != liveProto` before updating `@Published` state, eliminating main thread stuttering and frame drops.
+2. **Static Shared Date Formatters**:
+   - `APIService` uses thread-safe static `ISO8601DateFormatter` instances to prevent high-frequency memory allocations during 5s live polling cycles.
+3. **Deterministic Stable UUID Hashing**:
+   - Added `toStableUUID` String extension to map string IDs from backend into stable UUIDs, fixing reminder dismissal state mismatches.
+4. **Physical iOS Device Deployment**:
+   - `generate_xcodeproj.py` configures `CODE_SIGN_STYLE = Automatic` and `"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development"` for seamless deployment on physical iPhones.
+
+---
+
+## 🛠️ 5. Key File Index
+
+- [`backend/server.js`](file:///Users/davidbondarescu/WellnessBuddy/backend/server.js): Node.js HTTP server & REST APIs (`/api/auth/restore-session`, `/api/protocol/:clientId`, `/api/practitioner/assign-protocol/:clientId`).
+- [`backend/public/index.html`](file:///Users/davidbondarescu/WellnessBuddy/backend/public/index.html): Web portal frontend (Practitioner Studio & Patient Portal).
+- [`WellnessBuddy/Services/APIService.swift`](file:///Users/davidbondarescu/WellnessBuddy/WellnessBuddy/Services/APIService.swift): API network service.
+- [`WellnessBuddy/Services/FullscriptService.swift`](file:///Users/davidbondarescu/WellnessBuddy/WellnessBuddy/Services/FullscriptService.swift): Fullscript dispensary integration & external browser launcher.
+- [`WellnessBuddy/Services/NotificationService.swift`](file:///Users/davidbondarescu/WellnessBuddy/WellnessBuddy/Services/NotificationService.swift): UNUserNotificationCenter push notification manager.
+- [`WellnessBuddy/ViewModels/WellnessBuddyViewModel.swift`](file:///Users/davidbondarescu/WellnessBuddy/WellnessBuddy/ViewModels/WellnessBuddyViewModel.swift): Main application state & live sync manager.
+- [`WellnessBuddy/Components/CalmDesignComponents.swift`](file:///Users/davidbondarescu/WellnessBuddy/WellnessBuddy/Components/CalmDesignComponents.swift): Custom design system UI components & `WellnessBuddyLogoView`.
+- [`generate_xcodeproj.py`](file:///Users/davidbondarescu/WellnessBuddy/generate_xcodeproj.py): Xcode project generator script.
+
+---
+
+## 🚀 6. How to Run & Deploy
+
+### A. Run Backend Locally
 ```bash
-node backend/server.js
-# Runs live at http://localhost:3000
+cd /Users/davidbondarescu/WellnessBuddy/backend
+node server.js
 ```
+Access live portal at `http://localhost:3000`.
 
-### Open Web Studio
-```bash
-open http://localhost:3000
-```
-
-### Regenerate Xcode Project & Open App
+### B. Regenerate Xcode Project & Run iOS App
 ```bash
 python3 generate_xcodeproj.py
-open WellnessBuddy.xcodeproj
 ```
+Open `WellnessBuddy.xcodeproj` in Xcode, select your target (Simulator or physical iPhone), and press **⌘R**.
 
-### Sync & Push Updates to GitHub
+### C. Commit & Push to GitHub (Triggers Render Auto-Deploy)
 ```bash
 git add .
-git commit -m "Update handoff documentation"
+git commit -m "Update Wellness Buddy application"
 git push origin main
 ```
+Live deployed at: [https://wellness-buddy-vduz.onrender.com](https://wellness-buddy-vduz.onrender.com)
