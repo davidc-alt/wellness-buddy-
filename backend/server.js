@@ -317,7 +317,7 @@ const server = http.createServer(async (req, res) => {
         practitionerNotes: item.practitionerNotes || "Take as directed.",
         totalServingsRemaining: item.totalServingsRemaining !== undefined ? item.totalServingsRemaining : 30,
         maxServings: item.maxServings || 30,
-        fullscriptRefillUrl: item.fullscriptRefillUrl || "https://fullscript.com"
+        fullscriptRefillUrl: item.fullscriptRefillUrl || "https://us.fullscript.com/welcome/lvitti/signup"
       }));
     } else if (body.item) {
       if (!db.protocols[clientId]) db.protocols[clientId] = [];
@@ -335,7 +335,7 @@ const server = http.createServer(async (req, res) => {
         practitionerNotes: body.item.practitionerNotes || "Take as directed.",
         totalServingsRemaining: body.item.totalServingsRemaining !== undefined ? body.item.totalServingsRemaining : 30,
         maxServings: body.item.maxServings || 30,
-        fullscriptRefillUrl: body.item.fullscriptRefillUrl || "https://fullscript.com"
+        fullscriptRefillUrl: body.item.fullscriptRefillUrl || "https://us.fullscript.com/welcome/lvitti/signup"
       };
 
       if (existingIdx >= 0) {

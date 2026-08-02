@@ -279,7 +279,7 @@ public struct ClientDashboardView: View {
                                             
                                             ForEach(itemsForSchedule) { item in
                                                 RegimenCardView(item: item, viewModel: viewModel, onRefillTap: {
-                                                    selectedItemForRefill = item
+                                                    FullscriptService.shared.openFullscriptExternal(for: item)
                                                 })
                                                 .padding(.horizontal, 20)
                                             }

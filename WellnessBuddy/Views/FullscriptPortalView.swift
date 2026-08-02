@@ -182,7 +182,7 @@ public struct FullscriptPortalView: View {
     }
     
     private func triggerFullscriptRefill(for item: ProtocolItem) {
-        self.selectedItemForRefill = item
+        FullscriptService.shared.openFullscriptExternal(for: item)
     }
 }
 
