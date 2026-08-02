@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 /// Manages integration with Fullscript practitioner dispensary, order refills, and stock tracking
 public class FullscriptService: ObservableObject {
