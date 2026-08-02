@@ -120,6 +120,7 @@ public class WellnessBuddyViewModel: ObservableObject {
             .sink { [weak self] _ in
                 guard let self = self, self.isLoggedIn, !self.activeClientId.isEmpty else { return }
                 self.fetchLiveProtocol()
+                self.evaluateAndScheduleReminders()
             }
     }
     
@@ -130,21 +131,74 @@ public class WellnessBuddyViewModel: ObservableObject {
         APIService.shared.fetchProtocol(for: activeClientId) { [weak self] liveProto in
             guard let self = self, let liveProto = liveProto else { return }
             self.currentProtocol = liveProto
-            
-            if let firstItem = liveProto.items.first {
-                // If reminder isn't active or item changed, update reminder
-                if self.activeReminder == nil || self.activeReminder?.item.id != firstItem.id {
-                    self.activeReminder = ActiveReminderState(
-                        item: firstItem,
-                        schedule: firstItem.timingSchedule,
-                        scheduledTime: Date(),
-                        isSnoozed: false
-                    )
-                }
-            } else {
-                // Clear active reminder if no items are prescribed!
-                self.activeReminder = nil
+            self.evaluateAndScheduleReminders()
+        }
+    }
+    
+    // MARK: - Frequency Interval & Dynamic Reminder Calculations
+    
+    public func lastCompletedDoseLog(for itemId: UUID) -> DoseLogEntry? {
+        return doseLogs.first(where: { $0.itemId == itemId && $0.status == .completed })
+    }
+    
+    public func nextDoseTime(for item: ProtocolItem) -> Date? {
+        if let lastLog = lastCompletedDoseLog(for: item.id) {
+            return lastLog.timestamp.addingTimeInterval(item.intervalHoursCalculated * 3600)
+        }
+        return nil // Never logged -> due now
+    }
+    
+    public func isDoseDue(for item: ProtocolItem) -> Bool {
+        guard let dueTime = nextDoseTime(for: item) else { return true }
+        return Date() >= dueTime
+    }
+    
+    public func timeUntilNextDose(for item: ProtocolItem) -> TimeInterval? {
+        guard let dueTime = nextDoseTime(for: item) else { return nil }
+        let diff = dueTime.timeIntervalSince(Date())
+        return diff > 0 ? diff : nil
+    }
+    
+    public func formattedTimeUntilNextDose(for item: ProtocolItem) -> String? {
+        guard let remainingSeconds = timeUntilNextDose(for: item) else { return nil }
+        let totalMinutes = Int(ceil(remainingSeconds / 60.0))
+        let hours = totalMinutes / 60
+        let mins = totalMinutes % 60
+        
+        if hours > 0 {
+            return "\(hours)h \(mins)m"
+        } else if mins > 0 {
+            return "\(mins)m"
+        } else {
+            return "less than 1 minute"
+        }
+    }
+    
+    public var soonestNextDoseSummary: (item: ProtocolItem, remainingStr: String)? {
+        let itemsWithNextDose = currentProtocol.items.compactMap { item -> (ProtocolItem, TimeInterval, String)? in
+            guard let remSecs = timeUntilNextDose(for: item), let formatted = formattedTimeUntilNextDose(for: item) else { return nil }
+            return (item, remSecs, formatted)
+        }
+        guard let soonest = itemsWithNextDose.min(by: { $0.1 < $1.1 }) else { return nil }
+        return (soonest.0, soonest.2)
+    }
+    
+    public func evaluateAndScheduleReminders() {
+        guard isLoggedIn, !activeClientId.isEmpty else { return }
+        
+        // Find if any prescribed item is currently due
+        if let dueItem = currentProtocol.items.first(where: { isDoseDue(for: $0) }) {
+            if activeReminder == nil || activeReminder?.item.id != dueItem.id {
+                self.activeReminder = ActiveReminderState(
+                    item: dueItem,
+                    schedule: dueItem.timingSchedule,
+                    scheduledTime: Date(),
+                    isSnoozed: false
+                )
             }
+        } else {
+            // All due doses have been logged! Hide in-app banner until next dose time
+            self.activeReminder = nil
         }
     }
     
@@ -189,11 +243,15 @@ public class WellnessBuddyViewModel: ObservableObject {
             currentProtocol.items[index] = updatedItem
         }
         
-        if activeReminder?.item.id == item.id {
-            findNextPendingReminder(excluding: item.id)
-        }
+        // Schedule next local notification for exact repeat interval (e.g. 4h, 8h, 12h, 24h)
+        let intervalSecs = item.intervalHoursCalculated * 3600
+        NotificationService.shared.scheduleReminder(for: item, inSeconds: intervalSecs)
         
-        triggerToast("✓ \(item.name) logged! Adherence updated.")
+        // Re-evaluate active reminder state (banner disappears for this item!)
+        evaluateAndScheduleReminders()
+        
+        let countdownStr = formattedTimeUntilNextDose(for: item) ?? "in \(Int(item.intervalHoursCalculated))h"
+        triggerToast("✓ \(item.name) logged! Next dose in \(countdownStr).")
     }
     
     public func snoozeDose(for item: ProtocolItem, minutes: Int, timing: TimingSchedule) {
@@ -245,20 +303,6 @@ public class WellnessBuddyViewModel: ObservableObject {
     
     public func dismissActiveReminder() {
         self.activeReminder = nil
-    }
-    
-    private func findNextPendingReminder(excluding itemId: UUID) {
-        let remainingItems = currentProtocol.items.filter { $0.id != itemId }
-        if let nextItem = remainingItems.first {
-            self.activeReminder = ActiveReminderState(
-                item: nextItem,
-                schedule: nextItem.timingSchedule,
-                scheduledTime: Date().addingTimeInterval(3600),
-                isSnoozed: false
-            )
-        } else {
-            self.activeReminder = nil
-        }
     }
     
     // MARK: - Adherence Metrics & Dynamic Streak Counter

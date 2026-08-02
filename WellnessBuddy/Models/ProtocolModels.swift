@@ -101,12 +101,26 @@ public struct ProtocolItem: Identifiable, Codable, Hashable {
     public var dosageValue: Double
     public var dosageUnit: DosageUnit
     public var timingSchedule: TimingSchedule
-    public var frequencyDescription: String // e.g. "Once Daily", "5 Days On / 2 Days Off"
+    public var frequencyDescription: String // e.g. "Once Daily", "Every 8 Hours"
+    public var intervalHours: Double?
     public var practitionerNotes: String
     public var fullscriptProductId: String?
     public var fullscriptRefillUrl: String?
     public var totalServingsRemaining: Int
     public var maxServings: Int
+    
+    public var intervalHoursCalculated: Double {
+        if let hours = intervalHours, hours > 0 {
+            return hours
+        }
+        let lower = frequencyDescription.lowercased()
+        if lower.contains("4 hour") || lower.contains("4h") || lower.contains("every 4") { return 4.0 }
+        if lower.contains("6 hour") || lower.contains("6h") || lower.contains("every 6") { return 6.0 }
+        if lower.contains("8 hour") || lower.contains("8h") || lower.contains("every 8") { return 8.0 }
+        if lower.contains("12 hour") || lower.contains("12h") || lower.contains("every 12") { return 12.0 }
+        if lower.contains("48 hour") || lower.contains("48h") || lower.contains("every 48") || lower.contains("every 2 day") { return 48.0 }
+        return 24.0
+    }
     
     public init(
         id: UUID = UUID(),
@@ -117,6 +131,7 @@ public struct ProtocolItem: Identifiable, Codable, Hashable {
         dosageUnit: DosageUnit,
         timingSchedule: TimingSchedule,
         frequencyDescription: String,
+        intervalHours: Double? = nil,
         practitionerNotes: String,
         fullscriptProductId: String? = nil,
         fullscriptRefillUrl: String? = nil,
@@ -131,6 +146,7 @@ public struct ProtocolItem: Identifiable, Codable, Hashable {
         self.dosageUnit = dosageUnit
         self.timingSchedule = timingSchedule
         self.frequencyDescription = frequencyDescription
+        self.intervalHours = intervalHours
         self.practitionerNotes = practitionerNotes
         self.fullscriptProductId = fullscriptProductId
         self.fullscriptRefillUrl = fullscriptRefillUrl
@@ -140,7 +156,7 @@ public struct ProtocolItem: Identifiable, Codable, Hashable {
     
     // Custom Decodable initializer for flexibility with backend API types
     enum CodingKeys: String, CodingKey {
-        case id, name, brand, category, dosageValue, dosageUnit, timingSchedule, frequencyDescription, practitionerNotes, fullscriptProductId, fullscriptRefillUrl, totalServingsRemaining, maxServings
+        case id, name, brand, category, dosageValue, dosageUnit, timingSchedule, frequencyDescription, intervalHours, practitionerNotes, fullscriptProductId, fullscriptRefillUrl, totalServingsRemaining, maxServings
     }
     
     public init(from decoder: Decoder) throws {
@@ -176,6 +192,7 @@ public struct ProtocolItem: Identifiable, Codable, Hashable {
         }
         
         self.frequencyDescription = try container.decodeIfPresent(String.self, forKey: .frequencyDescription) ?? "Daily"
+        self.intervalHours = try container.decodeIfPresent(Double.self, forKey: .intervalHours)
         self.practitionerNotes = try container.decodeIfPresent(String.self, forKey: .practitionerNotes) ?? ""
         self.fullscriptProductId = try container.decodeIfPresent(String.self, forKey: .fullscriptProductId)
         self.fullscriptRefillUrl = try container.decodeIfPresent(String.self, forKey: .fullscriptRefillUrl)

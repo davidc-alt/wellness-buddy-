@@ -290,6 +290,19 @@ const server = http.createServer(async (req, res) => {
       return String(u).trim();
     }
 
+    function parseIntervalHours(item) {
+      if (item.intervalHours && !isNaN(parseFloat(item.intervalHours))) {
+        return parseFloat(item.intervalHours);
+      }
+      const desc = String(item.frequencyDescription || "").toLowerCase();
+      if (desc.includes("4 hour") || desc.includes("every 4")) return 4;
+      if (desc.includes("6 hour") || desc.includes("every 6")) return 6;
+      if (desc.includes("8 hour") || desc.includes("every 8")) return 8;
+      if (desc.includes("12 hour") || desc.includes("every 12")) return 12;
+      if (desc.includes("48 hour") || desc.includes("every 48") || desc.includes("every 2 day")) return 48;
+      return 24;
+    }
+
     if (body.items) {
       db.protocols[clientId] = body.items.map(item => ({
         id: item.id || ("supp_" + Date.now() + "_" + Math.random().toString(36).substr(2, 4)),
@@ -300,6 +313,7 @@ const server = http.createServer(async (req, res) => {
         dosageUnit: normalizeUnit(item.dosageUnit),
         timingSchedule: item.timingSchedule || "Empty Stomach",
         frequencyDescription: item.frequencyDescription || "Daily",
+        intervalHours: parseIntervalHours(item),
         practitionerNotes: item.practitionerNotes || "Take as directed.",
         totalServingsRemaining: item.totalServingsRemaining !== undefined ? item.totalServingsRemaining : 30,
         maxServings: item.maxServings || 30,
@@ -315,6 +329,7 @@ const server = http.createServer(async (req, res) => {
         dosageUnit: normalizeUnit(body.item.dosageUnit),
         timingSchedule: body.item.timingSchedule || "Empty Stomach",
         frequencyDescription: body.item.frequencyDescription || "Daily",
+        intervalHours: parseIntervalHours(body.item),
         practitionerNotes: body.item.practitionerNotes || "Take as directed.",
         totalServingsRemaining: body.item.totalServingsRemaining !== undefined ? body.item.totalServingsRemaining : 30,
         maxServings: body.item.maxServings || 30,

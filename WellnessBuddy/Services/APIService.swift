@@ -229,6 +229,7 @@ public class APIService: ObservableObject {
             "dosageUnit": item.dosageUnit.rawValue,
             "timingSchedule": item.timingSchedule.rawValue,
             "frequencyDescription": item.frequencyDescription,
+            "intervalHours": item.intervalHoursCalculated,
             "practitionerNotes": item.practitionerNotes,
             "totalServingsRemaining": item.totalServingsRemaining,
             "maxServings": item.maxServings

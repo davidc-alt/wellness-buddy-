@@ -77,6 +77,37 @@ public struct ClientDashboardView: View {
                             PersistentReminderBannerView(viewModel: viewModel, reminderState: activeAlert)
                                 .transition(.move(edge: .top).combined(with: .opacity))
                                 .animation(.spring(), value: viewModel.activeReminder?.id)
+                        } else if let summary = viewModel.soonestNextDoseSummary {
+                            // NEXT DOSE COUNTDOWN CARD (Shows when doses are up to date!)
+                            HStack(spacing: 14) {
+                                ZStack {
+                                    Circle()
+                                        .fill(Color.paletteSage.opacity(0.15))
+                                        .frame(width: 44, height: 44)
+                                    Image(systemName: "timer")
+                                        .font(.system(size: 20, weight: .bold))
+                                        .foregroundColor(.paletteSage)
+                                }
+                                
+                                VStack(alignment: .leading, spacing: 3) {
+                                    HStack {
+                                        Text("✓ Doses Up To Date")
+                                            .font(.system(size: 14, weight: .bold, design: .rounded))
+                                            .foregroundColor(.paletteDark)
+                                        Spacer()
+                                        Text("Next in \(summary.remainingStr)")
+                                            .font(.system(size: 12, weight: .heavy, design: .rounded))
+                                            .foregroundColor(.paletteSage)
+                                    }
+                                    
+                                    Text("\(summary.item.name) • \(summary.item.frequencyDescription)")
+                                        .font(.system(size: 12, weight: .medium, design: .rounded))
+                                        .foregroundColor(.paletteSilver)
+                                }
+                            }
+                            .calmCardStyle(padding: 16, cornerRadius: 22)
+                            .padding(.horizontal, 20)
+                            .transition(.opacity)
                         }
                         
                         // Minimalist Metric Overview Cards
@@ -295,18 +326,26 @@ struct RegimenCardView: View {
                         
                         Spacer()
                         
-                        if item.isLowStock {
-                            Text("\(item.totalServingsRemaining) left")
-                                .font(.system(size: 11, weight: .bold, design: .rounded))
+                        if viewModel.isDoseDue(for: item) {
+                            Text("DUE NOW")
+                                .font(.system(size: 10, weight: .heavy, design: .rounded))
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 3)
                                 .background(Color.paletteOcean.opacity(0.12))
                                 .foregroundColor(.paletteOcean)
                                 .clipShape(Capsule())
+                        } else if let nextStr = viewModel.formattedTimeUntilNextDose(for: item) {
+                            Text("Next in \(nextStr)")
+                                .font(.system(size: 10, weight: .bold, design: .rounded))
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 3)
+                                .background(Color.paletteSage.opacity(0.15))
+                                .foregroundColor(.paletteSage)
+                                .clipShape(Capsule())
                         }
                     }
                     
-                    Text("\(item.dosageValue.cleanString) \(item.dosageUnit.rawValue) • \(item.brand)")
+                    Text("\(item.dosageValue.cleanString) \(item.dosageUnit.rawValue) • \(item.brand) • \(item.frequencyDescription)")
                         .font(.system(size: 12, weight: .medium, design: .rounded))
                         .foregroundColor(.paletteSilver)
                 }

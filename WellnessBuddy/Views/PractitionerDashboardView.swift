@@ -154,6 +154,7 @@ public struct AddProtocolItemSheet: View {
     @State private var dosageUnit: DosageUnit = .capsules
     @State private var timingSchedule: TimingSchedule = .emptyStomach
     @State private var frequency: String = "Once Daily"
+    @State private var selectedIntervalHours: Double = 24.0
     @State private var notes: String = ""
     
     public var body: some View {
@@ -187,7 +188,16 @@ public struct AddProtocolItemSheet: View {
                         }
                     }
                     
-                    TextField("Frequency (e.g. Daily with Breakfast)", text: $frequency)
+                    Picker("Repeat Frequency / Take Interval", selection: $selectedIntervalHours) {
+                        Text("Every 4 Hours").tag(4.0)
+                        Text("Every 6 Hours").tag(6.0)
+                        Text("Every 8 Hours").tag(8.0)
+                        Text("Every 12 Hours").tag(12.0)
+                        Text("Every 24 Hours (Once Daily)").tag(24.0)
+                        Text("Every 48 Hours (Every 2 Days)").tag(48.0)
+                    }
+                    
+                    TextField("Custom Frequency Label", text: $frequency)
                 }
                 
                 Section(header: Text("Practitioner Notes & Patient Instructions")) {
@@ -211,6 +221,7 @@ public struct AddProtocolItemSheet: View {
                             dosageUnit: dosageUnit,
                             timingSchedule: timingSchedule,
                             frequencyDescription: frequency,
+                            intervalHours: selectedIntervalHours,
                             practitionerNotes: notes
                         )
                         viewModel.addProtocolItem(newItem)
@@ -238,6 +249,18 @@ public struct EditProtocolItemSheet: View {
                         ForEach(TimingSchedule.allCases) { timing in
                             Text(timing.rawValue).tag(timing)
                         }
+                    }
+                    
+                    Picker("Repeat Frequency", selection: Binding(
+                        get: { item.intervalHoursCalculated },
+                        set: { item.intervalHours = $0; item.frequencyDescription = "Every \($0.cleanString) Hours" }
+                    )) {
+                        Text("Every 4 Hours").tag(4.0)
+                        Text("Every 6 Hours").tag(6.0)
+                        Text("Every 8 Hours").tag(8.0)
+                        Text("Every 12 Hours").tag(12.0)
+                        Text("Every 24 Hours (Once Daily)").tag(24.0)
+                        Text("Every 48 Hours (Every 2 Days)").tag(48.0)
                     }
                 }
                 

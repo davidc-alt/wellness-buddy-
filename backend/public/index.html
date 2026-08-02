@@ -559,9 +559,22 @@
         </div>
       </div>
 
-      <div class="form-group">
-        <label>Frequency Description</label>
-        <input type="text" id="modalSuppFreq" class="form-input" placeholder="Daily at Morning Wake-Up">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div class="form-group">
+          <label>Repeat Frequency / Take Interval</label>
+          <select id="modalSuppInterval" class="form-input">
+            <option value="4">Every 4 Hours</option>
+            <option value="6">Every 6 Hours</option>
+            <option value="8">Every 8 Hours</option>
+            <option value="12">Every 12 Hours</option>
+            <option value="24" selected>Every 24 Hours (Once Daily)</option>
+            <option value="48">Every 48 Hours (Every 2 Days)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Frequency Description</label>
+          <input type="text" id="modalSuppFreq" class="form-input" placeholder="e.g. Every 8 Hours">
+        </div>
       </div>
 
       <div class="form-group">
@@ -795,14 +808,15 @@
 
       const brand = document.getElementById('modalSuppBrand').value.trim() || "Practitioner Direct";
       const timingSchedule = document.getElementById('modalSuppTiming').value || "Empty Stomach";
-      const frequencyDescription = document.getElementById('modalSuppFreq').value.trim() || "Daily";
+      const intervalHours = parseFloat(document.getElementById('modalSuppInterval').value) || 24;
+      const frequencyDescription = document.getElementById('modalSuppFreq').value.trim() || `Every ${intervalHours} Hours`;
       const practitionerNotes = document.getElementById('modalSuppNotes').value.trim();
 
       await fetch(`/api/practitioner/assign-protocol/${selectedClientId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          item: { name, dosageValue, dosageUnit, brand, timingSchedule, frequencyDescription, practitionerNotes }
+          item: { name, dosageValue, dosageUnit, brand, timingSchedule, intervalHours, frequencyDescription, practitionerNotes }
         })
       });
 
@@ -868,7 +882,7 @@
         pdfIframe.src = "";
       }
 
-      // Fetch Dose Logs to update adherence metrics
+      // Fetch Dose Logs to update adherence metrics & repeat intervals
       const logRes = await fetch(`/api/dose-log/${clientId}`);
       const logData = await logRes.json();
       const logs = logData.doseLogs || [];
@@ -877,13 +891,35 @@
       document.getElementById('clientStreakDisplay').innerText = (doneLogs.length > 0 ? Math.min(doneLogs.length, 14) : 0) + " Days";
       document.getElementById('clientDoseCountDisplay').innerText = `${doneLogs.length} of ${items.length}`;
 
+      const now = Date.now();
+      function getItemNextDoseTime(item) {
+        const itemLogs = logs.filter(l => String(l.itemId) === String(item.id) && l.status === 'Done');
+        if (itemLogs.length === 0) return 0; // Never taken -> Due now!
+        const lastLogTime = new Date(itemLogs[0].timestamp).getTime();
+        const intervalMs = (item.intervalHours || 24) * 3600 * 1000;
+        return lastLogTime + intervalMs;
+      }
+
+      function getTimeRemainingText(nextDoseTime) {
+        if (now >= nextDoseTime) return null;
+        const totalMins = Math.ceil((nextDoseTime - now) / 60000);
+        const hours = Math.floor(totalMins / 60);
+        const mins = totalMins % 60;
+        if (hours > 0) return `${hours}h ${mins}m`;
+        if (mins > 0) return `${mins}m`;
+        return "less than 1 min";
+      }
+
+      // Find item that is due now
+      const dueItem = items.find(i => now >= getItemNextDoseTime(i));
+
       // Update Active Reminder
-      if (items.length > 0) {
-        activeReminderItem = items[0];
+      if (dueItem) {
+        activeReminderItem = dueItem;
         document.getElementById('clientActiveReminder').classList.remove('hidden');
-        document.getElementById('remName').innerText = items[0].name;
-        document.getElementById('remSub').innerText = `${items[0].dosageValue} ${items[0].dosageUnit} • ${items[0].brand}`;
-        document.getElementById('remSchedule').innerText = "🌅 " + (items[0].timingSchedule ? items[0].timingSchedule.toUpperCase() : "EMPTY STOMACH");
+        document.getElementById('remName').innerText = dueItem.name;
+        document.getElementById('remSub').innerText = `${dueItem.dosageValue} ${dueItem.dosageUnit} • ${dueItem.brand} • ${dueItem.frequencyDescription || 'Daily'}`;
+        document.getElementById('remSchedule').innerText = "⏰ DUE NOW";
       } else {
         activeReminderItem = null;
         document.getElementById('clientActiveReminder').classList.add('hidden');
@@ -896,20 +932,30 @@
         ? `<div style="padding: 24px; text-align: center; color: var(--silver-muted); background: var(--soft-bg); border-radius: var(--radius-sm);">
             ${items.length === 0 ? 'Your practitioner will review your DOB and health intake to prescribe your custom protocol.' : 'No supplements under this timing schedule filter.'}
            </div>`
-        : filtered.map(i => `
+        : filtered.map(i => {
+          const nextTime = getItemNextDoseTime(i);
+          const isDue = now >= nextTime;
+          const remainingText = getTimeRemainingText(nextTime);
+          const badgeHtml = isDue 
+            ? `<span class="schedule-badge" style="background: rgba(47, 107, 135, 0.15); color: var(--ocean-blue);">DUE NOW</span>`
+            : `<span class="schedule-badge" style="background: rgba(92, 139, 125, 0.15); color: var(--sage-muted);">Next in ${remainingText || 'soon'}</span>`;
+
+          return `
           <div class="supp-card">
-            <div>
-              <div class="supp-title">${i.name} (${i.dosageValue} ${i.dosageUnit})</div>
-              <div class="supp-sub">${i.brand} • ${i.frequencyDescription}</div>
+            <div style="flex: 1;">
+              <div class="supp-title" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>${i.name} (${i.dosageValue} ${i.dosageUnit})</span>
+                ${badgeHtml}
+              </div>
+              <div class="supp-sub">${i.brand} • ${i.frequencyDescription || 'Daily'}</div>
               <div class="supp-notes">“${i.practitionerNotes || 'Take as directed.'}”</div>
               <div style="display: flex; gap: 8px; margin-top: 12px;">
                 <button class="btn-pill" style="padding: 6px 14px; font-size: 11px;" onclick="completeDoseAction('${i.id}', '${i.name}', '${i.timingSchedule}')">✓ Done</button>
                 <button class="btn-pill btn-secondary" style="padding: 6px 14px; font-size: 11px;" onclick="snoozeDoseAction('${i.id}', '${i.name}', '${i.timingSchedule}')">⏳ Wait</button>
               </div>
             </div>
-            <span class="schedule-badge">${i.timingSchedule}</span>
           </div>
-        `).join('');
+        `}).join('');
     }
 
     function filterSchedule(schedule, btn) {
