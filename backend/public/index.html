@@ -1023,6 +1023,47 @@
       }
     });
 
+    async function performPatientLogin(name, dob, goal = '', symptoms = '') {
+      if (!name || !dob) {
+        alert("Please enter Full Name and Date of Birth.");
+        return;
+      }
+      try {
+        const res = await fetch('/api/auth/register-client', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, dob, goal, symptoms })
+        });
+        const data = await res.json();
+        if (data.success && data.client) {
+          currentClientUser = data.client;
+          switchTab('client');
+          loadClientDashboard(data.client.id);
+          loadPractitionerDashboard();
+        } else {
+          alert(data.message || "Failed to log in. Please check your credentials.");
+        }
+      } catch (err) {
+        console.error("Login error:", err);
+        alert("Could not connect to server. Please try again.");
+      }
+    }
+
+    async function quickLoginPatient(name, dob) {
+      document.getElementById('signupName').value = name;
+      document.getElementById('signupDob').value = dob;
+      await performPatientLogin(name, dob);
+    }
+
+    document.getElementById('signupForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const name = document.getElementById('signupName').value.trim();
+      const dob = document.getElementById('signupDob').value.trim();
+      const goal = document.getElementById('signupGoal').value.trim();
+      const symptoms = document.getElementById('signupSymptoms').value.trim();
+      await performPatientLogin(name, dob, goal, symptoms);
+    });
+
     // Initial Load & Start Polling
     loadPractitionerDashboard();
     startAutoPolling();
