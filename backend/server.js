@@ -100,12 +100,12 @@ const server = http.createServer(async (req, res) => {
   // 1. CLIENT REGISTRATION WITH NAME & DOB
   if (pathname === '/api/auth/register-client' && method === 'POST') {
     const body = await getJsonBody(req);
-    if (!body.name || !body.dob) {
-      return sendJson(res, 400, { success: false, message: "Full Name and Date of Birth (DOB) are required" });
+    if (!body.name || body.name.trim().length === 0) {
+      return sendJson(res, 400, { success: false, message: "Full Name is required" });
     }
 
     const name = body.name.trim();
-    const dob = body.dob.trim();
+    const dob = (body.dob && body.dob.trim().length > 0) ? body.dob.trim() : "Not specified";
     const email = (body.email && body.email.trim().length > 0) ? body.email.trim() : (name.toLowerCase().replace(/\s+/g, '.') + "@wellnessclient.com");
     const password = body.password || "password123";
 

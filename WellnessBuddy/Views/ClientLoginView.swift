@@ -173,22 +173,7 @@ public struct ClientLoginView: View {
                 viewModel.fetchLiveProtocol()
                 viewModel.fetchDoseLogs()
             } else {
-                // Offline / Local Fallback login for demo
-                let fallbackClient = ClientProfile(
-                    id: "cli_\(Int(Date().timeIntervalSince1970))",
-                    name: nameInput,
-                    dob: dobInput,
-                    email: "client@wellnessbuddy.com",
-                    goal: goalInput,
-                    practitionerNote: "Welcome! Your practitioner will review your DOB and assign your protocol."
-                )
-                viewModel.activeClientProfile = fallbackClient
-                viewModel.activeClientName = fallbackClient.name
-                viewModel.activeClientId = fallbackClient.id
-                viewModel.saveSession(client: fallbackClient)
-                viewModel.isLoggedIn = true
-                viewModel.fetchLiveProtocol()
-                viewModel.fetchDoseLogs()
+                errorMessage = "Could not connect to live server. Please tap Log In again while server finishes waking up."
             }
         }
     }

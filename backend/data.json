@@ -10,6 +10,20 @@
   ],
   "clients": [
     {
+      "id": "cli_1785698436533",
+      "name": "david b",
+      "dob": "02242007",
+      "email": "david.b@wellnessclient.com",
+      "password": "password123",
+      "goal": "Optimize energy, cellular health & recovery",
+      "symptoms": "None reported",
+      "currentSupplements": "None",
+      "registeredAt": "2026-08-02T19:20:36.533Z",
+      "streakDays": 0,
+      "adherenceRate": 100,
+      "practitionerNote": "Waiting for your practitioner to prescribe your custom protocol."
+    },
+    {
       "id": "cli_1785648478575",
       "name": "James",
       "dob": "2222222",
@@ -113,7 +127,8 @@
     ],
     "cli_1785647719698": [],
     "cli_1785648278102": [],
-    "cli_1785648478575": []
+    "cli_1785648478575": [],
+    "cli_1785698436533": []
   },
   "doseLogs": [],
   "messages": [],

@@ -25,7 +25,7 @@ public class APIService: ObservableObject {
     public init() {}
     
     /// Helper to perform HTTP request across candidate URLs until one succeeds
-    private func performRequest(endpoint: String, method: String = "GET", bodyData: Data? = nil, completion: @escaping (Data?) -> Void) {
+    private func performRequest(endpoint: String, method: String = "GET", bodyData: Data? = nil, retryCount: Int = 0, completion: @escaping (Data?) -> Void) {
         // First try the current baseURLString
         var urlsToTry = [baseURLString]
         for url in candidateURLs {
@@ -36,6 +36,13 @@ public class APIService: ObservableObject {
         
         func tryNextURL(index: Int) {
             guard index < urlsToTry.count else {
+                if retryCount < 2 {
+                    print("🔄 APIService: Retrying connection to live server (attempt \(retryCount + 1))...")
+                    DispatchQueue.global().asyncAfter(deadline: .now() + 2.0) {
+                        self.performRequest(endpoint: endpoint, method: method, bodyData: bodyData, retryCount: retryCount + 1, completion: completion)
+                    }
+                    return
+                }
                 print("⚠️ APIService: All backend server URLs failed.")
                 completion(nil)
                 return
@@ -49,8 +56,8 @@ public class APIService: ObservableObject {
             
             var request = URLRequest(url: url)
             request.httpMethod = method
-            // Allow 12s timeout for Render free tier cold starts
-            request.timeoutInterval = base.contains("onrender.com") ? 12.0 : 4.0
+            // Allow 30s timeout for Render free tier cold starts
+            request.timeoutInterval = base.contains("onrender.com") ? 30.0 : 5.0
             if let bodyData = bodyData {
                 request.setValue("application/json", forHTTPHeaderField: "Content-Type")
                 request.httpBody = bodyData
