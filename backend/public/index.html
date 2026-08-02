@@ -744,7 +744,8 @@
     async function deleteSupplementItem(itemId) {
       if (!selectedClientId || !confirm("Remove this supplement from patient protocol?")) return;
       await fetch(`/api/practitioner/delete-protocol-item/${selectedClientId}/${itemId}`, { method: 'DELETE' });
-      loadPractitionerDashboard();
+      await loadPractitionerDashboard();
+      if (selectedClientId) await selectClientForPractitioner(selectedClientId);
     }
 
     async function savePractitionerNote() {
@@ -777,14 +778,16 @@
         { name: "Liposomal Vitamin D3 + K2", brand: "Quicksilver Scientific", category: "Vitamin & Mineral", dosageValue: 5000, dosageUnit: "IU", timingSchedule: "With Meal", intervalHours: 24, frequencyDescription: "Once Daily with Lunch", practitionerNotes: "Take with a meal containing healthy dietary fats." }
       ];
 
-      for (let item of preset) {
-        await fetch(`/api/practitioner/assign-protocol/${selectedClientId}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ item })
-        });
+      await fetch(`/api/practitioner/assign-protocol/${selectedClientId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: preset })
+      });
+
+      await loadPractitionerDashboard();
+      if (selectedClientId) {
+        await selectClientForPractitioner(selectedClientId);
       }
-      loadPractitionerDashboard();
     }
 
     function openAddModal() {
@@ -860,7 +863,8 @@
 
       editingItemId = null;
       closeAddModal();
-      loadPractitionerDashboard();
+      await loadPractitionerDashboard();
+      if (selectedClientId) await selectClientForPractitioner(selectedClientId);
     }
 
     async function uploadPdfProtocolFile(event) {
