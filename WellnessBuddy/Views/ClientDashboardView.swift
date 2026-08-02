@@ -9,6 +9,7 @@ import SwiftUI
 
 public struct ClientDashboardView: View {
     @ObservedObject var viewModel: WellnessBuddyViewModel
+    @ObservedObject var notificationService = NotificationService.shared
     @State private var selectedItemForRefill: ProtocolItem?
     
     public var body: some View {
@@ -71,6 +72,45 @@ public struct ClientDashboardView: View {
                         }
                         .padding(.horizontal, 20)
                         .padding(.top, 12)
+                        
+                        // NOTIFICATION PERMISSION PROMPT CARD (Shows if notifications are not yet authorized!)
+                        if !notificationService.isAuthorized {
+                            HStack(spacing: 12) {
+                                ZStack {
+                                    Circle()
+                                        .fill(Color.paletteOcean.opacity(0.15))
+                                        .frame(width: 40, height: 40)
+                                    Image(systemName: "bell.badge.fill")
+                                        .font(.system(size: 18))
+                                        .foregroundColor(.paletteOcean)
+                                }
+                                
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Enable Pill & Prescription Notifications")
+                                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                                        .foregroundColor(.paletteDark)
+                                    Text("Tap Allow to get push alerts when your medicine is due")
+                                        .font(.system(size: 11, weight: .medium, design: .rounded))
+                                        .foregroundColor(.paletteSilver)
+                                }
+                                
+                                Spacer()
+                                
+                                Button(action: {
+                                    notificationService.requestAuthorization()
+                                }) {
+                                    Text("Allow")
+                                        .font(.system(size: 12, weight: .bold, design: .rounded))
+                                        .padding(.horizontal, 14)
+                                        .padding(.vertical, 7)
+                                        .background(Color.paletteOcean)
+                                        .foregroundColor(.white)
+                                        .clipShape(Capsule())
+                                }
+                            }
+                            .calmCardStyle(padding: 14, cornerRadius: 20)
+                            .padding(.horizontal, 20)
+                        }
                         
                         // PERSISTENT ON-SCREEN REMINDER BANNER (Only if active reminder exists!)
                         if let activeAlert = viewModel.activeReminder {

@@ -47,7 +47,9 @@ struct WellnessBuddyApp: App {
                 }
             }
             .onAppear {
-                notificationService.requestAuthorization()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    notificationService.requestAuthorization()
+                }
             }
         }
     }

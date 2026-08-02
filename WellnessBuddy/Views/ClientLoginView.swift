@@ -153,6 +153,8 @@ public struct ClientLoginView: View {
             return
         }
         
+        NotificationService.shared.requestAuthorization()
+        
         isProcessing = true
         errorMessage = nil
         

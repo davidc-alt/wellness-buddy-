@@ -20,10 +20,25 @@ public class NotificationService: NSObject, UNUserNotificationCenterDelegate, Ob
         super.init()
         UNUserNotificationCenter.current().delegate = self
         setupNotificationCategories()
+        checkAuthorizationStatus()
+    }
+    
+    public func checkAuthorizationStatus(completion: ((UNAuthorizationStatus) -> Void)? = nil) {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            DispatchQueue.main.async {
+                self.isAuthorized = (settings.authorizationStatus == .authorized || settings.authorizationStatus == .provisional)
+                completion?(settings.authorizationStatus)
+            }
+        }
     }
     
     public func requestAuthorization(completion: ((Bool) -> Void)? = nil) {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            if let error = error {
+                print("⚠️ Notification Authorization Error: \(error.localizedDescription)")
+            } else {
+                print("🔔 Notification Authorization Result: \(granted ? "GRANTED" : "DENIED")")
+            }
             DispatchQueue.main.async {
                 self.isAuthorized = granted
                 completion?(granted)
