@@ -11,8 +11,8 @@ import Foundation
 public class FullscriptService: ObservableObject {
     public static let shared = FullscriptService()
     
-    @Published public var practitionerDispensaryName: String = "Dr. Marcus Vance Performance Medicine"
-    @Published public var practitionerFullscriptUrl: String = "https://fullscript.com/dispensary/dr-vance-performance"
+    @Published public var practitionerDispensaryName: String = "Dr. Luba Vitti Integrative Health"
+    @Published public var practitionerFullscriptUrl: String = "https://fullscript.com/dispensary/dr-luba-vitti"
     @Published public var isConnected: Bool = true
     @Published public var lastSyncDate: Date = Date()
     
