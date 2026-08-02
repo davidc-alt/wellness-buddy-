@@ -11,22 +11,18 @@ import Combine
 public class APIService: ObservableObject {
     public static let shared = APIService()
     
-    // Primary Server URL (defaults to live Render server and falls back to localhost)
+    // Primary Server URL (defaults to live Render server)
     @Published public var baseURLString: String = "https://wellness-buddy-vduz.onrender.com"
     
-    // Candidate URLs to try (Live Production Server + Local Development)
+    // Candidate URLs to try (Live Production Server)
     public var candidateURLs: [String] = [
-        "https://wellness-buddy-vduz.onrender.com",
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://192.168.4.53:3000"
+        "https://wellness-buddy-vduz.onrender.com"
     ]
     
     public init() {}
     
-    /// Helper to perform HTTP request across candidate URLs until one succeeds
+    /// Helper to perform HTTP request to live server with retry mechanism for Render cold starts
     private func performRequest(endpoint: String, method: String = "GET", bodyData: Data? = nil, retryCount: Int = 0, completion: @escaping (Data?) -> Void) {
-        // First try the current baseURLString
         var urlsToTry = [baseURLString]
         for url in candidateURLs {
             if !urlsToTry.contains(url) {
@@ -36,7 +32,7 @@ public class APIService: ObservableObject {
         
         func tryNextURL(index: Int) {
             guard index < urlsToTry.count else {
-                if retryCount < 2 {
+                if retryCount < 3 {
                     print("🔄 APIService: Retrying connection to live server (attempt \(retryCount + 1))...")
                     DispatchQueue.global().asyncAfter(deadline: .now() + 2.0) {
                         self.performRequest(endpoint: endpoint, method: method, bodyData: bodyData, retryCount: retryCount + 1, completion: completion)
@@ -56,8 +52,8 @@ public class APIService: ObservableObject {
             
             var request = URLRequest(url: url)
             request.httpMethod = method
-            // Allow 30s timeout for Render free tier cold starts
-            request.timeoutInterval = base.contains("onrender.com") ? 30.0 : 5.0
+            // Allow 45s timeout for Render free tier cold starts
+            request.timeoutInterval = 45.0
             if let bodyData = bodyData {
                 request.setValue("application/json", forHTTPHeaderField: "Content-Type")
                 request.httpBody = bodyData
@@ -71,7 +67,7 @@ public class APIService: ObservableObject {
                     }
                     completion(data)
                 } else {
-                    print("🔄 APIService: Failed \(base)\(endpoint), trying next URL...")
+                    print("🔄 APIService: Failed \(base)\(endpoint), trying next URL/retry...")
                     tryNextURL(index: index + 1)
                 }
             }.resume()
