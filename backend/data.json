@@ -1,0 +1,76 @@
+{
+  "practitioners": [
+    {
+      "id": "prac_1",
+      "name": "Practitioner Luba Vitti",
+      "title": "Integrative Health Specialist",
+      "email": "practitioner@wellnessbuddy.com",
+      "password": "password123"
+    }
+  ],
+  "clients": [
+    {
+      "id": "cli_1785633947973",
+      "name": "Todd V",
+      "dob": "09111980",
+      "email": "todd.v@wellnessclient.com",
+      "password": "password123",
+      "goal": "Optimize energy, cellular health & recovery",
+      "symptoms": "None reported",
+      "currentSupplements": "None",
+      "registeredAt": "2026-08-02T01:25:47.973Z",
+      "streakDays": 0,
+      "adherenceRate": 100,
+      "practitionerNote": "Waiting for your practitioner to prescribe your custom protocol."
+    }
+  ],
+  "protocols": {
+    "cli_1785633947973": [
+      {
+        "id": "supp_1785633976585",
+        "name": "sterioids",
+        "brand": "pure",
+        "category": "Supplement",
+        "dosageValue": 1,
+        "dosageUnit": "capsule",
+        "timingSchedule": "Empty Stomach",
+        "frequencyDescription": "in the morning",
+        "practitionerNotes": "Take as directed.",
+        "totalServingsRemaining": 30,
+        "maxServings": 30,
+        "fullscriptRefillUrl": "https://fullscript.com"
+      },
+      {
+        "id": "supp_1785633999004",
+        "name": "sterioids",
+        "brand": "pure",
+        "category": "Supplement",
+        "dosageValue": 1,
+        "dosageUnit": "capsule",
+        "timingSchedule": "Empty Stomach",
+        "frequencyDescription": "in the morning",
+        "practitionerNotes": "Take as directed.",
+        "totalServingsRemaining": 30,
+        "maxServings": 30,
+        "fullscriptRefillUrl": "https://fullscript.com"
+      },
+      {
+        "id": "supp_1785634014135",
+        "name": "vitamin b",
+        "brand": "pure",
+        "category": "Supplement",
+        "dosageValue": 1,
+        "dosageUnit": "capsule",
+        "timingSchedule": "Empty Stomach",
+        "frequencyDescription": "in the morning",
+        "practitionerNotes": "Take as directed.",
+        "totalServingsRemaining": 30,
+        "maxServings": 30,
+        "fullscriptRefillUrl": "https://fullscript.com"
+      }
+    ]
+  },
+  "doseLogs": [],
+  "messages": [],
+  "refills": []
+}

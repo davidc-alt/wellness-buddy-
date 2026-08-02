@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wellness Buddy — Practitioner Studio & Patient Portal</title>
+  <style>
+    :root {
+      --sage-muted: #5C8B7D;
+      --ocean-blue: #2F6B87;
+      --silver-muted: #A7B0B4;
+      --soft-bg: #EDEFF0;
+      --dark-charcoal: #354047;
+      --white: #FFFFFF;
+      --radius-lg: 24px;
+      --radius-md: 18px;
+      --radius-sm: 14px;
+      --shadow-sm: 0 6px 18px rgba(53, 64, 71, 0.06);
+      --shadow-md: 0 12px 28px rgba(53, 64, 71, 0.1);
+      --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--soft-bg);
+      color: var(--dark-charcoal);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Header Bar */
+    .app-header {
+      background: var(--white);
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-sm);
+      border-bottom: 1px solid rgba(0,0,0,0.04);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; display: flex; align-items: center; gap: 8px; }
+    .brand span { color: var(--sage-muted); }
+    .brand-badge { font-size: 10px; font-weight: 800; background: var(--dark-charcoal); color: var(--white); padding: 3px 8px; border-radius: 20px; letter-spacing: 0.5px; }
+
+    .nav-pills {
+      display: flex;
+      gap: 6px;
+      background: var(--soft-bg);
+      padding: 5px;
+      border-radius: 40px;
+    }
+
+    .nav-pill {
+      border: none;
+      background: transparent;
+      padding: 8px 18px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--dark-charcoal);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .nav-pill.active {
+      background: var(--dark-charcoal);
+      color: var(--white);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .header-actions { display: flex; align-items: center; gap: 12px; }
+
+    /* Main Container */
+    .container {
+      max-width: 1200px;
+      margin: 28px auto;
+      padding: 0 24px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 24px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .card-title { font-size: 18px; font-weight: 800; letter-spacing: -0.3px; display: flex; align-items: center; gap: 8px; }
+
+    .btn-pill {
+      background: var(--dark-charcoal);
+      color: var(--white);
+      border: none;
+      padding: 10px 22px;
+      border-radius: 40px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-pill:hover { opacity: 0.92; transform: translateY(-1px); }
+    .btn-secondary { background: var(--soft-bg); color: var(--dark-charcoal); }
+    .btn-sage { background: var(--sage-muted); color: var(--white); }
+    .btn-ocean { background: var(--ocean-blue); color: var(--white); }
+    .btn-danger { background: #E74C3C; color: var(--white); }
+
+    /* Client Roster Items */
+    .client-item {
+      padding: 16px;
+      border-radius: var(--radius-sm);
+      background: var(--soft-bg);
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 2px solid transparent;
+    }
+
+    .client-item:hover { transform: translateX(2px); background: #E2E5E7; }
+
+    .client-item.active {
+      background: var(--dark-charcoal);
+      color: var(--white);
+      border-color: var(--sage-muted);
+    }
+
+    .client-item.active .client-meta { color: var(--silver-muted); }
+
+    .client-name { font-weight: 800; font-size: 15px; display: flex; align-items: center; gap: 6px; }
+    .client-meta { font-size: 12px; color: var(--dark-charcoal); opacity: 0.7; margin-top: 2px; }
+
+    .tag-new {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 12px;
+      background: var(--ocean-blue);
+      color: var(--white);
+      letter-spacing: 0.5px;
+    }
+
+    /* Supplement Protocol Items */
+    .supp-card {
+      padding: 18px;
+      border-radius: var(--radius-md);
+      background: var(--white);
+      border: 1px solid rgba(0,0,0,0.06);
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+    }
+
+    .supp-title { font-size: 16px; font-weight: 800; }
+    .supp-sub { font-size: 13px; color: var(--silver-muted); margin-top: 2px; font-weight: 600; }
+    .supp-notes { font-size: 13px; margin-top: 6px; color: var(--dark-charcoal); background: var(--soft-bg); padding: 8px 12px; border-radius: 10px; font-style: italic; }
+
+    .schedule-badge {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 5px 12px;
+      border-radius: 20px;
+      background: var(--soft-bg);
+      color: var(--dark-charcoal);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Form Inputs */
+    .form-group { margin-bottom: 16px; text-align: left; }
+    .form-group label { display: block; font-size: 11px; font-weight: 800; color: var(--dark-charcoal); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(0,0,0,0.12);
+      font-size: 14px;
+      outline: none;
+      background: var(--white);
+      font-family: inherit;
+      transition: border 0.2s ease;
+    }
+
+    .form-input:focus { border-color: var(--ocean-blue); }
+
+    /* Chat Container */
+    .chat-container {
+      height: 240px;
+      overflow-y: auto;
+      padding: 16px;
+      background: var(--soft-bg);
+      border-radius: var(--radius-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .chat-bubble { max-width: 80%; padding: 10px 16px; border-radius: 18px; font-size: 14px; line-height: 1.4; }
+    .chat-bubble.practitioner { align-self: flex-end; background: var(--dark-charcoal); color: var(--white); border-bottom-right-radius: 4px; }
+    .chat-bubble.client { align-self: flex-start; background: var(--white); color: var(--dark-charcoal); border-bottom-left-radius: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+
+    /* Filter Chips */
+    .filter-chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 16px; }
+    .filter-chip {
+      padding: 8px 16px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 700;
+      background: var(--white);
+      color: var(--dark-charcoal);
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+      transition: all 0.2s ease;
+    }
+    .filter-chip.active { background: var(--dark-charcoal); color: var(--white); }
+
+    /* Modal Styling */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      width: 100%;
+      max-width: 520px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <!-- APP HEADER -->
+  <header class="app-header">
+    <div class="brand">
+      🌿 Wellness <span>Buddy</span>
+      <span class="brand-badge">PRACTITIONER STUDIO</span>
+    </div>
+
+    <div class="nav-pills">
+      <button class="nav-pill active" id="btnPractitionerTab" onclick="switchTab('practitioner')">🌿 Practitioner Studio</button>
+      <button class="nav-pill" id="btnClientTab" onclick="switchTab('client')">📱 Patient App View</button>
+      <button class="nav-pill" id="btnSignupTab" onclick="switchTab('signup')">🔑 Patient Login (Name & DOB)</button>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn-pill btn-secondary" onclick="clearRoster()" title="Reset patient roster to 0 clients">🔄 Clear Roster (0 Patients)</button>
+    </div>
+  </header>
+
+  <!-- VIEW 1: PRACTITIONER STUDIO -->
+  <div id="practitionerView" class="container grid-2">
+    <!-- LEFT: CLIENT ROSTER -->
+    <div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Patient Roster</div>
+          <span style="font-size: 12px; font-weight: 700; color: var(--sage-muted);" id="rosterCount">0 Patients</span>
+        </div>
+
+        <div id="practitionerClientList"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: SELECTED CLIENT INTAKE & PROTOCOL ASSIGNMENT -->
+    <div>
+      <div class="card" id="practitionerSelectedBox">
+        <!-- EMPTY STATE IF NO PATIENT SELECTED OR 0 CLIENTS -->
+        <div id="noPatientSelectedState" style="text-align: center; padding: 40px 20px;">
+          <div style="font-size: 40px; margin-bottom: 12px;">🌿</div>
+          <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 6px;">No Patients Registered Yet</h3>
+          <p style="font-size: 14px; color: var(--silver-muted); max-width: 380px; margin: 0 auto 20px;">
+            When a patient logs in with their <b>Full Name</b> & <b>Date of Birth (DOB)</b> on the Patient App or Portal, they will pop up here live.
+          </p>
+          <button class="btn-pill btn-ocean" onclick="switchTab('signup')">🔑 Go to Patient Login & Registration</button>
+        </div>
+
+        <!-- SELECTED PATIENT CONTENT -->
+        <div id="patientDetailsContent" class="hidden">
+          <div class="card-header">
+            <div>
+              <div class="card-title" id="selectedClientName">Marcus Vance</div>
+              <div style="font-size: 13px; color: var(--silver-muted); margin-top: 2px;" id="selectedClientSub">DOB: 1988-05-14 • marcus@example.com</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span class="schedule-badge" id="selectedClientStatus" style="background: rgba(92, 139, 125, 0.15); color: var(--sage-muted);">Protocol Active</span>
+              <button class="btn-pill btn-danger" style="padding: 6px 14px; font-size: 12px;" onclick="deleteSelectedPatient()" title="Delete patient profile and protocol">🗑️ Delete Patient</button>
+            </div>
+          </div>
+
+          <!-- CLIENT HEALTH INTAKE DETAILS -->
+          <div style="background: var(--soft-bg); padding: 18px; border-radius: var(--radius-md); margin-bottom: 24px;">
+            <div style="font-size: 11px; font-weight: 800; color: var(--silver-muted); letter-spacing: 0.8px; margin-bottom: 4px;">PRIMARY HEALTH GOAL</div>
+            <div style="font-size: 15px; font-weight: 700; margin-bottom: 12px;" id="selectedClientGoal">Optimize energy, hormone baseline & sleep quality</div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div>
+                <div style="font-size: 10px; font-weight: 800; color: var(--silver-muted); letter-spacing: 0.8px; margin-bottom: 2px;">REPORTED SYMPTOMS</div>
+                <div style="font-size: 13px; font-weight: 600;" id="selectedClientSymptoms">Low afternoon energy, brain fog</div>
+              </div>
+              <div>
+                <div style="font-size: 10px; font-weight: 800; color: var(--silver-muted); letter-spacing: 0.8px; margin-bottom: 2px;">CURRENT SUPPLEMENTS</div>
+                <div style="font-size: 13px; font-weight: 600;" id="selectedClientCurrentSupps">Multivitamin</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PRACTITIONER GUIDANCE NOTE INPUT -->
+          <div class="card-header" style="margin-bottom: 10px;">
+            <div class="card-title">Practitioner Guidance Note</div>
+          </div>
+          <div style="display: flex; gap: 10px; margin-bottom: 24px;">
+            <input type="text" id="practitionerNoteInput" class="form-input" placeholder="e.g. Take NAD+ on empty stomach right after waking up...">
+            <button class="btn-pill btn-sage" onclick="savePractitionerNote()">Save Note</button>
+          </div>
+
+          <!-- PROTOCOL BUILDER -->
+          <div class="card-header">
+            <div class="card-title">Prescribed Supplement Protocol</div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn-pill btn-secondary" onclick="addPresetStack()">⚡ Quick Stack Preset</button>
+              <button class="btn-pill" onclick="openAddModal()">+ Add Supplement</button>
+            </div>
+          </div>
+
+          <div id="practitionerProtocolList"></div>
+        </div>
+      </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW 2: PATIENT LOGIN & DOB REGISTRATION -->
+  <div id="signupView" class="container hidden" style="max-width: 520px;">
+    <div class="card">
+      <div style="text-align: center; margin-bottom: 20px;">
+        <div style="display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; background: var(--dark-charcoal); color: var(--white); border-radius: 50%; font-size: 24px; margin-bottom: 12px;">🌿</div>
+        <h2 style="font-size: 24px; font-weight: 800; margin-bottom: 4px;">Patient Portal Login</h2>
+        <p style="font-size: 14px; color: var(--silver-muted);">Enter your <b>Full Name</b> and <b>Date of Birth (DOB)</b> to log in and receive your prescribed wellness protocol.</p>
+      </div>
+
+      <form id="signupForm">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="signupName" class="form-input" placeholder="e.g. Jhon Doe" value="Jhon Doe" required>
+        </div>
+
+        <div class="form-group">
+          <label>Date of Birth (MM-DD-YYYY)</label>
+          <input type="text" id="signupDob" class="form-input" placeholder="MM-DD-YYYY" value="1990-01-01" required>
+        </div>
+
+        <div class="form-group">
+          <label>Primary Health Goals</label>
+          <input type="text" id="signupGoal" class="form-input" placeholder="e.g. Energy, recovery..." value="Optimize energy, cellular health & recovery">
+        </div>
+
+        <div class="form-group">
+          <label>Reported Symptoms (Optional)</label>
+          <input type="text" id="signupSymptoms" class="form-input" placeholder="e.g. Afternoon fatigue, joint stiffness">
+        </div>
+
+        <button type="submit" class="btn-pill" style="width: 100%; margin-top: 8px; padding: 14px;">Log In / Register & Connect to Practitioner</button>
+      </form>
+
+      <!-- DEMO PATIENT LOGIN CHIPS -->
+      <div style="margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--soft-bg); text-align: center;">
+        <div style="font-size: 11px; font-weight: 800; color: var(--silver-muted); letter-spacing: 1px; margin-bottom: 10px;">QUICK DEMO PATIENT LOGINS</div>
+        <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+          <button class="btn-pill btn-secondary" onclick="quickLoginPatient('Jhon Doe', '1990-01-01')">Jhon Doe (1990-01-01)</button>
+          <button class="btn-pill btn-secondary" onclick="quickLoginPatient('Alex Mercer', '1992-08-20')">Alex Mercer (1992-08-20)</button>
+          <button class="btn-pill btn-secondary" onclick="quickLoginPatient('David Miller', '1990-03-10')">David Miller (1990-03-10)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW 3: PATIENT APP VIEW (Formatted Same as iOS Patient App) -->
+  <div id="clientView" class="container hidden" style="max-width: 680px;">
+    <!-- LOGGED IN CLIENT DASHBOARD (MATCHING IOS PATIENT APP SECTIONS) -->
+    <div id="clientDashboardContent">
+      
+      <!-- SECTION 1: INSPIRATION GREETING HEADER & METRIC CARDS -->
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+        <div>
+          <div style="font-size: 30px; font-weight: 800; color: var(--dark-charcoal); line-height: 1.1;">Good morning,</div>
+          <div style="font-size: 30px; font-weight: 800; color: var(--ocean-blue); line-height: 1.1;" id="clientGreetingName">Patient</div>
+          <div style="font-size: 13px; font-weight: 700; color: var(--sage-muted); margin-top: 4px;" id="clientDobDisplay">DOB: 1988-05-14</div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button class="btn-pill btn-secondary" style="padding: 10px 16px;" onclick="switchTab('signup')">👤 Switch Patient</button>
+        </div>
+      </div>
+
+      <!-- DUAL METRIC OVERVIEW CARDS (Matching twin metric boxes on Patient App) -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px;">
+        <div style="background: var(--white); padding: 16px 20px; border-radius: 22px; box-shadow: var(--shadow-sm);">
+          <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; color: var(--dark-charcoal);">
+            <span>Active Streak</span>
+            <span style="color: var(--ocean-blue);">🔥</span>
+          </div>
+          <div style="font-size: 26px; font-weight: 800; margin-top: 6px;" id="clientStreakDisplay">14 Days</div>
+        </div>
+
+        <div style="background: var(--white); padding: 16px 20px; border-radius: 22px; box-shadow: var(--shadow-sm);">
+          <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; color: var(--dark-charcoal);">
+            <span>Doses Completed</span>
+            <span style="color: var(--sage-muted);">✓</span>
+          </div>
+          <div style="font-size: 26px; font-weight: 800; margin-top: 6px;" id="clientDoseCountDisplay">1 of 3</div>
+        </div>
+      </div>
+
+      <!-- SECTION 2: PERSISTENT REMINDER BANNER -->
+      <div class="card" id="clientActiveReminder" style="border: 2px solid var(--ocean-blue); background: #F4F8FA;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <span class="schedule-badge" style="background: rgba(47, 107, 135, 0.15); color: var(--ocean-blue);" id="remSchedule">🌅 ON EMPTY STOMACH</span>
+          <span style="font-size: 11px; font-weight: 800; color: var(--ocean-blue); letter-spacing: 0.5px;">DUE NOW</span>
+        </div>
+        <div style="font-size: 18px; font-weight: 800;" id="remName">NAD+ Liposomal Concentrate</div>
+        <div style="font-size: 13px; color: var(--silver-muted); margin-bottom: 16px;" id="remSub">2 sprays • Empower Pharma</div>
+        
+        <div style="display: flex; gap: 12px;">
+          <button class="btn-pill btn-secondary" style="flex: 1;" onclick="snoozeDoseAction()">⏳ Wait (Snooze)</button>
+          <button class="btn-pill" style="flex: 1;" onclick="completeDoseAction()">✓ Done (Log Dose)</button>
+        </div>
+      </div>
+
+      <!-- SECTION 3: PRACTITIONER GUIDANCE CALLOUT CARD -->
+      <div class="card" style="background: var(--white);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <div style="font-size: 10px; font-weight: 800; color: var(--silver-muted); letter-spacing: 1px;">PRACTITIONER GUIDANCE</div>
+          <div style="font-size: 12px; font-weight: 700; color: var(--sage-muted);" id="clientPracName">Practitioner Luba Vitti</div>
+        </div>
+        <div style="font-size: 14px; font-weight: 600; font-style: italic; color: var(--dark-charcoal);" id="clientPractitionerNote">
+          “Follow your timing schedule strictly for maximum absorption.”
+        </div>
+      </div>
+
+      <!-- SECTION 4: TIMING SCHEDULE FILTER CHIPS -->
+      <div class="filter-chips" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px;">
+        <button class="filter-chip active" onclick="filterSchedule('All', this)">All</button>
+        <button class="filter-chip" onclick="filterSchedule('Empty Stomach', this)">🌅 Empty Stomach</button>
+        <button class="filter-chip" onclick="filterSchedule('With Breakfast', this)">🍳 Breakfast</button>
+        <button class="filter-chip" onclick="filterSchedule('With Meal', this)">🥗 With Meal</button>
+        <button class="filter-chip" onclick="filterSchedule('With Lunch', this)">🥪 Lunch</button>
+        <button class="filter-chip" onclick="filterSchedule('With Dinner', this)">🥩 Dinner</button>
+        <button class="filter-chip" onclick="filterSchedule('Mid-Day', this)">☕ Mid-Day</button>
+        <button class="filter-chip" onclick="filterSchedule('Pre-Workout', this)">🏋️ Pre-Workout</button>
+        <button class="filter-chip" onclick="filterSchedule('Post-Workout', this)">⚡ Post-Workout</button>
+        <button class="filter-chip" onclick="filterSchedule('Before Bed', this)">🌙 Before Bed</button>
+      </div>
+
+      <!-- SECTION 5: PRESCRIBED REGIMEN STACK GROUPED BY SCHEDULE -->
+      <div class="card">
+        <div class="card-title" style="margin-bottom: 16px;">My Prescribed Supplement Stack</div>
+        <div id="clientSuppList"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ADD SUPPLEMENT MODAL -->
+  <div id="addModal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="card-header">
+        <div class="card-title">Prescribe Supplement</div>
+        <button style="border: none; background: none; font-size: 20px; cursor: pointer;" onclick="closeAddModal()">✕</button>
+      </div>
+
+      <div class="form-group">
+        <label>Supplement Name</label>
+        <input type="text" id="modalSuppName" class="form-input" placeholder="e.g. NAD+ Liposomal Concentrate">
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div class="form-group">
+          <label>Dosage Value</label>
+          <input type="number" id="modalSuppDosage" class="form-input" placeholder="2">
+        </div>
+        <div class="form-group">
+          <label>Dosage Unit</label>
+          <input type="text" id="modalSuppUnit" class="form-input" placeholder="sprays / mg / caps">
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div class="form-group">
+          <label>Brand</label>
+          <input type="text" id="modalSuppBrand" class="form-input" placeholder="Empower Pharma">
+        </div>
+        <div class="form-group">
+          <label>Timing Schedule</label>
+          <select id="modalSuppTiming" class="form-input">
+            <option value="Empty Stomach">🌅 On Empty Stomach (Morning Wake-Up)</option>
+            <option value="With Breakfast">🍳 With Breakfast</option>
+            <option value="With Meal">🥗 With Meals</option>
+            <option value="With Lunch">🥪 With Lunch</option>
+            <option value="With Dinner">🥩 With Dinner</option>
+            <option value="Mid-Day">☕ Mid-Day / Afternoon</option>
+            <option value="Pre-Workout">🏋️ Pre-Workout</option>
+            <option value="Post-Workout">⚡ Post-Workout</option>
+            <option value="Before Bed">🌙 Before Bed (Nighttime)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Frequency Description</label>
+        <input type="text" id="modalSuppFreq" class="form-input" placeholder="Daily at Morning Wake-Up">
+      </div>
+
+      <div class="form-group">
+        <label>Practitioner Guidance & Instructions</label>
+        <textarea id="modalSuppNotes" class="form-input" style="height: 64px;" placeholder="Administer 1 spray per nostril on empty stomach immediately upon waking."></textarea>
+      </div>
+
+      <button class="btn-pill btn-ocean" style="width: 100%; padding: 12px;" onclick="submitAddSupplement()">🚀 Prescribe & Send to Patient App</button>
+    </div>
+  </div>
+
+  <script>
+    let activeTab = 'practitioner';
+    let clientsData = [];
+    let selectedClientId = null;
+    let currentClientUser = null;
+    let activeScheduleFilter = 'All';
+    let pollInterval = null;
+    let activeReminderItem = null;
+
+    function switchTab(tab) {
+      activeTab = tab;
+      document.getElementById('btnPractitionerTab').classList.toggle('active', tab === 'practitioner');
+      document.getElementById('btnClientTab').classList.toggle('active', tab === 'client');
+      document.getElementById('btnSignupTab').classList.toggle('active', tab === 'signup');
+
+      document.getElementById('practitionerView').classList.toggle('hidden', tab !== 'practitioner');
+      document.getElementById('clientView').classList.toggle('hidden', tab !== 'client');
+      document.getElementById('signupView').classList.toggle('hidden', tab !== 'signup');
+
+      if (tab === 'practitioner') loadPractitionerDashboard();
+      if (tab === 'client' && currentClientUser) loadClientDashboard(currentClientUser.id);
+    }
+
+    // --- PRACTITIONER DASHBOARD & LIVE POLLING ---
+    async function loadPractitionerDashboard() {
+      try {
+        const res = await fetch('/api/practitioner/clients');
+        const data = await res.json();
+        clientsData = data.clients || [];
+        document.getElementById('rosterCount').innerText = clientsData.length + (clientsData.length === 1 ? " Patient" : " Patients");
+
+        renderPractitionerClientList();
+
+        if (clientsData.length === 0) {
+          selectedClientId = null;
+          document.getElementById('noPatientSelectedState').classList.remove('hidden');
+          document.getElementById('patientDetailsContent').classList.add('hidden');
+        } else {
+          document.getElementById('noPatientSelectedState').classList.add('hidden');
+          document.getElementById('patientDetailsContent').classList.remove('hidden');
+          
+          if (!selectedClientId || !clientsData.some(c => c.id === selectedClientId)) {
+            selectedClientId = clientsData[0].id;
+          }
+          selectClientForPractitioner(selectedClientId);
+        }
+      } catch (err) { console.error(err); }
+    }
+
+    // Poll every 2 seconds for updates smoothly
+    function startAutoPolling() {
+      if (pollInterval) clearInterval(pollInterval);
+      pollInterval = setInterval(() => {
+        if (activeTab === 'practitioner') loadPractitionerDashboard();
+        if (activeTab === 'client' && currentClientUser) loadClientDashboard(currentClientUser.id);
+      }, 2000);
+    }
+
+    function renderPractitionerClientList() {
+      const el = document.getElementById('practitionerClientList');
+      if (clientsData.length === 0) {
+        el.innerHTML = `<div style="padding: 24px; text-align: center; color: var(--silver-muted); background: var(--soft-bg); border-radius: var(--radius-sm);">No patients registered yet.</div>`;
+        return;
+      }
+
+      el.innerHTML = clientsData.map(c => `
+        <div class="client-item ${c.id === selectedClientId ? 'active' : ''}" onclick="selectClientForPractitioner('${c.id}')">
+          <div>
+            <div class="client-name">${c.name} ${!c.hasProtocolAssigned ? '<span class="tag-new">NEW</span>' : ''}</div>
+            <div class="client-meta">DOB: ${c.dob || 'N/A'} • ${c.email}</div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="font-weight: 800; font-size: 13px;">${c.itemCount} Supps</div>
+            <button style="border: none; background: transparent; font-size: 14px; cursor: pointer; opacity: 0.7;" onclick="event.stopPropagation(); deletePatient('${c.id}', '${c.name.replace(/'/g, "\\'")}')" title="Delete Patient">🗑️</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function deletePatient(clientId, name) {
+      if (!confirm(`Are you sure you want to delete patient "${name}"? This will permanently remove their profile and assigned protocol.`)) return;
+      await fetch(`/api/practitioner/delete-client/${clientId}`, { method: 'DELETE' });
+      if (selectedClientId === clientId) selectedClientId = null;
+      if (currentClientUser && currentClientUser.id === clientId) currentClientUser = null;
+      loadPractitionerDashboard();
+    }
+
+    function deleteSelectedPatient() {
+      if (!selectedClientId) return;
+      const c = clientsData.find(cli => cli.id === selectedClientId);
+      if (c) deletePatient(c.id, c.name);
+    }
+
+    async function selectClientForPractitioner(id) {
+      selectedClientId = id;
+      renderPractitionerClientList();
+      const c = clientsData.find(cli => cli.id === id);
+      if (!c) return;
+
+      document.getElementById('noPatientSelectedState').classList.add('hidden');
+      document.getElementById('patientDetailsContent').classList.remove('hidden');
+
+      document.getElementById('selectedClientName').innerText = c.name;
+      document.getElementById('selectedClientSub').innerText = `DOB: ${c.dob || 'Not specified'} • ${c.email}`;
+      document.getElementById('selectedClientGoal').innerText = c.goal || 'Optimize overall health & recovery';
+      document.getElementById('selectedClientSymptoms').innerText = c.symptoms || "None reported";
+      document.getElementById('selectedClientCurrentSupps').innerText = c.currentSupplements || "None";
+      document.getElementById('selectedClientStatus').innerText = c.hasProtocolAssigned ? "Protocol Active" : "Needs Protocol Assignment";
+      
+      // Do not overwrite input if currently focused by user
+      if (document.activeElement !== document.getElementById('practitionerNoteInput')) {
+        document.getElementById('practitionerNoteInput').value = c.practitionerNote || "";
+      }
+
+      const res = await fetch(`/api/protocol/${id}`);
+      const data = await res.json();
+      const items = data.protocol.items || [];
+
+      // Update PDF status in practitioner studio
+      const pdfStatusEl = document.getElementById('practitionerPdfStatus');
+      const btnDeletePdfEl = document.getElementById('btnDeletePdf');
+      if (data.protocol.pdfUrl) {
+        pdfStatusEl.innerHTML = `✅ Prescribed: <a href="${data.protocol.pdfUrl}" target="_blank" style="color: var(--ocean-blue); font-weight: 800; text-decoration: underline;">${data.protocol.pdfName || 'Protocol Document'}</a>`;
+        btnDeletePdfEl.classList.remove('hidden');
+      } else {
+        pdfStatusEl.innerText = "No PDF protocol uploaded";
+        btnDeletePdfEl.classList.add('hidden');
+      }
+
+      document.getElementById('practitionerProtocolList').innerHTML = items.length === 0 
+        ? `<div style="padding: 20px; text-align: center; color: var(--silver-muted); background: var(--soft-bg); border-radius: var(--radius-sm);">No supplements assigned yet. Click <b>+ Add Supplement</b> or <b>⚡ Quick Stack Preset</b>.</div>`
+        : items.map(i => `
+          <div class="supp-card">
+            <div style="flex: 1;">
+              <div class="supp-title">${i.name} (${i.dosageValue} ${i.dosageUnit})</div>
+              <div class="supp-sub">${i.brand} • ${i.frequencyDescription}</div>
+              <div class="supp-notes">“${i.practitionerNotes || 'Take as directed.'}”</div>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
+              <span class="schedule-badge">${i.timingSchedule}</span>
+              <button class="btn-pill btn-secondary" style="padding: 4px 10px; font-size: 11px; color: #E74C3C;" onclick="deleteSupplementItem('${i.id}')">🗑️ Remove</button>
+            </div>
+          </div>
+        `).join('');
+
+      loadPractitionerChat(id);
+    }
+
+    async function deleteSupplementItem(itemId) {
+      if (!selectedClientId || !confirm("Remove this supplement from patient protocol?")) return;
+      await fetch(`/api/practitioner/delete-protocol-item/${selectedClientId}/${itemId}`, { method: 'DELETE' });
+      loadPractitionerDashboard();
+    }
+
+    async function savePractitionerNote() {
+      if (!selectedClientId) return;
+      const note = document.getElementById('practitionerNoteInput').value;
+      await fetch(`/api/practitioner/assign-protocol/${selectedClientId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ practitionerNote: note })
+      });
+      alert('Practitioner guidance note saved and sent to Patient App!');
+      loadPractitionerDashboard();
+    }
+
+    async function clearRoster() {
+      if (confirm("Are you sure you want to clear the roster to 0 patients?")) {
+        await fetch('/api/practitioner/reset', { method: 'POST' });
+        selectedClientId = null;
+        currentClientUser = null;
+        loadPractitionerDashboard();
+      }
+    }
+
+    // PRESET QUICK STACK
+    async function addPresetStack() {
+      if (!selectedClientId) return;
+      const preset = [
+        { name: "NAD+ Liposomal Concentrate", brand: "Empower Pharma", category: "Supplement", dosageValue: 2, dosageUnit: "sprays", timingSchedule: "Empty Stomach", frequencyDescription: "Daily at Morning Wake-Up", practitionerNotes: "Administer 1 spray per nostril on empty stomach immediately upon waking." },
+        { name: "BPC-157 Oral Supplement", brand: "Tailor Made Compounding", category: "Supplement", dosageValue: 500, dosageUnit: "mcg", timingSchedule: "Empty Stomach", frequencyDescription: "5 Days On / 2 Days Off", practitionerNotes: "Take 1 capsule 30 mins before breakfast for gut lining & recovery." },
+        { name: "Liposomal Vitamin D3 + K2", brand: "Quicksilver Scientific", category: "Vitamin & Mineral", dosageValue: 5000, dosageUnit: "IU", timingSchedule: "With Meal", frequencyDescription: "Once Daily with Lunch", practitionerNotes: "Take with a meal containing healthy dietary fats." }
+      ];
+
+      for (let item of preset) {
+        await fetch(`/api/practitioner/assign-protocol/${selectedClientId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ item })
+        });
+      }
+      loadPractitionerDashboard();
+    }
+
+    function openAddModal() {
+      if (!selectedClientId) return alert("Select a patient first.");
+      document.getElementById('addModal').classList.remove('hidden');
+    }
+    function closeAddModal() { document.getElementById('addModal').classList.add('hidden'); }
+
+    async function submitAddSupplement() {
+      const name = document.getElementById('modalSuppName').value.trim();
+      const dosageValue = document.getElementById('modalSuppDosage').value.trim();
+      const dosageUnit = document.getElementById('modalSuppUnit').value.trim();
+      const brand = document.getElementById('modalSuppBrand').value.trim();
+      const timingSchedule = document.getElementById('modalSuppTiming').value;
+      const frequencyDescription = document.getElementById('modalSuppFreq').value.trim();
+      const practitionerNotes = document.getElementById('modalSuppNotes').value.trim();
+
+      if (!name || !dosageValue || !dosageUnit) return alert("Please fill in Name, Dosage Value, and Dosage Unit.");
+
+      await fetch(`/api/practitioner/assign-protocol/${selectedClientId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          item: { name, dosageValue, dosageUnit, brand, timingSchedule, frequencyDescription, practitionerNotes }
+        })
+      });
+
+      closeAddModal();
+      loadPractitionerDashboard();
+    }
+
+    async function uploadPdfProtocolFile(event) {
+      const file = event.target.files[0];
+      if (!file || !selectedClientId) return;
+      if (file.type !== 'application/pdf') return alert("Please select a valid PDF file.");
+
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        const base64Data = e.target.result;
+        const res = await fetch(`/api/practitioner/upload-pdf/${selectedClientId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pdfData: base64Data, fileName: file.name })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert("📄 PDF Protocol uploaded successfully!");
+          loadPractitionerDashboard();
+        } else {
+          alert(data.message || "Failed to upload PDF.");
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function removePdfProtocolFile() {
+      if (!selectedClientId || !confirm("Remove PDF protocol document for this patient?")) return;
+      await fetch(`/api/practitioner/delete-pdf/${selectedClientId}`, { method: 'DELETE' });
+      loadPractitionerDashboard();
+    }
+
+    // --- PATIENT APP DASHBOARD ---
+    async function loadClientDashboard(clientId) {
+      if (!currentClientUser) return;
+
+      document.getElementById('clientGreetingName').innerText = currentClientUser.name;
+      document.getElementById('clientDobDisplay').innerText = "DOB: " + (currentClientUser.dob || "Not specified");
+      document.getElementById('clientPracName').innerText = "Practitioner Luba Vitti";
+
+      const res = await fetch(`/api/protocol/${clientId}`);
+      const data = await res.json();
+      const items = data.protocol.items || [];
+
+      document.getElementById('clientPractitionerNote').innerText = "“" + (data.protocol.practitionerNoteToClient || "Follow your timing schedule strictly.") + "”";
+
+      // Render Scrollable PDF Protocol Widget at the bottom
+      const pdfWidgetCard = document.getElementById('clientPdfWidgetCard');
+      const pdfIframe = document.getElementById('clientPdfIframe');
+      const pdfDownloadBtn = document.getElementById('clientPdfDownloadBtn');
+
+      if (data.protocol.pdfUrl) {
+        pdfWidgetCard.classList.remove('hidden');
+        pdfIframe.src = data.protocol.pdfUrl;
+        pdfDownloadBtn.href = data.protocol.pdfUrl;
+      } else {
+        pdfWidgetCard.classList.add('hidden');
+        pdfIframe.src = "";
+      }
+
+      // Fetch Dose Logs to update adherence metrics
+      const logRes = await fetch(`/api/dose-log/${clientId}`);
+      const logData = await logRes.json();
+      const logs = logData.doseLogs || [];
+      const doneLogs = logs.filter(l => l.status === 'Done');
+
+      document.getElementById('clientStreakDisplay').innerText = (doneLogs.length > 0 ? Math.min(doneLogs.length, 14) : 0) + " Days";
+      document.getElementById('clientDoseCountDisplay').innerText = `${doneLogs.length} of ${items.length}`;
+
+      // Update Active Reminder
+      if (items.length > 0) {
+        activeReminderItem = items[0];
+        document.getElementById('clientActiveReminder').classList.remove('hidden');
+        document.getElementById('remName').innerText = items[0].name;
+        document.getElementById('remSub').innerText = `${items[0].dosageValue} ${items[0].dosageUnit} • ${items[0].brand}`;
+        document.getElementById('remSchedule').innerText = "🌅 " + (items[0].timingSchedule ? items[0].timingSchedule.toUpperCase() : "EMPTY STOMACH");
+      } else {
+        activeReminderItem = null;
+        document.getElementById('clientActiveReminder').classList.add('hidden');
+      }
+
+      // Filter & Render Items
+      const filtered = activeScheduleFilter === 'All' ? items : items.filter(i => i.timingSchedule === activeScheduleFilter);
+
+      document.getElementById('clientSuppList').innerHTML = filtered.length === 0
+        ? `<div style="padding: 24px; text-align: center; color: var(--silver-muted); background: var(--soft-bg); border-radius: var(--radius-sm);">
+            ${items.length === 0 ? 'Your practitioner will review your DOB and health intake to prescribe your custom protocol.' : 'No supplements under this timing schedule filter.'}
+           </div>`
+        : filtered.map(i => `
+          <div class="supp-card">
+            <div>
+              <div class="supp-title">${i.name} (${i.dosageValue} ${i.dosageUnit})</div>
+              <div class="supp-sub">${i.brand} • ${i.frequencyDescription}</div>
+              <div class="supp-notes">“${i.practitionerNotes || 'Take as directed.'}”</div>
+              <div style="display: flex; gap: 8px; margin-top: 12px;">
+                <button class="btn-pill" style="padding: 6px 14px; font-size: 11px;" onclick="completeDoseAction('${i.id}', '${i.name}', '${i.timingSchedule}')">✓ Done</button>
+                <button class="btn-pill btn-secondary" style="padding: 6px 14px; font-size: 11px;" onclick="snoozeDoseAction('${i.id}', '${i.name}', '${i.timingSchedule}')">⏳ Wait</button>
+              </div>
+            </div>
+            <span class="schedule-badge">${i.timingSchedule}</span>
+          </div>
+        `).join('');
+    }
+
+    function filterSchedule(schedule, btn) {
+      activeScheduleFilter = schedule;
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      if (currentClientUser) loadClientDashboard(currentClientUser.id);
+    }
+
+    async function completeDoseAction(itemId, itemName, schedule) {
+      if (!currentClientUser) return;
+      await fetch('/api/dose-log', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          clientId: currentClientUser.id,
+          itemId: itemId,
+          itemName: itemName,
+          timingSchedule: schedule,
+          status: 'Done'
+        })
+      });
+      alert(`✓ ${itemName || 'Dose'} marked as completed! Adherence streak updated.`);
+      loadClientDashboard(currentClientUser.id);
+    }
+
+    async function snoozeDoseAction(itemId, itemName, schedule) {
+      if (!currentClientUser) return;
+      await fetch('/api/dose-log', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          clientId: currentClientUser.id,
+          itemId: itemId,
+          itemName: itemName,
+          timingSchedule: schedule,
+          status: 'Wait'
+        })
+      });
+      alert(`⏳ ${itemName || 'Dose'} snoozed for 15 minutes.`);
+      loadClientDashboard(currentClientUser.id);
+    }
+
+    function completeActiveReminder() {
+      if (activeReminderItem) {
+        completeDoseAction(activeReminderItem.id, activeReminderItem.name, activeReminderItem.timingSchedule);
+      }
+    }
+
+    function snoozeActiveReminder() {
+      if (activeReminderItem) {
+        snoozeDoseAction(activeReminderItem.id, activeReminderItem.name, activeReminderItem.timingSchedule);
+      }
+    }
+
+    // Initial Load & Start Polling
+    loadPractitionerDashboard();
+    startAutoPolling();
+  </script>
+</body>
+</html>
