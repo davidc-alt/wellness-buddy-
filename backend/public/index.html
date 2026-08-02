@@ -940,22 +940,26 @@
             ? `<span class="schedule-badge" style="background: rgba(47, 107, 135, 0.15); color: var(--ocean-blue);">DUE NOW</span>`
             : `<span class="schedule-badge" style="background: rgba(92, 139, 125, 0.15); color: var(--sage-muted);">Next in ${remainingText || 'soon'}</span>`;
 
-          return `
-          <div class="supp-card">
-            <div style="flex: 1;">
-              <div class="supp-title" style="display: flex; justify-content: space-between; align-items: center;">
-                <span>${i.name} (${i.dosageValue} ${i.dosageUnit})</span>
-                ${badgeHtml}
+              const actionButtonsHtml = isDue
+                ? `<div style="display: flex; gap: 8px; margin-top: 12px;">
+                    <button class="btn-pill" style="padding: 6px 14px; font-size: 11px;" onclick="completeDoseAction('${i.id}', '${i.name}', '${i.timingSchedule}')">✓ Done</button>
+                    <button class="btn-pill btn-secondary" style="padding: 6px 14px; font-size: 11px;" onclick="snoozeDoseAction('${i.id}', '${i.name}', '${i.timingSchedule}')">⏳ Wait</button>
+                   </div>`
+                : `<div style="margin-top: 12px;"><span style="font-size: 12px; font-weight: 800; color: var(--sage-muted); background: rgba(92, 139, 125, 0.12); padding: 5px 12px; border-radius: 20px;">✓ Dose Completed</span></div>`;
+
+              return `
+              <div class="supp-card">
+                <div style="flex: 1;">
+                  <div class="supp-title" style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>${i.name} (${i.dosageValue} ${i.dosageUnit})</span>
+                    ${badgeHtml}
+                  </div>
+                  <div class="supp-sub">${i.brand} • ${i.frequencyDescription || 'Daily'}</div>
+                  <div class="supp-notes">“${i.practitionerNotes || 'Take as directed.'}”</div>
+                  ${actionButtonsHtml}
+                </div>
               </div>
-              <div class="supp-sub">${i.brand} • ${i.frequencyDescription || 'Daily'}</div>
-              <div class="supp-notes">“${i.practitionerNotes || 'Take as directed.'}”</div>
-              <div style="display: flex; gap: 8px; margin-top: 12px;">
-                <button class="btn-pill" style="padding: 6px 14px; font-size: 11px;" onclick="completeDoseAction('${i.id}', '${i.name}', '${i.timingSchedule}')">✓ Done</button>
-                <button class="btn-pill btn-secondary" style="padding: 6px 14px; font-size: 11px;" onclick="snoozeDoseAction('${i.id}', '${i.name}', '${i.timingSchedule}')">⏳ Wait</button>
-              </div>
-            </div>
-          </div>
-        `}).join('');
+            `}).join('');
     }
 
     function filterSchedule(schedule, btn) {

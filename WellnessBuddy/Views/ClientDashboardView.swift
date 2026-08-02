@@ -397,35 +397,51 @@ struct RegimenCardView: View {
                     .foregroundColor(.paletteDark.opacity(0.7))
             }
             
-            // Minimalist Action Buttons
+            // Action Buttons — Done & Wait buttons only appear when dose is DUE NOW!
             HStack(spacing: 8) {
-                PillDoneAnimationButton(action: {
-                    viewModel.markDoseDone(for: item, timing: item.timingSchedule)
-                })
+                if viewModel.isDoseDue(for: item) {
+                    PillDoneAnimationButton(action: {
+                        viewModel.markDoseDone(for: item, timing: item.timingSchedule)
+                    })
+                    
+                    Button(action: {
+                        showSnoozeSheet = true
+                    }) {
+                        Text("Wait")
+                            .font(.system(size: 13, weight: .bold, design: .rounded))
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 10)
+                            .background(Color.paletteSoftBg)
+                            .foregroundColor(.paletteDark)
+                            .clipShape(Capsule())
+                    }
+                    .actionSheet(isPresented: $showSnoozeSheet) {
+                        ActionSheet(
+                            title: Text("Snooze \(item.name)"),
+                            message: Text("Choose when to be reminded:"),
+                            buttons: [
+                                .default(Text("Wait 15 Minutes")) { viewModel.snoozeDose(for: item, minutes: 15, timing: item.timingSchedule) },
+                                .default(Text("Wait 30 Minutes")) { viewModel.snoozeDose(for: item, minutes: 30, timing: item.timingSchedule) },
+                                .default(Text("Wait 1 Hour")) { viewModel.snoozeDose(for: item, minutes: 60, timing: item.timingSchedule) },
+                                .cancel()
+                            ]
+                        )
+                    }
+                } else {
+                    HStack(spacing: 6) {
+                        Image(systemName: "checkmark.seal.fill")
+                            .foregroundColor(.paletteSage)
+                        Text("Dose Completed")
+                            .font(.system(size: 12, weight: .bold, design: .rounded))
+                            .foregroundColor(.paletteDark)
+                    }
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
+                    .background(Color.paletteSage.opacity(0.12))
+                    .clipShape(Capsule())
+                }
                 
-                Button(action: {
-                    showSnoozeSheet = true
-                }) {
-                    Text("Wait")
-                        .font(.system(size: 13, weight: .bold, design: .rounded))
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 10)
-                        .background(Color.paletteSoftBg)
-                        .foregroundColor(.paletteDark)
-                        .clipShape(Capsule())
-                }
-                .actionSheet(isPresented: $showSnoozeSheet) {
-                    ActionSheet(
-                        title: Text("Snooze \(item.name)"),
-                        message: Text("Choose when to be reminded:"),
-                        buttons: [
-                            .default(Text("Wait 15 Minutes")) { viewModel.snoozeDose(for: item, minutes: 15, timing: item.timingSchedule) },
-                            .default(Text("Wait 30 Minutes")) { viewModel.snoozeDose(for: item, minutes: 30, timing: item.timingSchedule) },
-                            .default(Text("Wait 1 Hour")) { viewModel.snoozeDose(for: item, minutes: 60, timing: item.timingSchedule) },
-                            .cancel()
-                        ]
-                    )
-                }
+                Spacer()
                 
                 Button(action: onRefillTap) {
                     Image(systemName: "shippingbox.fill")
