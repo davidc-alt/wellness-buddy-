@@ -279,7 +279,7 @@
     <div class="nav-pills">
       <button class="nav-pill active" id="btnPractitionerTab" onclick="switchTab('practitioner')">🌿 Practitioner Studio</button>
       <button class="nav-pill" id="btnClientTab" onclick="switchTab('client')">📱 Patient App View</button>
-      <button class="nav-pill" id="btnSignupTab" onclick="switchTab('signup')">🔑 Patient Login (Name & DOB)</button>
+      <button class="nav-pill" id="btnSignupTab" onclick="switchTab('signup')">🔑 Patient Login (For Testing Purposes Only)</button>
     </div>
 
     <div class="header-actions">
@@ -377,6 +377,7 @@
       <div style="text-align: center; margin-bottom: 20px;">
         <div style="display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; background: var(--dark-charcoal); color: var(--white); border-radius: 50%; font-size: 24px; margin-bottom: 12px;">🌿</div>
         <h2 style="font-size: 24px; font-weight: 800; margin-bottom: 4px;">Patient Portal Login</h2>
+        <div style="display: inline-block; padding: 4px 12px; background: rgba(217, 119, 6, 0.15); color: #B45309; font-size: 11px; font-weight: 800; border-radius: 20px; margin-bottom: 12px; letter-spacing: 0.5px;">⚠️ FOR TESTING PURPOSES ONLY</div>
         <p style="font-size: 14px; color: var(--silver-muted);">Enter your <b>Full Name</b> and <b>Date of Birth (DOB)</b> to log in and receive your prescribed wellness protocol.</p>
       </div>
 
@@ -518,11 +519,19 @@
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
         <div class="form-group">
           <label>Dosage Value</label>
-          <input type="number" id="modalSuppDosage" class="form-input" placeholder="2">
+          <input type="text" id="modalSuppDosage" class="form-input" placeholder="e.g. 2">
         </div>
         <div class="form-group">
           <label>Dosage Unit</label>
-          <input type="text" id="modalSuppUnit" class="form-input" placeholder="sprays / mg / caps">
+          <select id="modalSuppUnit" class="form-input">
+            <option value="caps">caps (capsules)</option>
+            <option value="mg">mg (milligrams)</option>
+            <option value="mcg">mcg (micrograms)</option>
+            <option value="IU">IU (International Units)</option>
+            <option value="mL">mL (milliliters)</option>
+            <option value="scoops">scoops</option>
+            <option value="sprays">sprays</option>
+          </select>
         </div>
       </div>
 
@@ -757,20 +766,34 @@
 
     function openAddModal() {
       if (!selectedClientId) return alert("Select a patient first.");
+      document.getElementById('modalSuppName').value = '';
+      document.getElementById('modalSuppDosage').value = '1';
+      document.getElementById('modalSuppUnit').value = 'caps';
+      document.getElementById('modalSuppBrand').value = '';
+      document.getElementById('modalSuppFreq').value = 'Daily';
+      document.getElementById('modalSuppNotes').value = '';
       document.getElementById('addModal').classList.remove('hidden');
     }
     function closeAddModal() { document.getElementById('addModal').classList.add('hidden'); }
 
     async function submitAddSupplement() {
-      const name = document.getElementById('modalSuppName').value.trim();
-      const dosageValue = document.getElementById('modalSuppDosage').value.trim();
-      const dosageUnit = document.getElementById('modalSuppUnit').value.trim();
-      const brand = document.getElementById('modalSuppBrand').value.trim();
-      const timingSchedule = document.getElementById('modalSuppTiming').value;
-      const frequencyDescription = document.getElementById('modalSuppFreq').value.trim();
-      const practitionerNotes = document.getElementById('modalSuppNotes').value.trim();
+      const nameEl = document.getElementById('modalSuppName');
+      const name = nameEl ? nameEl.value.trim() : '';
+      if (!name) return alert("Please enter the Supplement Name.");
 
-      if (!name || !dosageValue || !dosageUnit) return alert("Please fill in Name, Dosage Value, and Dosage Unit.");
+      let dosageValue = document.getElementById('modalSuppDosage').value.trim();
+      if (!dosageValue) dosageValue = "1";
+
+      let dosageUnit = document.getElementById('modalSuppUnit').value.trim();
+      if (!dosageUnit) dosageUnit = "caps";
+      if (dosageUnit.toLowerCase() === 'capsule' || dosageUnit.toLowerCase() === 'capsules') {
+        dosageUnit = 'caps';
+      }
+
+      const brand = document.getElementById('modalSuppBrand').value.trim() || "Practitioner Direct";
+      const timingSchedule = document.getElementById('modalSuppTiming').value || "Empty Stomach";
+      const frequencyDescription = document.getElementById('modalSuppFreq').value.trim() || "Daily";
+      const practitionerNotes = document.getElementById('modalSuppNotes').value.trim();
 
       await fetch(`/api/practitioner/assign-protocol/${selectedClientId}`, {
         method: 'POST',

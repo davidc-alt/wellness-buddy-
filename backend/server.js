@@ -272,6 +272,19 @@ const server = http.createServer(async (req, res) => {
     
     if (!db.protocols[clientId]) db.protocols[clientId] = [];
 
+    function normalizeUnit(u) {
+      if (!u) return "caps";
+      const s = String(u).trim().toLowerCase();
+      if (s === "capsule" || s === "capsules" || s === "cap" || s === "caps") return "caps";
+      if (s === "mg" || s === "milligram" || s === "milligrams") return "mg";
+      if (s === "mcg" || s === "microgram" || s === "micrograms") return "mcg";
+      if (s === "iu" || s === "international units") return "IU";
+      if (s === "ml" || s === "milliliter" || s === "milliliters") return "mL";
+      if (s === "scoop" || s === "scoops") return "scoops";
+      if (s === "spray" || s === "sprays") return "sprays";
+      return String(u).trim();
+    }
+
     if (body.items) {
       db.protocols[clientId] = body.items.map(item => ({
         id: item.id || ("supp_" + Date.now() + "_" + Math.random().toString(36).substr(2, 4)),
@@ -279,7 +292,7 @@ const server = http.createServer(async (req, res) => {
         brand: item.brand || "Practitioner Direct",
         category: item.category || "Supplement",
         dosageValue: parseFloat(item.dosageValue) || 1,
-        dosageUnit: item.dosageUnit || "caps",
+        dosageUnit: normalizeUnit(item.dosageUnit),
         timingSchedule: item.timingSchedule || "Empty Stomach",
         frequencyDescription: item.frequencyDescription || "Daily",
         practitionerNotes: item.practitionerNotes || "Take as directed.",
@@ -294,7 +307,7 @@ const server = http.createServer(async (req, res) => {
         brand: body.item.brand || "Practitioner Direct",
         category: body.item.category || "Supplement",
         dosageValue: parseFloat(body.item.dosageValue) || 1,
-        dosageUnit: body.item.dosageUnit || "caps",
+        dosageUnit: normalizeUnit(body.item.dosageUnit),
         timingSchedule: body.item.timingSchedule || "Empty Stomach",
         frequencyDescription: body.item.frequencyDescription || "Daily",
         practitionerNotes: body.item.practitionerNotes || "Take as directed.",
