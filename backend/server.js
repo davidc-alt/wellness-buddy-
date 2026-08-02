@@ -92,6 +92,11 @@ const server = http.createServer(async (req, res) => {
 
   // --- API ENDPOINTS ---
 
+  // 0. HEALTH CHECK / LIVE PING
+  if (pathname === '/api/ping' && method === 'GET') {
+    return sendJson(res, 200, { success: true, timestamp: new Date().toISOString(), status: "live" });
+  }
+
   // 1. CLIENT REGISTRATION WITH NAME & DOB
   if (pathname === '/api/auth/register-client' && method === 'POST') {
     const body = await getJsonBody(req);
@@ -410,4 +415,12 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, () => {
   console.log(`🌿 Wellness Buddy Production System running live at http://localhost:${PORT}`);
+  
+  // Heartbeat loop to keep Render free tier awake & prevent cold-start resets
+  setInterval(() => {
+    const pingTarget = process.env.RENDER_EXTERNAL_URL ? `${process.env.RENDER_EXTERNAL_URL}/api/ping` : `http://localhost:${PORT}/api/ping`;
+    http.get(pingTarget, (res) => {
+      // Keep-alive heartbeat successful
+    }).on('error', () => {});
+  }, 8 * 60 * 1000); // Ping every 8 minutes
 });

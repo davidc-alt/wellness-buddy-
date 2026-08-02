@@ -11,11 +11,12 @@ import Combine
 public class APIService: ObservableObject {
     public static let shared = APIService()
     
-    // Primary Server URL (defaults to localhost:3000 and falls back to Mac local IP)
-    @Published public var baseURLString: String = "http://localhost:3000"
+    // Primary Server URL (defaults to live Render server and falls back to localhost)
+    @Published public var baseURLString: String = "https://wellness-buddy-vduz.onrender.com"
     
-    // Candidate URLs to try for local development (Simulator & Physical Device)
+    // Candidate URLs to try (Live Production Server + Local Development)
     public var candidateURLs: [String] = [
+        "https://wellness-buddy-vduz.onrender.com",
         "http://localhost:3000",
         "http://127.0.0.1:3000",
         "http://192.168.4.53:3000"
@@ -48,7 +49,8 @@ public class APIService: ObservableObject {
             
             var request = URLRequest(url: url)
             request.httpMethod = method
-            request.timeoutInterval = 4.0
+            // Allow 12s timeout for Render free tier cold starts
+            request.timeoutInterval = base.contains("onrender.com") ? 12.0 : 4.0
             if let bodyData = bodyData {
                 request.setValue("application/json", forHTTPHeaderField: "Content-Type")
                 request.httpBody = bodyData

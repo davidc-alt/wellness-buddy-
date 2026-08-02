@@ -282,7 +282,10 @@
       <button class="nav-pill" id="btnSignupTab" onclick="switchTab('signup')">🔑 Patient Login (For Testing Purposes Only)</button>
     </div>
 
-    <div class="header-actions">
+    <div class="header-actions" style="display: flex; align-items: center; gap: 10px;">
+      <div style="display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 800; color: #10B981; background: rgba(16, 185, 129, 0.12); padding: 6px 12px; border-radius: 20px; letter-spacing: 0.5px;" id="liveSyncStatus">
+        <span style="width: 7px; height: 7px; background: #10B981; border-radius: 50%; display: inline-block;"></span> 🟢 LIVE SYNC ACTIVE
+      </div>
       <button class="btn-pill btn-secondary" onclick="clearRoster()" title="Reset patient roster to 0 clients">🔄 Clear Roster (0 Patients)</button>
     </div>
   </header>
@@ -961,6 +964,14 @@
         snoozeDoseAction(activeReminderItem.id, activeReminderItem.name, activeReminderItem.timingSchedule);
       }
     }
+
+    // Immediate Sync on Window Focus / Tab Switch
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        if (activeTab === 'practitioner') loadPractitionerDashboard();
+        if (activeTab === 'client' && currentClientUser) loadClientDashboard(currentClientUser.id);
+      }
+    });
 
     // Initial Load & Start Polling
     loadPractitionerDashboard();
