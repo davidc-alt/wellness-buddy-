@@ -510,7 +510,7 @@
   <div id="addModal" class="modal-overlay hidden">
     <div class="modal-card">
       <div class="card-header">
-        <div class="card-title">Prescribe Supplement</div>
+        <div class="card-title" id="modalTitle">Prescribe Supplement</div>
         <button style="border: none; background: none; font-size: 20px; cursor: pointer;" onclick="closeAddModal()">✕</button>
       </div>
 
@@ -582,7 +582,7 @@
         <textarea id="modalSuppNotes" class="form-input" style="height: 64px;" placeholder="Administer 1 spray per nostril on empty stomach immediately upon waking."></textarea>
       </div>
 
-      <button class="btn-pill btn-ocean" style="width: 100%; padding: 12px;" onclick="submitAddSupplement()">🚀 Prescribe & Send to Patient App</button>
+      <button class="btn-pill btn-ocean" id="modalSubmitBtn" style="width: 100%; padding: 12px;" onclick="submitAddSupplement()">🚀 Prescribe & Send to Patient App</button>
     </div>
   </div>
 
@@ -703,6 +703,7 @@
       const res = await fetch(`/api/protocol/${id}`);
       const data = await res.json();
       const items = data.protocol.items || [];
+      currentProtocolItems = items;
 
       // Update PDF status in practitioner studio
       const pdfStatusEl = document.getElementById('practitionerPdfStatus');
@@ -721,12 +722,15 @@
           <div class="supp-card">
             <div style="flex: 1;">
               <div class="supp-title">${i.name} (${i.dosageValue} ${i.dosageUnit})</div>
-              <div class="supp-sub">${i.brand} • ${i.frequencyDescription}</div>
+              <div class="supp-sub">${i.brand} • ${i.frequencyDescription || 'Daily'} • ${i.intervalHours ? 'Every ' + i.intervalHours + 'h' : 'Every 24h'}</div>
               <div class="supp-notes">“${i.practitionerNotes || 'Take as directed.'}”</div>
             </div>
             <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
               <span class="schedule-badge">${i.timingSchedule}</span>
-              <button class="btn-pill btn-secondary" style="padding: 4px 10px; font-size: 11px; color: #E74C3C;" onclick="deleteSupplementItem('${i.id}')">🗑️ Remove</button>
+              <div style="display: flex; gap: 6px;">
+                <button class="btn-pill btn-secondary" style="padding: 4px 10px; font-size: 11px;" onclick="openEditModal('${i.id}')">✏️ Edit</button>
+                <button class="btn-pill btn-secondary" style="padding: 4px 10px; font-size: 11px; color: #E74C3C;" onclick="deleteSupplementItem('${i.id}')">🗑️ Remove</button>
+              </div>
             </div>
           </div>
         `).join('');
@@ -765,9 +769,9 @@
     async function addPresetStack() {
       if (!selectedClientId) return;
       const preset = [
-        { name: "NAD+ Liposomal Concentrate", brand: "Empower Pharma", category: "Supplement", dosageValue: 2, dosageUnit: "sprays", timingSchedule: "Empty Stomach", frequencyDescription: "Daily at Morning Wake-Up", practitionerNotes: "Administer 1 spray per nostril on empty stomach immediately upon waking." },
-        { name: "BPC-157 Oral Supplement", brand: "Tailor Made Compounding", category: "Supplement", dosageValue: 500, dosageUnit: "mcg", timingSchedule: "Empty Stomach", frequencyDescription: "5 Days On / 2 Days Off", practitionerNotes: "Take 1 capsule 30 mins before breakfast for gut lining & recovery." },
-        { name: "Liposomal Vitamin D3 + K2", brand: "Quicksilver Scientific", category: "Vitamin & Mineral", dosageValue: 5000, dosageUnit: "IU", timingSchedule: "With Meal", frequencyDescription: "Once Daily with Lunch", practitionerNotes: "Take with a meal containing healthy dietary fats." }
+        { name: "NAD+ Liposomal Concentrate", brand: "Empower Pharma", category: "Supplement", dosageValue: 2, dosageUnit: "sprays", timingSchedule: "Empty Stomach", intervalHours: 24, frequencyDescription: "Daily at Morning Wake-Up", practitionerNotes: "Administer 1 spray per nostril on empty stomach immediately upon waking." },
+        { name: "BPC-157 Oral Supplement", brand: "Tailor Made Compounding", category: "Supplement", dosageValue: 500, dosageUnit: "mcg", timingSchedule: "Empty Stomach", intervalHours: 24, frequencyDescription: "5 Days On / 2 Days Off", practitionerNotes: "Take 1 capsule 30 mins before breakfast for gut lining & recovery." },
+        { name: "Liposomal Vitamin D3 + K2", brand: "Quicksilver Scientific", category: "Vitamin & Mineral", dosageValue: 5000, dosageUnit: "IU", timingSchedule: "With Meal", intervalHours: 24, frequencyDescription: "Once Daily with Lunch", practitionerNotes: "Take with a meal containing healthy dietary fats." }
       ];
 
       for (let item of preset) {
@@ -782,15 +786,41 @@
 
     function openAddModal() {
       if (!selectedClientId) return alert("Select a patient first.");
+      editingItemId = null;
+      document.getElementById('modalTitle').innerText = "+ Prescribe Supplement / Peptide";
+      document.getElementById('modalSubmitBtn').innerText = "🚀 Prescribe & Send to Patient App";
       document.getElementById('modalSuppName').value = '';
       document.getElementById('modalSuppDosage').value = '1';
       document.getElementById('modalSuppUnit').value = 'caps';
       document.getElementById('modalSuppBrand').value = '';
-      document.getElementById('modalSuppFreq').value = 'Daily';
+      document.getElementById('modalSuppTiming').value = 'Empty Stomach';
+      document.getElementById('modalSuppInterval').value = '24';
+      document.getElementById('modalSuppFreq').value = '';
       document.getElementById('modalSuppNotes').value = '';
       document.getElementById('addModal').classList.remove('hidden');
     }
-    function closeAddModal() { document.getElementById('addModal').classList.add('hidden'); }
+
+    function openEditModal(itemId) {
+      const item = currentProtocolItems.find(i => String(i.id) === String(itemId));
+      if (!item) return;
+      editingItemId = item.id;
+      document.getElementById('modalTitle').innerText = "✏️ Edit Prescribed Supplement";
+      document.getElementById('modalSubmitBtn').innerText = "💾 Save Changes & Update Patient App";
+      document.getElementById('modalSuppName').value = item.name || '';
+      document.getElementById('modalSuppDosage').value = item.dosageValue || 1;
+      document.getElementById('modalSuppUnit').value = item.dosageUnit || 'caps';
+      document.getElementById('modalSuppBrand').value = item.brand || '';
+      document.getElementById('modalSuppTiming').value = item.timingSchedule || 'Empty Stomach';
+      document.getElementById('modalSuppInterval').value = item.intervalHours || 24;
+      document.getElementById('modalSuppFreq').value = item.frequencyDescription || '';
+      document.getElementById('modalSuppNotes').value = item.practitionerNotes || '';
+      document.getElementById('addModal').classList.remove('hidden');
+    }
+
+    function closeAddModal() {
+      editingItemId = null;
+      document.getElementById('addModal').classList.add('hidden');
+    }
 
     async function submitAddSupplement() {
       const nameEl = document.getElementById('modalSuppName');
@@ -812,14 +842,20 @@
       const frequencyDescription = document.getElementById('modalSuppFreq').value.trim() || `Every ${intervalHours} Hours`;
       const practitionerNotes = document.getElementById('modalSuppNotes').value.trim();
 
+      const itemData = {
+        name, dosageValue, dosageUnit, brand, timingSchedule, intervalHours, frequencyDescription, practitionerNotes
+      };
+      if (editingItemId) {
+        itemData.id = editingItemId;
+      }
+
       await fetch(`/api/practitioner/assign-protocol/${selectedClientId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          item: { name, dosageValue, dosageUnit, brand, timingSchedule, intervalHours, frequencyDescription, practitionerNotes }
-        })
+        body: JSON.stringify({ item: itemData })
       });
 
+      editingItemId = null;
       closeAddModal();
       loadPractitionerDashboard();
     }

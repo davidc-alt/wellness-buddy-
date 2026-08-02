@@ -320,7 +320,9 @@ const server = http.createServer(async (req, res) => {
         fullscriptRefillUrl: item.fullscriptRefillUrl || "https://fullscript.com"
       }));
     } else if (body.item) {
-      const newItem = {
+      if (!db.protocols[clientId]) db.protocols[clientId] = [];
+      const existingIdx = db.protocols[clientId].findIndex(i => String(i.id) === String(body.item.id));
+      const targetItem = {
         id: body.item.id || ("supp_" + Date.now()),
         name: body.item.name,
         brand: body.item.brand || "Practitioner Direct",
@@ -335,7 +337,12 @@ const server = http.createServer(async (req, res) => {
         maxServings: body.item.maxServings || 30,
         fullscriptRefillUrl: body.item.fullscriptRefillUrl || "https://fullscript.com"
       };
-      db.protocols[clientId].push(newItem);
+
+      if (existingIdx >= 0) {
+        db.protocols[clientId][existingIdx] = targetItem;
+      } else {
+        db.protocols[clientId].push(targetItem);
+      }
     }
 
     if (body.practitionerNote !== undefined) {
