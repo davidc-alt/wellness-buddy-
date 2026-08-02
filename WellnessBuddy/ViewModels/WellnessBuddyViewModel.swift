@@ -47,7 +47,70 @@ public class WellnessBuddyViewModel: ObservableObject {
         self.activeReminder = nil
         self.doseLogs = []
         
+        restoreSessionIfAvailable()
         startLivePolling()
+    }
+    
+    // MARK: - Session Persistence for Multi-User & Auto-Login
+    
+    public func saveSession(client: ClientProfile) {
+        let defaults = UserDefaults.standard
+        defaults.set(true, forKey: "wb_is_logged_in")
+        defaults.set(client.id, forKey: "wb_active_client_id")
+        defaults.set(client.name, forKey: "wb_active_client_name")
+        defaults.set(client.dob ?? "", forKey: "wb_active_client_dob")
+        defaults.set(client.email, forKey: "wb_active_client_email")
+        defaults.set(client.goal ?? "", forKey: "wb_active_client_goal")
+        defaults.set(client.practitionerNote ?? "", forKey: "wb_active_client_practitioner_note")
+    }
+    
+    public func restoreSessionIfAvailable() {
+        let defaults = UserDefaults.standard
+        if defaults.bool(forKey: "wb_is_logged_in"),
+           let clientId = defaults.string(forKey: "wb_active_client_id"),
+           !clientId.isEmpty {
+            let name = defaults.string(forKey: "wb_active_client_name") ?? "Patient"
+            let dob = defaults.string(forKey: "wb_active_client_dob")
+            let email = defaults.string(forKey: "wb_active_client_email") ?? ""
+            let goal = defaults.string(forKey: "wb_active_client_goal")
+            let note = defaults.string(forKey: "wb_active_client_practitioner_note")
+            
+            let restoredProfile = ClientProfile(
+                id: clientId,
+                name: name,
+                dob: dob,
+                email: email,
+                goal: goal,
+                practitionerNote: note
+            )
+            
+            self.activeClientId = clientId
+            self.activeClientName = name
+            self.activeClientProfile = restoredProfile
+            self.isLoggedIn = true
+            
+            fetchLiveProtocol()
+            fetchDoseLogs()
+        }
+    }
+    
+    public func clearSavedSession() {
+        let defaults = UserDefaults.standard
+        defaults.removeObject(forKey: "wb_is_logged_in")
+        defaults.removeObject(forKey: "wb_active_client_id")
+        defaults.removeObject(forKey: "wb_active_client_name")
+        defaults.removeObject(forKey: "wb_active_client_dob")
+        defaults.removeObject(forKey: "wb_active_client_email")
+        defaults.removeObject(forKey: "wb_active_client_goal")
+        defaults.removeObject(forKey: "wb_active_client_practitioner_note")
+    }
+    
+    public func fetchDoseLogs() {
+        guard !activeClientId.isEmpty else { return }
+        APIService.shared.fetchDoseLogs(for: activeClientId) { [weak self] logs in
+            guard let self = self else { return }
+            self.doseLogs = logs
+        }
     }
     
     /// Periodically poll server every 3 seconds while logged in so new practitioner prescriptions pop up automatically!
@@ -86,6 +149,7 @@ public class WellnessBuddyViewModel: ObservableObject {
     }
     
     public func logout() {
+        clearSavedSession()
         self.isLoggedIn = false
         self.activeClientProfile = nil
         self.activeClientId = ""
@@ -197,9 +261,33 @@ public class WellnessBuddyViewModel: ObservableObject {
         }
     }
     
-    // MARK: - Adherence Metrics
+    // MARK: - Adherence Metrics & Dynamic Streak Counter
     public var currentStreakDays: Int {
-        return doseLogs.isEmpty ? 0 : 1
+        let calendar = Calendar.current
+        let completedLogs = doseLogs.filter { $0.status == .completed }
+        guard !completedLogs.isEmpty else { return 0 }
+        
+        let completedDaysSet = Set(completedLogs.map { calendar.startOfDay(for: $0.timestamp) })
+        let sortedDays = completedDaysSet.sorted(by: >)
+        
+        let today = calendar.startOfDay(for: Date())
+        let yesterday = calendar.date(byAdding: .day, value: -1, to: today)!
+        
+        guard let mostRecentDay = sortedDays.first,
+              mostRecentDay == today || mostRecentDay == yesterday else {
+            return 0
+        }
+        
+        var streak = 0
+        var checkDay = mostRecentDay
+        
+        while completedDaysSet.contains(checkDay) {
+            streak += 1
+            guard let prevDay = calendar.date(byAdding: .day, value: -1, to: checkDay) else { break }
+            checkDay = prevDay
+        }
+        
+        return streak
     }
     
     public var adherencePercentage: Int {

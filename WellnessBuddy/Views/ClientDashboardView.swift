@@ -320,21 +320,9 @@ struct RegimenCardView: View {
             
             // Minimalist Action Buttons
             HStack(spacing: 8) {
-                Button(action: {
+                PillDoneAnimationButton(action: {
                     viewModel.markDoseDone(for: item, timing: item.timingSchedule)
-                }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "checkmark")
-                            .font(.system(size: 12, weight: .bold))
-                        Text("Done")
-                            .font(.system(size: 13, weight: .bold, design: .rounded))
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 10)
-                    .background(Color.paletteDark)
-                    .foregroundColor(.white)
-                    .clipShape(Capsule())
-                }
+                })
                 
                 Button(action: {
                     showSnoozeSheet = true

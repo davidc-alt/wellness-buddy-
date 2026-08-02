@@ -135,3 +135,82 @@ public struct ToastBannerView: View {
         .padding(.horizontal, 20)
     }
 }
+
+/// Interactive Done Button with satisfying micro-animation, particle sparkle burst, rotation, and spring scale pulse
+public struct PillDoneAnimationButton: View {
+    public let title: String
+    public let action: () -> Void
+    
+    @State private var isAnimating: Bool = false
+    @State private var showParticles: Bool = false
+    @State private var showCheckmarkSeal: Bool = false
+    
+    public init(title: String = "Done", action: @escaping () -> Void) {
+        self.title = title
+        self.action = action
+    }
+    
+    public var body: some View {
+        Button(action: {
+            #if os(iOS)
+            let impact = UIImpactFeedbackGenerator(style: .medium)
+            impact.impactOccurred()
+            let success = UINotificationFeedbackGenerator()
+            success.notificationOccurred(.success)
+            #endif
+            
+            withAnimation(.spring(response: 0.25, dampingFraction: 0.4)) {
+                isAnimating = true
+                showParticles = true
+                showCheckmarkSeal = true
+            }
+            
+            action()
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.65) {
+                withAnimation(.easeOut(duration: 0.35)) {
+                    isAnimating = false
+                    showParticles = false
+                    showCheckmarkSeal = false
+                }
+            }
+        }) {
+            ZStack {
+                // Sparkle Particle Burst Effect
+                if showParticles {
+                    ForEach(0..<8, id: \.self) { index in
+                        let angle = Double(index) * (360.0 / 8.0) * (.pi / 180.0)
+                        let distance: CGFloat = 28
+                        Circle()
+                            .fill(index % 2 == 0 ? Color.paletteSage : Color.paletteOcean)
+                            .frame(width: 6, height: 6)
+                            .offset(
+                                x: showParticles ? cos(angle) * distance : 0,
+                                y: showParticles ? sin(angle) * distance : 0
+                            )
+                            .opacity(showParticles ? 0.9 : 0)
+                            .scaleEffect(showParticles ? 1.3 : 0.2)
+                    }
+                }
+                
+                HStack(spacing: 6) {
+                    Image(systemName: showCheckmarkSeal ? "checkmark.circle.fill" : "checkmark")
+                        .font(.system(size: 13, weight: .bold))
+                        .rotationEffect(.degrees(showCheckmarkSeal ? 360 : 0))
+                    
+                    Text(showCheckmarkSeal ? "Logged!" : title)
+                        .font(.system(size: 13, weight: .bold, design: .rounded))
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 10)
+                .background(showCheckmarkSeal ? Color.paletteSage : Color.paletteDark)
+                .foregroundColor(.white)
+                .clipShape(Capsule())
+                .scaleEffect(isAnimating ? 1.06 : 1.0)
+                .shadow(color: showCheckmarkSeal ? Color.paletteSage.opacity(0.4) : Color.clear, radius: 8, x: 0, y: 3)
+            }
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+

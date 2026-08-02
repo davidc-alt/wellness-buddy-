@@ -126,22 +126,10 @@ public struct PersistentReminderBannerView: View {
                     )
                 }
                 
-                // Done Pill Button (Primary Accent)
-                Button(action: {
+                // Done Pill Button (Primary Accent with Micro-animation)
+                PillDoneAnimationButton(action: {
                     viewModel.markDoseDone(for: reminderState.item, timing: reminderState.schedule)
-                }) {
-                    HStack(spacing: 6) {
-                        Image(systemName: "checkmark")
-                            .font(.system(size: 13, weight: .black))
-                        Text("Done")
-                            .font(.system(size: 14, weight: .bold, design: .rounded))
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
-                    .background(Color.paletteDark)
-                    .foregroundColor(.white)
-                    .clipShape(Capsule())
-                }
+                })
             }
         }
         .calmCardStyle(padding: 20, cornerRadius: 26)

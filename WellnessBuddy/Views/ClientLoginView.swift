@@ -11,9 +11,9 @@ import SwiftUI
 public struct ClientLoginView: View {
     @ObservedObject var viewModel: WellnessBuddyViewModel
     
-    @State private var nameInput: String = "Jhon Doe"
-    @State private var dobInput: String = "1990-01-01"
-    @State private var goalInput: String = "Optimize energy, cellular health & recovery"
+    @State private var nameInput: String = ""
+    @State private var dobInput: String = ""
+    @State private var goalInput: String = ""
     @State private var isProcessing: Bool = false
     @State private var errorMessage: String?
     
@@ -48,7 +48,7 @@ public struct ClientLoginView: View {
                     Text("FULL NAME")
                         .font(.system(size: 11, weight: .bold, design: .rounded))
                         .foregroundColor(.paletteSilver)
-                    TextField("e.g. Jhon Doe", text: $nameInput)
+                    TextField("Last Name First Name", text: $nameInput)
                         .padding(14)
                         .background(Color.paletteSoftBg)
                         .clipShape(RoundedRectangle(cornerRadius: 14))
@@ -68,7 +68,7 @@ public struct ClientLoginView: View {
                     Text("PRIMARY HEALTH GOAL (OPTIONAL)")
                         .font(.system(size: 11, weight: .bold, design: .rounded))
                         .foregroundColor(.paletteSilver)
-                    TextField("Hormone baseline, cellular energy...", text: $goalInput)
+                    TextField("Primary health goal (optional)...", text: $goalInput)
                         .padding(14)
                         .background(Color.paletteSoftBg)
                         .clipShape(RoundedRectangle(cornerRadius: 14))
@@ -168,8 +168,10 @@ public struct ClientLoginView: View {
                 viewModel.activeClientProfile = client
                 viewModel.activeClientName = client.name
                 viewModel.activeClientId = client.id
+                viewModel.saveSession(client: client)
                 viewModel.isLoggedIn = true
                 viewModel.fetchLiveProtocol()
+                viewModel.fetchDoseLogs()
             } else {
                 // Offline / Local Fallback login for demo
                 let fallbackClient = ClientProfile(
@@ -183,8 +185,10 @@ public struct ClientLoginView: View {
                 viewModel.activeClientProfile = fallbackClient
                 viewModel.activeClientName = fallbackClient.name
                 viewModel.activeClientId = fallbackClient.id
+                viewModel.saveSession(client: fallbackClient)
                 viewModel.isLoggedIn = true
                 viewModel.fetchLiveProtocol()
+                viewModel.fetchDoseLogs()
             }
         }
     }

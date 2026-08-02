@@ -82,23 +82,36 @@ public struct ComplianceStatsView: View {
                             .tracking(1.0)
                         
                         HStack(spacing: 8) {
-                            ForEach(0..<7) { dayOffset in
-                                let days = ["M", "T", "W", "T", "F", "S", "S"]
-                                let isCompleted = dayOffset < 6 // demo data
+                            let calendar = Calendar.current
+                            let today = calendar.startOfDay(for: Date())
+                            let pastWeekDays = (0..<7).reversed().map { offset -> (date: Date, label: String, isCompleted: Bool) in
+                                let targetDate = calendar.date(byAdding: .day, value: -offset, to: today)!
+                                let formatter = DateFormatter()
+                                formatter.dateFormat = "EEEEE"
+                                let label = formatter.string(from: targetDate)
+                                
+                                let isDone = viewModel.doseLogs.contains { log in
+                                    log.status == .completed && calendar.isDate(log.timestamp, inSameDayAs: targetDate)
+                                }
+                                return (targetDate, label, isDone)
+                            }
+                            
+                            ForEach(0..<pastWeekDays.count, id: \.self) { index in
+                                let dayInfo = pastWeekDays[index]
                                 
                                 VStack(spacing: 8) {
-                                    Text(days[dayOffset])
+                                    Text(dayInfo.label)
                                         .font(.system(size: 11, weight: .bold, design: .rounded))
                                         .foregroundColor(.calmTextSecondary)
                                     
                                     ZStack {
                                         Circle()
-                                            .fill(isCompleted ? Color.calmSage : Color.calmLightSage)
+                                            .fill(dayInfo.isCompleted ? Color.calmSage : Color.calmLightSage)
                                             .frame(width: 36, height: 36)
                                         
-                                        Image(systemName: isCompleted ? "checkmark" : "minus")
+                                        Image(systemName: dayInfo.isCompleted ? "checkmark" : "minus")
                                             .font(.system(size: 13, weight: .bold))
-                                            .foregroundColor(isCompleted ? .white : .calmTextSecondary)
+                                            .foregroundColor(dayInfo.isCompleted ? .white : .calmTextSecondary)
                                     }
                                 }
                                 .frame(maxWidth: .infinity)

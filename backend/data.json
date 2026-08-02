@@ -10,6 +10,20 @@
   ],
   "clients": [
     {
+      "id": "cli_1785647719698",
+      "name": "David bondarescu",
+      "dob": "02242007",
+      "email": "david.bondarescu@wellnessclient.com",
+      "password": "password123",
+      "goal": "Optimize energy, cellular health & recovery",
+      "symptoms": "None reported",
+      "currentSupplements": "None",
+      "registeredAt": "2026-08-02T05:15:19.698Z",
+      "streakDays": 0,
+      "adherenceRate": 100,
+      "practitionerNote": "Waiting for your practitioner to prescribe your custom protocol."
+    },
+    {
       "id": "cli_1785633947973",
       "name": "Todd V",
       "dob": "09111980",
@@ -68,7 +82,8 @@
         "maxServings": 30,
         "fullscriptRefillUrl": "https://fullscript.com"
       }
-    ]
+    ],
+    "cli_1785647719698": []
   },
   "doseLogs": [],
   "messages": [],

@@ -168,6 +168,51 @@ public class APIService: ObservableObject {
         performRequest(endpoint: "/api/dose-log", method: "POST", bodyData: bodyData) { _ in }
     }
     
+    /// Fetch dose logs live from backend API for active logged in client
+    public func fetchDoseLogs(for clientId: String, completion: @escaping ([DoseLogEntry]) -> Void) {
+        performRequest(endpoint: "/api/dose-log/\(clientId)", method: "GET") { data in
+            guard let data = data else {
+                DispatchQueue.main.async { completion([]) }
+                return
+            }
+            
+            do {
+                let decoded = try JSONDecoder().decode(DoseLogListResponse.self, from: data)
+                let isoFormatter = ISO8601DateFormatter()
+                isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+                
+                let isoFormatterFallback = ISO8601DateFormatter()
+                isoFormatterFallback.formatOptions = [.withInternetDateTime]
+                
+                let entries: [DoseLogEntry] = decoded.doseLogs.compactMap { apiItem in
+                    let date = isoFormatter.date(from: apiItem.timestamp) 
+                            ?? isoFormatterFallback.date(from: apiItem.timestamp) 
+                            ?? Date()
+                    
+                    let timing = TimingSchedule(rawValue: apiItem.timingSchedule) ?? .emptyStomach
+                    let status = DoseStatus(rawValue: apiItem.status) ?? .completed
+                    let itemId = apiItem.itemId != nil ? (UUID(uuidString: apiItem.itemId!) ?? UUID()) : UUID()
+                    let id = UUID(uuidString: apiItem.id.replacingOccurrences(of: "log_", with: "")) ?? UUID()
+                    
+                    return DoseLogEntry(
+                        id: id,
+                        itemId: itemId,
+                        itemName: apiItem.itemName,
+                        timestamp: date,
+                        status: status,
+                        timingSchedule: timing,
+                        note: nil
+                    )
+                }
+                
+                DispatchQueue.main.async { completion(entries) }
+            } catch {
+                print("Dose log decode error: \(error)")
+                DispatchQueue.main.async { completion([]) }
+            }
+        }
+    }
+    
     /// Push protocol item to backend for active client
     public func assignProtocolItem(clientId: String, item: ProtocolItem, completion: (() -> Void)? = nil) {
         let itemPayload: [String: Any] = [
@@ -285,3 +330,19 @@ struct MessagesResponse: Codable {
     let success: Bool
     let messages: [ChatMessage]
 }
+
+struct DoseLogAPIItem: Codable {
+    let id: String
+    let clientId: String
+    let itemId: String?
+    let itemName: String
+    let timingSchedule: String
+    let status: String
+    let timestamp: String
+}
+
+struct DoseLogListResponse: Codable {
+    let success: Bool
+    let doseLogs: [DoseLogAPIItem]
+}
+
