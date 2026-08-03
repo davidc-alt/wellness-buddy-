@@ -80,6 +80,32 @@ function toStableUUID(str) {
   return `${hex1}-${hex2}-4${hex3.slice(-3)}-${hex4.slice(-4)}-${hex5.slice(-12)}`.toLowerCase();
 }
 
+function normalizeUnit(u) {
+  if (!u) return "caps";
+  const s = String(u).trim().toLowerCase();
+  if (s === "capsule" || s === "capsules" || s === "cap" || s === "caps") return "caps";
+  if (s === "mg" || s === "milligram" || s === "milligrams") return "mg";
+  if (s === "mcg" || s === "microgram" || s === "micrograms") return "mcg";
+  if (s === "iu" || s === "international units") return "IU";
+  if (s === "ml" || s === "milliliter" || s === "milliliters") return "mL";
+  if (s === "scoop" || s === "scoops") return "scoops";
+  if (s === "spray" || s === "sprays") return "sprays";
+  return String(u).trim();
+}
+
+function parseIntervalHours(item) {
+  if (item.intervalHours && !isNaN(parseFloat(item.intervalHours))) {
+    return parseFloat(item.intervalHours);
+  }
+  const desc = String(item.frequencyDescription || "").toLowerCase();
+  if (desc.includes("4 hour") || desc.includes("every 4")) return 4;
+  if (desc.includes("6 hour") || desc.includes("every 6")) return 6;
+  if (desc.includes("8 hour") || desc.includes("every 8")) return 8;
+  if (desc.includes("12 hour") || desc.includes("every 12")) return 12;
+  if (desc.includes("48 hour") || desc.includes("every 48") || desc.includes("every 2 day")) return 48;
+  return 24;
+}
+
 function getJsonBody(req) {
   return new Promise((resolve) => {
     let body = '';
@@ -361,32 +387,6 @@ const server = http.createServer(async (req, res) => {
     const body = await getJsonBody(req);
     
     if (!db.protocols[clientId]) db.protocols[clientId] = [];
-
-    function normalizeUnit(u) {
-      if (!u) return "caps";
-      const s = String(u).trim().toLowerCase();
-      if (s === "capsule" || s === "capsules" || s === "cap" || s === "caps") return "caps";
-      if (s === "mg" || s === "milligram" || s === "milligrams") return "mg";
-      if (s === "mcg" || s === "microgram" || s === "micrograms") return "mcg";
-      if (s === "iu" || s === "international units") return "IU";
-      if (s === "ml" || s === "milliliter" || s === "milliliters") return "mL";
-      if (s === "scoop" || s === "scoops") return "scoops";
-      if (s === "spray" || s === "sprays") return "sprays";
-      return String(u).trim();
-    }
-
-    function parseIntervalHours(item) {
-      if (item.intervalHours && !isNaN(parseFloat(item.intervalHours))) {
-        return parseFloat(item.intervalHours);
-      }
-      const desc = String(item.frequencyDescription || "").toLowerCase();
-      if (desc.includes("4 hour") || desc.includes("every 4")) return 4;
-      if (desc.includes("6 hour") || desc.includes("every 6")) return 6;
-      if (desc.includes("8 hour") || desc.includes("every 8")) return 8;
-      if (desc.includes("12 hour") || desc.includes("every 12")) return 12;
-      if (desc.includes("48 hour") || desc.includes("every 48") || desc.includes("every 2 day")) return 48;
-      return 24;
-    }
 
     if (body.items) {
       db.protocols[clientId] = body.items.map(item => ({
