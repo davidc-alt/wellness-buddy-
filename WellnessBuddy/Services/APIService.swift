@@ -12,14 +12,14 @@ public class APIService: ObservableObject {
     public static let shared = APIService()
     
     // Primary Server URL
-    @Published public var baseURLString: String = "http://localhost:3000"
+    @Published public var baseURLString: String = "https://wellness-buddy-vduz.onrender.com"
     
-    // Candidate URLs to try (Local Dev Server & Live Production Server)
+    // Candidate URLs to try (Live Production Server & Local Dev Server)
     public var candidateURLs: [String] = [
+        "https://wellness-buddy-vduz.onrender.com",
         "http://localhost:3000",
         "http://127.0.0.1:3000",
-        "http://Davids-MacBook-Air-2.local:3000",
-        "https://wellness-buddy-vduz.onrender.com"
+        "http://Davids-MacBook-Air-2.local:3000"
     ]
     
     public init() {}
