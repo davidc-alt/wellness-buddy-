@@ -305,6 +305,13 @@
           <span style="font-size: 12px; font-weight: 700; color: var(--sage-muted);" id="rosterCount">0 Patients</span>
         </div>
 
+        <!-- PATIENT SELECT DROPDOWN FOR DOSE HISTORY -->
+        <div style="margin-bottom: 12px;">
+          <select id="rosterPatientDropdown" class="form-input" style="width: 100%; padding: 10px 12px; font-weight: 700; border-radius: 12px; font-size: 12.5px; background: var(--soft-bg);" onchange="if(this.value){ selectClientForPractitioner(this.value); openPatientStatsModal(this.value); }">
+            <option value="">📊 Dropdown: Select Patient Medication History... ▾</option>
+          </select>
+        </div>
+
         <div id="practitionerClientList"></div>
       </div>
     </div>
@@ -334,7 +341,7 @@
             </div>
             <div style="display: flex; align-items: center; gap: 10px;">
               <span class="schedule-badge" id="selectedClientStatus" style="background: rgba(92, 139, 125, 0.15); color: var(--sage-muted);">Protocol Active</span>
-              <button class="btn-pill btn-secondary" style="padding: 6px 14px; font-size: 12px;" onclick="openPatientStatsModal(selectedClientId)" title="View patient dose history and compliance stats">📊 Patient Stats</button>
+              <button class="btn-pill btn-ocean" style="padding: 6px 14px; font-size: 12px; font-weight: 700;" onclick="openPatientStatsModal(selectedClientId)" title="View patient medication history and days taken">📊 Medication History & Days Taken ▾</button>
               <button class="btn-pill btn-danger" style="padding: 6px 14px; font-size: 12px;" onclick="deleteSelectedPatient()" title="Delete patient profile and protocol">🗑️ Delete Patient</button>
             </div>
           </div>
@@ -641,10 +648,13 @@
         </div>
       </div>
 
-      <!-- 7-DAY ADHERENCE TRACKER -->
+      <!-- 14-DAY ADHERENCE TRACKER (DAYS TAKEN vs MISSED) -->
       <div style="background: var(--white); border: 1px solid rgba(0,0,0,0.06); padding: 16px; border-radius: 18px; margin-bottom: 18px;">
-        <div style="font-size: 11px; font-weight: 800; color: var(--silver-muted); letter-spacing: 0.8px; margin-bottom: 12px;">LAST 7 DAYS ADHERENCE TRACKER</div>
-        <div id="stats7DaysGrid" style="display: flex; justify-content: space-between; gap: 6px;"></div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <div style="font-size: 11px; font-weight: 800; color: var(--silver-muted); letter-spacing: 0.8px;">14-DAY CALENDAR LOG (DAYS MEDICATION TAKEN vs MISSED)</div>
+          <div style="font-size: 10px; font-weight: 800; color: var(--sage-muted);">🟢 Taken • 🟠 Snoozed • 🔴 Missed • ⚪ No Log</div>
+        </div>
+        <div id="stats7DaysGrid" style="display: flex; justify-content: space-between; gap: 4px; overflow-x: auto; padding-bottom: 4px;"></div>
       </div>
 
       <!-- TIMING SCHEDULE BREAKDOWN (Hiding 0 Doses) -->
@@ -655,12 +665,21 @@
 
       <!-- DOSE LOG HISTORY TIMELINE ("WHEN PATIENT TOOK THEIR PILLS") -->
       <div>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <div style="font-size: 11px; font-weight: 800; color: var(--silver-muted); letter-spacing: 0.8px;">WHEN PATIENT TOOK THEIR PILLS</div>
-          <div style="display: flex; gap: 4px;">
-            <button class="nav-pill active" style="font-size: 11px; padding: 4px 10px;" id="statsFilterAllBtn" onclick="filterStatsLogs('all')">All Logs</button>
-            <button class="nav-pill" style="font-size: 11px; padding: 4px 10px;" id="statsFilterDoneBtn" onclick="filterStatsLogs('Done')">✓ Taken</button>
-            <button class="nav-pill" style="font-size: 11px; padding: 4px 10px;" id="statsFilterWaitBtn" onclick="filterStatsLogs('Wait')">⏳ Snoozed/Missed</button>
+        <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-size: 11px; font-weight: 800; color: var(--silver-muted); letter-spacing: 0.8px;">MEDICATION LOG TIMELINE (EXACT DAYS & TIMES TAKEN)</div>
+            <div style="display: flex; gap: 4px;">
+              <button class="nav-pill active" style="font-size: 11px; padding: 4px 10px;" id="statsFilterAllBtn" onclick="filterStatsLogs('all')">All Logs</button>
+              <button class="nav-pill" style="font-size: 11px; padding: 4px 10px;" id="statsFilterDoneBtn" onclick="filterStatsLogs('Done')">✓ Taken</button>
+              <button class="nav-pill" style="font-size: 11px; padding: 4px 10px;" id="statsFilterWaitBtn" onclick="filterStatsLogs('Wait')">⏳ Snoozed/Missed</button>
+            </div>
+          </div>
+
+          <!-- MEDICATION SPECIFIC DROPDOWN FILTER -->
+          <div>
+            <select id="statsMedFilterSelect" class="form-input" style="width: 100%; padding: 8px 12px; font-size: 12px; font-weight: 700; border-radius: 10px; background: var(--soft-bg);" onchange="filterStatsByMedName(this.value)">
+              <option value="all">💊 Filter by Medication: All Prescribed Items ▾</option>
+            </select>
           </div>
         </div>
 
@@ -735,6 +754,13 @@
 
     function renderPractitionerClientList() {
       const el = document.getElementById('practitionerClientList');
+      const dropdownEl = document.getElementById('rosterPatientDropdown');
+
+      if (dropdownEl) {
+        dropdownEl.innerHTML = `<option value="">📊 Dropdown: Select Patient Medication History... ▾</option>` +
+          clientsData.map(c => `<option value="${c.id}" ${c.id === selectedClientId ? 'selected' : ''}>${c.name} (DOB: ${c.dob || 'N/A'}) — ${c.adherenceRate || 100}% Adherence</option>`).join('');
+      }
+
       if (clientsData.length === 0) {
         el.innerHTML = `<div style="padding: 24px; text-align: center; color: var(--silver-muted); background: var(--soft-bg); border-radius: var(--radius-sm);">No patients registered yet.</div>`;
         return;
@@ -742,12 +768,12 @@
 
       el.innerHTML = clientsData.map(c => `
         <div class="client-item ${c.id === selectedClientId ? 'active' : ''}" onclick="selectClientForPractitioner('${c.id}')">
-          <div>
+          <div style="flex: 1;">
             <div class="client-name">${c.name} ${!c.hasProtocolAssigned ? '<span class="tag-new">NEW</span>' : ''}</div>
             <div class="client-meta">DOB: ${c.dob || 'N/A'} • ${c.email}</div>
           </div>
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <div style="font-weight: 800; font-size: 13px;">${c.itemCount} Supps</div>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <button class="btn-pill btn-secondary" style="padding: 4px 8px; font-size: 11px; font-weight: 700;" onclick="event.stopPropagation(); openPatientStatsModal('${c.id}')" title="View Medication History & Compliance Log">📊 History</button>
             <button style="border: none; background: transparent; font-size: 14px; cursor: pointer; opacity: 0.7;" onclick="event.stopPropagation(); deletePatient('${c.id}', '${c.name.replace(/'/g, "\\'")}')" title="Delete Patient">🗑️</button>
           </div>
         </div>
@@ -1259,6 +1285,7 @@
     let currentStatsClientId = null;
     let currentStatsLogs = [];
     let currentStatsFilter = 'all';
+    let currentStatsMedFilter = 'all';
 
     async function openPatientStatsModal(clientId) {
       const targetId = clientId || (currentClientUser ? currentClientUser.id : selectedClientId);
@@ -1269,6 +1296,7 @@
 
       currentStatsClientId = targetId;
       currentStatsFilter = 'all';
+      currentStatsMedFilter = 'all';
 
       // Find client profile info
       let clientObj = clientsData.find(c => c.id === targetId);
@@ -1279,11 +1307,23 @@
       const clientName = clientObj ? clientObj.name : "Patient";
       const clientDob = (clientObj && clientObj.dob) ? clientObj.dob : "Not specified";
 
-      document.getElementById('statsModalTitle').innerText = `${clientName} — Adherence Analytics`;
-      document.getElementById('statsModalSub').innerText = `DOB: ${clientDob} • Dose Log History & Compliance`;
+      document.getElementById('statsModalTitle').innerText = `${clientName} — Medication & Adherence History`;
+      document.getElementById('statsModalSub').innerText = `DOB: ${clientDob} • Exact Days & Times Prescriptions Taken`;
 
       document.getElementById('statsModal').classList.remove('hidden');
       document.getElementById('statsLogsTimeline').innerHTML = `<div style="text-align: center; color: var(--silver-muted); padding: 24px; font-size: 13px;">Loading dose log history...</div>`;
+
+      // Populate medication filter dropdown
+      try {
+        const protoRes = await fetch(`/api/protocol/${targetId}`);
+        const protoData = await protoRes.json();
+        const items = (protoData.protocol && protoData.protocol.items) ? protoData.protocol.items : [];
+        const medSelectEl = document.getElementById('statsMedFilterSelect');
+        if (medSelectEl) {
+          medSelectEl.innerHTML = `<option value="all">💊 Filter by Medication: All Prescribed Items ▾</option>` +
+            items.map(i => `<option value="${i.name}">${i.name} (${i.dosageValue} ${i.dosageUnit})</option>`).join('');
+        }
+      } catch (e) {}
 
       try {
         const res = await fetch(`/api/dose-log/${targetId}`);
@@ -1294,6 +1334,11 @@
         console.error("Error fetching dose logs:", err);
         document.getElementById('statsLogsTimeline').innerHTML = `<div style="text-align:center; color:red; padding:16px;">Failed to load dose logs.</div>`;
       }
+    }
+
+    function filterStatsByMedName(medName) {
+      currentStatsMedFilter = medName;
+      renderStatsTimeline();
     }
 
     function closeStatsModal() {
@@ -1397,23 +1442,27 @@
       const days = [];
       const now = new Date();
       
-      for (let i = 6; i >= 0; i--) {
+      for (let i = 13; i >= 0; i--) {
         const d = new Date(now);
         d.setDate(d.getDate() - i);
-        const dayName = d.toLocaleDateString('en-US', { weekday: 'narrow' });
+        const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
+        const dayNum = d.getDate();
         const dateStr = d.toDateString();
         
         const isDone = currentStatsLogs.some(l => l.status === 'Done' && new Date(l.timestamp).toDateString() === dateStr);
-        const isSnoozed = !isDone && currentStatsLogs.some(l => (l.status === 'Wait' || l.status === 'Snoozed' || l.status === 'Missed') && new Date(l.timestamp).toDateString() === dateStr);
-        
+        const isSnoozed = !isDone && currentStatsLogs.some(l => (l.status === 'Wait' || l.status === 'Snoozed') && new Date(l.timestamp).toDateString() === dateStr);
+        const isMissed = !isDone && !isSnoozed && currentStatsLogs.some(l => l.status === 'Missed' && new Date(l.timestamp).toDateString() === dateStr);
+
         days.push(`
-          <div style="text-align: center; flex: 1;">
-            <div style="font-size: 11px; font-weight: 800; color: var(--silver-muted); margin-bottom: 6px;">${dayName}</div>
-            <div style="width: 34px; height: 34px; margin: 0 auto; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; ${
-              isDone ? 'background: rgba(92, 139, 125, 0.2); color: var(--sage-muted); border: 1.5px solid var(--sage-muted);' : 
-              (isSnoozed ? 'background: rgba(217, 119, 6, 0.15); color: #B45309; border: 1.5px solid #D97706;' : 'background: var(--soft-bg); color: var(--silver-muted);')
-            }">
-              ${isDone ? '✓' : (isSnoozed ? '⌛' : '-')}
+          <div style="text-align: center; min-width: 38px; flex: 1;">
+            <div style="font-size: 10px; font-weight: 800; color: var(--silver-muted); margin-bottom: 4px;">${dayName}</div>
+            <div style="font-size: 11px; font-weight: 800; color: var(--dark-charcoal); margin-bottom: 4px;">${dayNum}</div>
+            <div style="width: 32px; height: 32px; margin: 0 auto; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; ${
+              isDone ? 'background: rgba(92, 139, 125, 0.25); color: var(--sage-muted); border: 1.5px solid var(--sage-muted);' : 
+              (isSnoozed ? 'background: rgba(217, 119, 6, 0.2); color: #B45309; border: 1.5px solid #D97706;' : 
+              (isMissed ? 'background: rgba(220, 38, 38, 0.2); color: #DC2626; border: 1.5px solid #DC2626;' : 'background: var(--soft-bg); color: var(--silver-muted);'))
+            }" title="${dateStr}: ${isDone ? 'Medication Taken' : (isSnoozed ? 'Snoozed / Delayed' : (isMissed ? 'Missed' : 'No Log'))}">
+              ${isDone ? '✓' : (isSnoozed ? '⌛' : (isMissed ? '❌' : '-'))}
             </div>
           </div>
         `);
@@ -1434,9 +1483,13 @@
       let filtered = currentStatsLogs;
       
       if (currentStatsFilter === 'Done') {
-        filtered = currentStatsLogs.filter(l => l.status === 'Done');
+        filtered = filtered.filter(l => l.status === 'Done');
       } else if (currentStatsFilter === 'Wait') {
-        filtered = currentStatsLogs.filter(l => l.status === 'Wait' || l.status === 'Snoozed' || l.status === 'Missed');
+        filtered = filtered.filter(l => l.status === 'Wait' || l.status === 'Snoozed' || l.status === 'Missed');
+      }
+
+      if (currentStatsMedFilter && currentStatsMedFilter !== 'all') {
+        filtered = filtered.filter(l => (l.itemName || "").toLowerCase().includes(currentStatsMedFilter.toLowerCase()));
       }
 
       if (filtered.length === 0) {
@@ -1446,24 +1499,24 @@
 
       timelineEl.innerHTML = filtered.map(log => {
         const dateObj = new Date(log.timestamp);
-        const formattedDate = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        const formattedDate = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
         const formattedTime = dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
         
         let statusBadge = '';
         if (log.status === 'Done') {
-          statusBadge = `<span style="font-size: 11px; font-weight: 800; background: rgba(92, 139, 125, 0.15); color: var(--sage-muted); padding: 4px 10px; border-radius: 20px;">✓ Taken</span>`;
+          statusBadge = `<span style="font-size: 11px; font-weight: 800; background: rgba(92, 139, 125, 0.18); color: var(--sage-muted); padding: 5px 12px; border-radius: 20px;">✓ Taken</span>`;
         } else if (log.status === 'Wait' || log.status === 'Snoozed') {
-          statusBadge = `<span style="font-size: 11px; font-weight: 800; background: rgba(217, 119, 6, 0.15); color: #B45309; padding: 4px 10px; border-radius: 20px;">⏳ Snoozed</span>`;
+          statusBadge = `<span style="font-size: 11px; font-weight: 800; background: rgba(217, 119, 6, 0.18); color: #B45309; padding: 5px 12px; border-radius: 20px;">⏳ Snoozed</span>`;
         } else {
-          statusBadge = `<span style="font-size: 11px; font-weight: 800; background: rgba(220, 38, 38, 0.15); color: #DC2626; padding: 4px 10px; border-radius: 20px;">❌ Missed</span>`;
+          statusBadge = `<span style="font-size: 11px; font-weight: 800; background: rgba(220, 38, 38, 0.18); color: #DC2626; padding: 5px 12px; border-radius: 20px;">❌ Missed</span>`;
         }
 
         return `
-          <div style="background: var(--soft-bg); padding: 12px 16px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center;">
+          <div style="background: var(--soft-bg); padding: 14px 18px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center;">
             <div>
               <div style="font-size: 14px; font-weight: 800; color: var(--dark-charcoal);">${log.itemName || 'Supplement Dose'}</div>
-              <div style="font-size: 12px; color: var(--silver-muted); margin-top: 2px;">
-                ${log.timingSchedule ? log.timingSchedule + ' • ' : ''}${formattedDate} at ${formattedTime}
+              <div style="font-size: 12px; color: var(--silver-muted); margin-top: 3px;">
+                ${log.timingSchedule ? '<b>' + log.timingSchedule + '</b> • ' : ''}${formattedDate} at <b>${formattedTime}</b>
               </div>
             </div>
             <div>${statusBadge}</div>
