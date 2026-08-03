@@ -206,10 +206,10 @@ def generate_pbxproj():
 			isa = XCBuildConfiguration;
 			buildSettings = {{
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGNING_REQUIRED = YES;
 				CODE_SIGNING_ALLOWED = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -238,10 +238,10 @@ def generate_pbxproj():
 			isa = XCBuildConfiguration;
 			buildSettings = {{
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGNING_REQUIRED = YES;
 				CODE_SIGNING_ALLOWED = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;

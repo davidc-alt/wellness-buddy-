@@ -223,7 +223,7 @@ public struct StreakCelebrationView: View {
                     Text("\(streakDays)-DAY STREAK!")
                         .font(.system(size: 13, weight: .black, design: .rounded))
                         .foregroundColor(.paletteOcean)
-                        .letterSpacing(0.8)
+                        .tracking(0.8)
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
