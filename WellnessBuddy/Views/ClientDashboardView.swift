@@ -299,6 +299,20 @@ public struct ClientDashboardView: View {
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                         .animation(.spring(), value: viewModel.showToast)
                 }
+                
+                // Cute Flame Streak Celebration Modal Overlay
+                if viewModel.showStreakCelebration {
+                    StreakCelebrationView(
+                        streakDays: viewModel.celebrationStreakDays,
+                        onDismiss: {
+                            withAnimation {
+                                viewModel.showStreakCelebration = false
+                            }
+                        }
+                    )
+                    .transition(.opacity)
+                    .zIndex(100)
+                }
             }
             .background(Color.paletteSoftBg.ignoresSafeArea())
             .navigationBarHidden(true)

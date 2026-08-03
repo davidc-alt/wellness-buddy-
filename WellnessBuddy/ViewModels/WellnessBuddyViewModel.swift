@@ -28,6 +28,10 @@ public class WellnessBuddyViewModel: ObservableObject {
     @Published public var toastMessage: String?
     @Published public var showToast: Bool = false
     
+    // Flame Mascot Streak Celebration Modal
+    @Published public var showStreakCelebration: Bool = false
+    @Published public var celebrationStreakDays: Int = 1
+    
     // Selected Filter for Client Screen
     @Published public var selectedTimingFilter: TimingSchedule? = nil
     
@@ -326,6 +330,17 @@ public class WellnessBuddyViewModel: ObservableObject {
         
         // Re-evaluate active reminder state (banner disappears for this item!)
         evaluateAndScheduleReminders()
+        
+        let streak = max(1, activeStreakDays)
+        let remainingDue = currentProtocol.items.filter { isDoseDue(for: $0) }
+        if remainingDue.isEmpty || streak > 0 {
+            self.celebrationStreakDays = streak
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
+                    self.showStreakCelebration = true
+                }
+            }
+        }
         
         let countdownStr = formattedTimeUntilNextDose(for: item) ?? "in \(Int(item.intervalHoursCalculated))h"
         triggerToast("✓ \(item.name) logged! Next dose in \(countdownStr).")

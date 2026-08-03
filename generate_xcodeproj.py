@@ -23,6 +23,7 @@ def generate_pbxproj():
         ("Views/ComplianceStatsView.swift", "ComplianceStatsView.swift"),
         ("Views/PractitionerDashboardView.swift", "PractitionerDashboardView.swift"),
         ("Views/ClientDashboardView.swift", "ClientDashboardView.swift"),
+        ("Views/StreakCelebrationView.swift", "StreakCelebrationView.swift"),
         ("WellnessBuddyApp.swift", "WellnessBuddyApp.swift"),
     ]
     

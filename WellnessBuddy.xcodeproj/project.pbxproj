@@ -21,6 +21,7 @@
 		080F994CDF215B8FBAF09329 /* ComplianceStatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B34796150895AFFB275ECE9 /* ComplianceStatsView.swift */; };
 		C83FD7320F24572EB3EE0E68 /* PractitionerDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B84695E045541DAB917A71 /* PractitionerDashboardView.swift */; };
 		0B61D05DB42A58D0910D8B65 /* ClientDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5FDD2922F45477953AD353 /* ClientDashboardView.swift */; };
+		B382303DEB125440B633F33C /* StreakCelebrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA52A7E31C6756F4B8FB8CEF /* StreakCelebrationView.swift */; };
 		7E0E7A93633B5B0A852D1C44 /* WellnessBuddyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDD98F2C435159E48B8470B3 /* WellnessBuddyApp.swift */; };
 		D553D297479F512885148384 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 688C3849B28E5B1F81EF8A77 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
@@ -41,6 +42,7 @@
 		1B34796150895AFFB275ECE9 /* ComplianceStatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/ComplianceStatsView.swift"; sourceTree = "<group>"; };
 		78B84695E045541DAB917A71 /* PractitionerDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/PractitionerDashboardView.swift"; sourceTree = "<group>"; };
 		BE5FDD2922F45477953AD353 /* ClientDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/ClientDashboardView.swift"; sourceTree = "<group>"; };
+		BA52A7E31C6756F4B8FB8CEF /* StreakCelebrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/StreakCelebrationView.swift"; sourceTree = "<group>"; };
 		FDD98F2C435159E48B8470B3 /* WellnessBuddyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WellnessBuddyApp.swift"; sourceTree = "<group>"; };
 		2037AC0100395565B489F9B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info.plist"; sourceTree = "<group>"; };
 		688C3849B28E5B1F81EF8A77 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Assets.xcassets"; sourceTree = "<group>"; };
@@ -72,6 +74,7 @@
 		1B34796150895AFFB275ECE9 /* ComplianceStatsView.swift */,
 		78B84695E045541DAB917A71 /* PractitionerDashboardView.swift */,
 		BE5FDD2922F45477953AD353 /* ClientDashboardView.swift */,
+		BA52A7E31C6756F4B8FB8CEF /* StreakCelebrationView.swift */,
 		FDD98F2C435159E48B8470B3 /* WellnessBuddyApp.swift */,
 		2037AC0100395565B489F9B3 /* Info.plist */,
 		688C3849B28E5B1F81EF8A77 /* Assets.xcassets */,
@@ -161,6 +164,7 @@
 		080F994CDF215B8FBAF09329 /* ComplianceStatsView.swift in Sources */,
 		C83FD7320F24572EB3EE0E68 /* PractitionerDashboardView.swift in Sources */,
 		0B61D05DB42A58D0910D8B65 /* ClientDashboardView.swift in Sources */,
+		B382303DEB125440B633F33C /* StreakCelebrationView.swift in Sources */,
 		7E0E7A93633B5B0A852D1C44 /* WellnessBuddyApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
