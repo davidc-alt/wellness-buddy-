@@ -331,7 +331,7 @@ public class WellnessBuddyViewModel: ObservableObject {
         // Re-evaluate active reminder state (banner disappears for this item!)
         evaluateAndScheduleReminders()
         
-        let streak = max(1, activeStreakDays)
+        let streak = max(1, currentStreakDays)
         let remainingDue = currentProtocol.items.filter { isDoseDue(for: $0) }
         if remainingDue.isEmpty || streak > 0 {
             self.celebrationStreakDays = streak
