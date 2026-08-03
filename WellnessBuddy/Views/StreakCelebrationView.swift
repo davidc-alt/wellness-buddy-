@@ -207,14 +207,14 @@ public struct StreakCelebrationView: View {
     
     public var body: some View {
         ZStack {
-            // Blurred Semi-transparent Overlay Background
-            Color.black.opacity(0.65)
+            // Blurred Translucent Overlay Background
+            Color.black.opacity(0.25)
                 .ignoresSafeArea()
                 .onTapGesture {
                     dismissModal()
                 }
 
-            // Central Celebration Card
+            // Central Translucent Celebration Card
             VStack(spacing: 20) {
                 // Top Flame Badge
                 HStack(spacing: 6) {
@@ -248,36 +248,17 @@ public struct StreakCelebrationView: View {
                         .lineSpacing(3)
                         .padding(.horizontal, 12)
                 }
-
-                // Primary Action Button
-                Button(action: {
-                    dismissModal()
-                }) {
-                    HStack(spacing: 8) {
-                        Text("Keep The Flame Alive")
-                            .font(.system(size: 16, weight: .bold, design: .rounded))
-                        Image(systemName: "flame.fill")
-                            .font(.system(size: 16, weight: .bold))
-                    }
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
-                    .background(
-                        LinearGradient(
-                            colors: [Color.paletteOcean, Color.paletteSage],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .clipShape(Capsule())
-                    .shadow(color: Color.paletteOcean.opacity(0.35), radius: 10, x: 0, y: 6)
-                }
-                .padding(.top, 6)
             }
             .padding(28)
-            .background(Color.white)
-            .clipShape(RoundedRectangle(cornerRadius: 32, style: .continuous))
-            .shadow(color: Color.black.opacity(0.25), radius: 24, x: 0, y: 12)
+            .background(
+                RoundedRectangle(cornerRadius: 32, style: .continuous)
+                    .fill(Color.white.opacity(0.88))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 32, style: .continuous)
+                    .stroke(Color.white.opacity(0.6), lineWidth: 1.5)
+            )
+            .shadow(color: Color.black.opacity(0.12), radius: 20, x: 0, y: 10)
             .padding(.horizontal, 28)
             .scaleEffect(cardScale)
             .opacity(cardOpacity)
@@ -292,15 +273,20 @@ public struct StreakCelebrationView: View {
                 cardScale = 1.0
                 cardOpacity = 1.0
             }
+            
+            // Auto-dismiss automatically after 2.5 seconds (No user action required!)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                dismissModal()
+            }
         }
     }
     
     private func dismissModal() {
-        withAnimation(.easeOut(duration: 0.25)) {
-            cardScale = 0.8
+        withAnimation(.easeOut(duration: 0.3)) {
+            cardScale = 0.85
             cardOpacity = 0
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             onDismiss()
         }
     }

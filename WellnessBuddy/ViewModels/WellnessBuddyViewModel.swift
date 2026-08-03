@@ -331,13 +331,22 @@ public class WellnessBuddyViewModel: ObservableObject {
         // Re-evaluate active reminder state (banner disappears for this item!)
         evaluateAndScheduleReminders()
         
-        let streak = max(1, currentStreakDays)
-        let remainingDue = currentProtocol.items.filter { isDoseDue(for: $0) }
-        if remainingDue.isEmpty || streak > 0 {
-            self.celebrationStreakDays = streak
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
-                withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
-                    self.showStreakCelebration = true
+        let items = currentProtocol.items
+        let remainingDue = items.filter { isDoseDue(for: $0) }
+        
+        // Trigger streak celebration ONLY when ALL pills are completed for the FIRST time today!
+        if !items.isEmpty && remainingDue.isEmpty {
+            let todayKey = "lastStreakCelebrationDate_\(activeClientId)"
+            let todayStr = DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .none)
+            let lastDateStr = UserDefaults.standard.string(forKey: todayKey)
+            
+            if lastDateStr != todayStr {
+                UserDefaults.standard.set(todayStr, forKey: todayKey)
+                self.celebrationStreakDays = max(1, currentStreakDays)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                    withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
+                        self.showStreakCelebration = true
+                    }
                 }
             }
         }
