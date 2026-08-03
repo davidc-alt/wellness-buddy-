@@ -7,41 +7,43 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		279AD7368E835901A446A40C /* ProtocolModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6EBDEA79C25A2B870D8E22 /* ProtocolModels.swift */; };
-		158B68E8DE2A5291847E6AB9 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68F2689FC985A4A8DC5007A /* NotificationService.swift */; };
-		318CA14202DD5C089438F828 /* FullscriptService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD6CC1D84305089B7316992 /* FullscriptService.swift */; };
-		8EB72D8C6FA55A069CB00A21 /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2E0A8BE1F15D8D94393D9A /* APIService.swift */; };
-		4664D574505C52F0B4698603 /* WellnessBuddyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43B0C2E7567597CAB1BB4E7 /* WellnessBuddyViewModel.swift */; };
-		2525CE75B9FD55FA80AFC56C /* CalmDesignComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6843EB5DAFE9500B8A8351D2 /* CalmDesignComponents.swift */; };
-		3AB8B826A6DD5F519DE79EA9 /* ClientLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5207CA0782D5B6497ACF3B3 /* ClientLoginView.swift */; };
-		0073BFE5A7C5539E9B649665 /* PersistentReminderBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E031A2F47353E5B7DBFB73 /* PersistentReminderBannerView.swift */; };
-		D0731039C9CF51108B5A74EB /* SupplementTrackerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C08136B1A6ED502083C60F22 /* SupplementTrackerView.swift */; };
-		54C1E04B49785681BF4872EC /* MessagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04996F86F5A158F29BF67986 /* MessagesView.swift */; };
-		1323C7A449C552B4957DBD37 /* FullscriptPortalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3D8C52D3AB5CDA87521D11 /* FullscriptPortalView.swift */; };
-		080F994CDF215B8FBAF09329 /* ComplianceStatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B34796150895AFFB275ECE9 /* ComplianceStatsView.swift */; };
-		C83FD7320F24572EB3EE0E68 /* PractitionerDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B84695E045541DAB917A71 /* PractitionerDashboardView.swift */; };
-		0B61D05DB42A58D0910D8B65 /* ClientDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5FDD2922F45477953AD353 /* ClientDashboardView.swift */; };
+		0073BFE5A7C5539E9B649665 /* Views/PersistentReminderBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E031A2F47353E5B7DBFB73 /* Views/PersistentReminderBannerView.swift */; };
+		080F994CDF215B8FBAF09329 /* Views/ComplianceStatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B34796150895AFFB275ECE9 /* Views/ComplianceStatsView.swift */; };
+		0B61D05DB42A58D0910D8B65 /* Views/ClientDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5FDD2922F45477953AD353 /* Views/ClientDashboardView.swift */; };
+		1323C7A449C552B4957DBD37 /* Views/FullscriptPortalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3D8C52D3AB5CDA87521D11 /* Views/FullscriptPortalView.swift */; };
+		158B68E8DE2A5291847E6AB9 /* Services/NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68F2689FC985A4A8DC5007A /* Services/NotificationService.swift */; };
+		2525CE75B9FD55FA80AFC56C /* Components/CalmDesignComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6843EB5DAFE9500B8A8351D2 /* Components/CalmDesignComponents.swift */; };
+		279AD7368E835901A446A40C /* Models/ProtocolModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6EBDEA79C25A2B870D8E22 /* Models/ProtocolModels.swift */; };
+		318CA14202DD5C089438F828 /* Services/FullscriptService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD6CC1D84305089B7316992 /* Services/FullscriptService.swift */; };
+		3AB8B826A6DD5F519DE79EA9 /* Views/ClientLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5207CA0782D5B6497ACF3B3 /* Views/ClientLoginView.swift */; };
+		4664D574505C52F0B4698603 /* ViewModels/WellnessBuddyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43B0C2E7567597CAB1BB4E7 /* ViewModels/WellnessBuddyViewModel.swift */; };
+		54C1E04B49785681BF4872EC /* Views/MessagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04996F86F5A158F29BF67986 /* Views/MessagesView.swift */; };
 		7E0E7A93633B5B0A852D1C44 /* WellnessBuddyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDD98F2C435159E48B8470B3 /* WellnessBuddyApp.swift */; };
+		8EB72D8C6FA55A069CB00A21 /* Services/APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2E0A8BE1F15D8D94393D9A /* Services/APIService.swift */; };
+		C83FD7320F24572EB3EE0E68 /* Views/PractitionerDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B84695E045541DAB917A71 /* Views/PractitionerDashboardView.swift */; };
+		D0731039C9CF51108B5A74EB /* Views/SupplementTrackerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C08136B1A6ED502083C60F22 /* Views/SupplementTrackerView.swift */; };
+		D553D297479F512885148384 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 688C3849B28E5B1F81EF8A77 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		04996F86F5A158F29BF67986 /* Views/MessagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/MessagesView.swift; sourceTree = "<group>"; };
+		09E031A2F47353E5B7DBFB73 /* Views/PersistentReminderBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/PersistentReminderBannerView.swift; sourceTree = "<group>"; };
+		1B34796150895AFFB275ECE9 /* Views/ComplianceStatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/ComplianceStatsView.swift; sourceTree = "<group>"; };
+		2037AC0100395565B489F9B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2C6EBDEA79C25A2B870D8E22 /* Models/ProtocolModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models/ProtocolModels.swift; sourceTree = "<group>"; };
+		3F2E0A8BE1F15D8D94393D9A /* Services/APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services/APIService.swift; sourceTree = "<group>"; };
+		6843EB5DAFE9500B8A8351D2 /* Components/CalmDesignComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components/CalmDesignComponents.swift; sourceTree = "<group>"; };
+		688C3849B28E5B1F81EF8A77 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		78B84695E045541DAB917A71 /* Views/PractitionerDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/PractitionerDashboardView.swift; sourceTree = "<group>"; };
+		A43B0C2E7567597CAB1BB4E7 /* ViewModels/WellnessBuddyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModels/WellnessBuddyViewModel.swift; sourceTree = "<group>"; };
+		A5207CA0782D5B6497ACF3B3 /* Views/ClientLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/ClientLoginView.swift; sourceTree = "<group>"; };
+		AA3D8C52D3AB5CDA87521D11 /* Views/FullscriptPortalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/FullscriptPortalView.swift; sourceTree = "<group>"; };
+		BE5FDD2922F45477953AD353 /* Views/ClientDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/ClientDashboardView.swift; sourceTree = "<group>"; };
+		C08136B1A6ED502083C60F22 /* Views/SupplementTrackerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/SupplementTrackerView.swift; sourceTree = "<group>"; };
+		D68F2689FC985A4A8DC5007A /* Services/NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services/NotificationService.swift; sourceTree = "<group>"; };
 		D933080F45E35AA09CCD02C6 /* WellnessBuddy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WellnessBuddy.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		2C6EBDEA79C25A2B870D8E22 /* ProtocolModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Models/ProtocolModels.swift"; sourceTree = "<group>"; };
-		D68F2689FC985A4A8DC5007A /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Services/NotificationService.swift"; sourceTree = "<group>"; };
-		DAD6CC1D84305089B7316992 /* FullscriptService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Services/FullscriptService.swift"; sourceTree = "<group>"; };
-		3F2E0A8BE1F15D8D94393D9A /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Services/APIService.swift"; sourceTree = "<group>"; };
-		A43B0C2E7567597CAB1BB4E7 /* WellnessBuddyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewModels/WellnessBuddyViewModel.swift"; sourceTree = "<group>"; };
-		6843EB5DAFE9500B8A8351D2 /* CalmDesignComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Components/CalmDesignComponents.swift"; sourceTree = "<group>"; };
-		A5207CA0782D5B6497ACF3B3 /* ClientLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/ClientLoginView.swift"; sourceTree = "<group>"; };
-		09E031A2F47353E5B7DBFB73 /* PersistentReminderBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/PersistentReminderBannerView.swift"; sourceTree = "<group>"; };
-		C08136B1A6ED502083C60F22 /* SupplementTrackerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/SupplementTrackerView.swift"; sourceTree = "<group>"; };
-		04996F86F5A158F29BF67986 /* MessagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/MessagesView.swift"; sourceTree = "<group>"; };
-		AA3D8C52D3AB5CDA87521D11 /* FullscriptPortalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/FullscriptPortalView.swift"; sourceTree = "<group>"; };
-		1B34796150895AFFB275ECE9 /* ComplianceStatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/ComplianceStatsView.swift"; sourceTree = "<group>"; };
-		78B84695E045541DAB917A71 /* PractitionerDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/PractitionerDashboardView.swift"; sourceTree = "<group>"; };
-		BE5FDD2922F45477953AD353 /* ClientDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/ClientDashboardView.swift"; sourceTree = "<group>"; };
-		FDD98F2C435159E48B8470B3 /* WellnessBuddyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WellnessBuddyApp.swift"; sourceTree = "<group>"; };
-		2037AC0100395565B489F9B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info.plist"; sourceTree = "<group>"; };
+		DAD6CC1D84305089B7316992 /* Services/FullscriptService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services/FullscriptService.swift; sourceTree = "<group>"; };
+		FDD98F2C435159E48B8470B3 /* WellnessBuddyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WellnessBuddyApp.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -53,25 +55,26 @@
 			);
 			sourceTree = "<group>";
 		};
-		BC553976FF6B557E94D23FA0 = {
+		BC553976FF6B557E94D23FA0 /* WellnessBuddy */ = {
 			isa = PBXGroup;
 			children = (
-		2C6EBDEA79C25A2B870D8E22 /* ProtocolModels.swift */,
-		D68F2689FC985A4A8DC5007A /* NotificationService.swift */,
-		DAD6CC1D84305089B7316992 /* FullscriptService.swift */,
-		3F2E0A8BE1F15D8D94393D9A /* APIService.swift */,
-		A43B0C2E7567597CAB1BB4E7 /* WellnessBuddyViewModel.swift */,
-		6843EB5DAFE9500B8A8351D2 /* CalmDesignComponents.swift */,
-		A5207CA0782D5B6497ACF3B3 /* ClientLoginView.swift */,
-		09E031A2F47353E5B7DBFB73 /* PersistentReminderBannerView.swift */,
-		C08136B1A6ED502083C60F22 /* SupplementTrackerView.swift */,
-		04996F86F5A158F29BF67986 /* MessagesView.swift */,
-		AA3D8C52D3AB5CDA87521D11 /* FullscriptPortalView.swift */,
-		1B34796150895AFFB275ECE9 /* ComplianceStatsView.swift */,
-		78B84695E045541DAB917A71 /* PractitionerDashboardView.swift */,
-		BE5FDD2922F45477953AD353 /* ClientDashboardView.swift */,
-		FDD98F2C435159E48B8470B3 /* WellnessBuddyApp.swift */,
-		2037AC0100395565B489F9B3 /* Info.plist */,
+				2C6EBDEA79C25A2B870D8E22 /* Models/ProtocolModels.swift */,
+				D68F2689FC985A4A8DC5007A /* Services/NotificationService.swift */,
+				DAD6CC1D84305089B7316992 /* Services/FullscriptService.swift */,
+				3F2E0A8BE1F15D8D94393D9A /* Services/APIService.swift */,
+				A43B0C2E7567597CAB1BB4E7 /* ViewModels/WellnessBuddyViewModel.swift */,
+				6843EB5DAFE9500B8A8351D2 /* Components/CalmDesignComponents.swift */,
+				A5207CA0782D5B6497ACF3B3 /* Views/ClientLoginView.swift */,
+				09E031A2F47353E5B7DBFB73 /* Views/PersistentReminderBannerView.swift */,
+				C08136B1A6ED502083C60F22 /* Views/SupplementTrackerView.swift */,
+				04996F86F5A158F29BF67986 /* Views/MessagesView.swift */,
+				AA3D8C52D3AB5CDA87521D11 /* Views/FullscriptPortalView.swift */,
+				1B34796150895AFFB275ECE9 /* Views/ComplianceStatsView.swift */,
+				78B84695E045541DAB917A71 /* Views/PractitionerDashboardView.swift */,
+				BE5FDD2922F45477953AD353 /* Views/ClientDashboardView.swift */,
+				FDD98F2C435159E48B8470B3 /* WellnessBuddyApp.swift */,
+				2037AC0100395565B489F9B3 /* Info.plist */,
+				688C3849B28E5B1F81EF8A77 /* Assets.xcassets */,
 			);
 			path = WellnessBuddy;
 			sourceTree = "<group>";
@@ -84,6 +87,7 @@
 			buildConfigurationList = 4FED3DD298F651F5A8A9B4DB /* Build configuration list for PBXNativeTarget "WellnessBuddy" */;
 			buildPhases = (
 				FB6011075A8A5DD6ABAB501F /* Sources */,
+				4B1360172E1B5485BE4D0B7D /* Resources */,
 			);
 			buildRules = (
 			);
@@ -127,73 +131,60 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		4B1360172E1B5485BE4D0B7D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D553D297479F512885148384 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		FB6011075A8A5DD6ABAB501F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-		279AD7368E835901A446A40C /* ProtocolModels.swift in Sources */,
-		158B68E8DE2A5291847E6AB9 /* NotificationService.swift in Sources */,
-		318CA14202DD5C089438F828 /* FullscriptService.swift in Sources */,
-		8EB72D8C6FA55A069CB00A21 /* APIService.swift in Sources */,
-		4664D574505C52F0B4698603 /* WellnessBuddyViewModel.swift in Sources */,
-		2525CE75B9FD55FA80AFC56C /* CalmDesignComponents.swift in Sources */,
-		3AB8B826A6DD5F519DE79EA9 /* ClientLoginView.swift in Sources */,
-		0073BFE5A7C5539E9B649665 /* PersistentReminderBannerView.swift in Sources */,
-		D0731039C9CF51108B5A74EB /* SupplementTrackerView.swift in Sources */,
-		54C1E04B49785681BF4872EC /* MessagesView.swift in Sources */,
-		1323C7A449C552B4957DBD37 /* FullscriptPortalView.swift in Sources */,
-		080F994CDF215B8FBAF09329 /* ComplianceStatsView.swift in Sources */,
-		C83FD7320F24572EB3EE0E68 /* PractitionerDashboardView.swift in Sources */,
-		0B61D05DB42A58D0910D8B65 /* ClientDashboardView.swift in Sources */,
-		7E0E7A93633B5B0A852D1C44 /* WellnessBuddyApp.swift in Sources */,
+				279AD7368E835901A446A40C /* Models/ProtocolModels.swift in Sources */,
+				158B68E8DE2A5291847E6AB9 /* Services/NotificationService.swift in Sources */,
+				318CA14202DD5C089438F828 /* Services/FullscriptService.swift in Sources */,
+				8EB72D8C6FA55A069CB00A21 /* Services/APIService.swift in Sources */,
+				4664D574505C52F0B4698603 /* ViewModels/WellnessBuddyViewModel.swift in Sources */,
+				2525CE75B9FD55FA80AFC56C /* Components/CalmDesignComponents.swift in Sources */,
+				3AB8B826A6DD5F519DE79EA9 /* Views/ClientLoginView.swift in Sources */,
+				0073BFE5A7C5539E9B649665 /* Views/PersistentReminderBannerView.swift in Sources */,
+				D0731039C9CF51108B5A74EB /* Views/SupplementTrackerView.swift in Sources */,
+				54C1E04B49785681BF4872EC /* Views/MessagesView.swift in Sources */,
+				1323C7A449C552B4957DBD37 /* Views/FullscriptPortalView.swift in Sources */,
+				080F994CDF215B8FBAF09329 /* Views/ComplianceStatsView.swift in Sources */,
+				C83FD7320F24572EB3EE0E68 /* Views/PractitionerDashboardView.swift in Sources */,
+				0B61D05DB42A58D0910D8B65 /* Views/ClientDashboardView.swift in Sources */,
+				7E0E7A93633B5B0A852D1C44 /* WellnessBuddyApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		B7DFC29BEE225D8F8494CD9F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				SDKROOT = iphoneos;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
-				SWIFT_VERSION = 5.0;
-			};
-			name = Debug;
-		};
-		590009A7EC4255EA9F5F7662 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				SDKROOT = iphoneos;
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
-				SWIFT_VERSION = 5.0;
-			};
-			name = Release;
-		};
 		4120FE0048B152CA91E68E65 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGNING_REQUIRED = NO;
 				CODE_SIGN_STYLE = Automatic;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development";
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9D65J6DN96;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = WellnessBuddy/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -212,17 +203,19 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGNING_REQUIRED = NO;
 				CODE_SIGN_STYLE = Automatic;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development";
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9D65J6DN96;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = WellnessBuddy/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -237,23 +230,49 @@
 			};
 			name = Release;
 		};
+		590009A7EC4255EA9F5F7662 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		B7DFC29BEE225D8F8494CD9F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		9184909CCEE95E1385DE9355 /* Build configuration list for PBXProject "WellnessBuddy" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B7DFC29BEE225D8F8494CD9F /* Debug */,
-				590009A7EC4255EA9F5F7662 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		4FED3DD298F651F5A8A9B4DB /* Build configuration list for PBXNativeTarget "WellnessBuddy" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4120FE0048B152CA91E68E65 /* Debug */,
 				506AC5918DC45F6DBDCD1411 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9184909CCEE95E1385DE9355 /* Build configuration list for PBXProject "WellnessBuddy" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B7DFC29BEE225D8F8494CD9F /* Debug */,
+				590009A7EC4255EA9F5F7662 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

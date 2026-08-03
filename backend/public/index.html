@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Wellness Buddy — Practitioner Studio & Patient Portal</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='wbGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%235C8B7D'/%3E%3Cstop offset='100%25' stop-color='%232F6B87'/%3E%3C/linearGradient%3E%3ClinearGradient id='wbHighlight' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23FFFFFF' stop-opacity='0.4'/%3E%3Cstop offset='100%25' stop-color='%23FFFFFF' stop-opacity='0.05'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='50' cy='50' r='48' fill='url(%23wbGrad)'/%3E%3Ccircle cx='50' cy='50' r='46.5' fill='none' stroke='url(%23wbHighlight)' stroke-width='3'/%3E%3Ctext x='50' y='62' font-family='-apple-system, system-ui, BlinkMacSystemFont, SF Pro Display, sans-serif' font-size='44' font-weight='800' fill='%23FFFFFF' text-anchor='middle' letter-spacing='-2'%3Ewb%3C/text%3E%3C/svg%3E">
   <style>
     :root {
       --sage-muted: #5C8B7D;
@@ -272,7 +273,10 @@
   <!-- APP HEADER -->
   <header class="app-header">
     <div class="brand" style="display: flex; align-items: center; gap: 10px;">
-      <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #5C8B7D 0%, #2F6B87 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 15px; font-family: system-ui, -apple-system, sans-serif; box-shadow: 0 4px 10px rgba(47, 107, 135, 0.25); letter-spacing: -0.5px;">wb</div>
+      <div style="position: relative; width: 38px; height: 38px; background: linear-gradient(135deg, #5C8B7D 0%, #2F6B87 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 16px; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif; box-shadow: 0 4px 12px rgba(47, 107, 135, 0.3); letter-spacing: -0.8px;">
+        <div style="position: absolute; inset: 1px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.35); pointer-events: none;"></div>
+        wb
+      </div>
       <div>Wellness <span>Buddy</span></div>
       <span class="brand-badge">PRACTITIONER STUDIO</span>
     </div>
@@ -310,7 +314,10 @@
       <div class="card" id="practitionerSelectedBox">
         <!-- EMPTY STATE IF NO PATIENT SELECTED OR 0 CLIENTS -->
         <div id="noPatientSelectedState" style="text-align: center; padding: 40px 20px;">
-          <div style="font-size: 40px; margin-bottom: 12px;">🌿</div>
+          <div style="display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; background: linear-gradient(135deg, #5C8B7D 0%, #2F6B87 100%); color: white; border-radius: 50%; font-size: 22px; font-weight: 800; margin-bottom: 14px; box-shadow: 0 6px 16px rgba(47, 107, 135, 0.25); letter-spacing: -1px; position: relative;">
+            <div style="position: absolute; inset: 1.5px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.35); pointer-events: none;"></div>
+            wb
+          </div>
           <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 6px;">No Patients Registered Yet</h3>
           <p style="font-size: 14px; color: var(--silver-muted); max-width: 380px; margin: 0 auto 20px;">
             When a patient logs in with their <b>Full Name</b> & <b>Date of Birth (DOB)</b> on the Patient App or Portal, they will pop up here live.
@@ -327,6 +334,7 @@
             </div>
             <div style="display: flex; align-items: center; gap: 10px;">
               <span class="schedule-badge" id="selectedClientStatus" style="background: rgba(92, 139, 125, 0.15); color: var(--sage-muted);">Protocol Active</span>
+              <button class="btn-pill btn-secondary" style="padding: 6px 14px; font-size: 12px;" onclick="openPatientStatsModal(selectedClientId)" title="View patient dose history and compliance stats">📊 Patient Stats</button>
               <button class="btn-pill btn-danger" style="padding: 6px 14px; font-size: 12px;" onclick="deleteSelectedPatient()" title="Delete patient profile and protocol">🗑️ Delete Patient</button>
             </div>
           </div>
@@ -379,7 +387,10 @@
   <div id="signupView" class="container hidden" style="max-width: 520px;">
     <div class="card">
       <div style="text-align: center; margin-bottom: 20px;">
-        <div style="display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; background: var(--dark-charcoal); color: var(--white); border-radius: 50%; font-size: 24px; margin-bottom: 12px;">🌿</div>
+        <div style="display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; background: linear-gradient(135deg, #5C8B7D 0%, #2F6B87 100%); color: var(--white); border-radius: 50%; font-size: 26px; font-weight: 800; margin-bottom: 14px; box-shadow: 0 8px 20px rgba(47, 107, 135, 0.3); letter-spacing: -1px; position: relative;">
+          <div style="position: absolute; inset: 2px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.35); pointer-events: none;"></div>
+          wb
+        </div>
         <h2 style="font-size: 24px; font-weight: 800; margin-bottom: 4px;">Patient Portal Login</h2>
         <div style="display: inline-block; padding: 4px 12px; background: rgba(217, 119, 6, 0.15); color: #B45309; font-size: 11px; font-weight: 800; border-radius: 20px; margin-bottom: 12px; letter-spacing: 0.5px;">⚠️ FOR TESTING PURPOSES ONLY</div>
         <p style="font-size: 14px; color: var(--silver-muted);">Enter your <b>Full Name</b> and <b>Date of Birth (DOB)</b> to log in and receive your prescribed wellness protocol.</p>
@@ -429,12 +440,13 @@
       <!-- SECTION 1: INSPIRATION GREETING HEADER & METRIC CARDS -->
       <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
         <div>
-          <div style="font-size: 30px; font-weight: 800; color: var(--dark-charcoal); line-height: 1.1;">Good morning,</div>
-          <div style="font-size: 30px; font-weight: 800; color: var(--ocean-blue); line-height: 1.1;" id="clientGreetingName">Patient</div>
+          <div style="font-size: 28px; font-weight: 800; color: var(--dark-charcoal); line-height: 1.1;" id="timeGreetingText">Good morning,</div>
+          <div style="font-size: 28px; font-weight: 800; color: var(--ocean-blue); line-height: 1.1;" id="clientGreetingName">Patient</div>
           <div style="font-size: 13px; font-weight: 700; color: var(--sage-muted); margin-top: 4px;" id="clientDobDisplay">DOB: 1988-05-14</div>
         </div>
 
         <div style="display: flex; align-items: center; gap: 8px;">
+          <button class="btn-pill btn-ocean" style="padding: 10px 16px;" onclick="openPatientStatsModal()">📊 Dose Stats & History</button>
           <button class="btn-pill btn-secondary" style="padding: 10px 16px;" onclick="switchTab('signup')">👤 Switch Patient</button>
         </div>
       </div>
@@ -584,6 +596,82 @@
       </div>
 
       <button class="btn-pill btn-ocean" id="modalSubmitBtn" style="width: 100%; padding: 12px;" onclick="submitAddSupplement()">🚀 Prescribe & Send to Patient App</button>
+    </div>
+  </div>
+
+  <!-- PATIENT STATS & DOSE HISTORY ANALYTICS MODAL -->
+  <div id="statsModal" class="modal-overlay hidden">
+    <div class="modal-card" style="max-width: 640px;">
+      <div class="card-header" style="margin-bottom: 16px; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="position: relative; width: 40px; height: 40px; background: linear-gradient(135deg, #5C8B7D 0%, #2F6B87 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 16px; letter-spacing: -0.8px; box-shadow: 0 4px 12px rgba(47, 107, 135, 0.3);">
+            <div style="position: absolute; inset: 1px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.35); pointer-events: none;"></div>
+            wb
+          </div>
+          <div>
+            <div class="card-title" id="statsModalTitle">Patient Adherence & Dose Stats</div>
+            <div style="font-size: 12px; color: var(--silver-muted);" id="statsModalSub">Live Compliance Analytics & History</div>
+          </div>
+        </div>
+        <button style="border: none; background: none; font-size: 22px; cursor: pointer; color: var(--silver-muted);" onclick="closeStatsModal()">✕</button>
+      </div>
+
+      <!-- KEY METRICS OVERVIEW CARDS -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px;">
+        <div style="background: var(--soft-bg); padding: 16px 18px; border-radius: 18px;">
+          <div style="font-size: 11px; font-weight: 800; color: var(--silver-muted); letter-spacing: 0.6px;">ADHERENCE RATE</div>
+          <div style="display: flex; align-items: baseline; gap: 8px; margin-top: 4px;">
+            <div style="font-size: 32px; font-weight: 800; color: var(--dark-charcoal);" id="statsAdherencePct">100%</div>
+            <span style="font-size: 12px; font-weight: 800; color: var(--sage-muted);" id="statsAdherenceLabel">Consistent</span>
+          </div>
+          <div style="background: rgba(0,0,0,0.08); height: 6px; border-radius: 10px; margin-top: 8px; overflow: hidden;">
+            <div id="statsAdherenceBar" style="background: var(--sage-muted); height: 100%; width: 100%; transition: width 0.3s ease;"></div>
+          </div>
+        </div>
+
+        <div style="background: var(--soft-bg); padding: 16px 18px; border-radius: 18px;">
+          <div style="font-size: 11px; font-weight: 800; color: var(--silver-muted); letter-spacing: 0.6px;">ACTIVE STREAK & LOGS</div>
+          <div style="display: flex; align-items: baseline; gap: 8px; margin-top: 4px;">
+            <div style="font-size: 32px; font-weight: 800; color: var(--ocean-blue);" id="statsStreakDays">0</div>
+            <span style="font-size: 12px; font-weight: 800; color: var(--ocean-blue);">Days Active 🔥</span>
+          </div>
+          <div style="font-size: 12px; font-weight: 700; color: var(--silver-muted); margin-top: 8px;" id="statsDosesBreakdown">
+            ✓ 0 Taken • ⚠️ 0 Missed / Snoozed
+          </div>
+        </div>
+      </div>
+
+      <!-- 7-DAY ADHERENCE TRACKER -->
+      <div style="background: var(--white); border: 1px solid rgba(0,0,0,0.06); padding: 16px; border-radius: 18px; margin-bottom: 18px;">
+        <div style="font-size: 11px; font-weight: 800; color: var(--silver-muted); letter-spacing: 0.8px; margin-bottom: 12px;">LAST 7 DAYS ADHERENCE TRACKER</div>
+        <div id="stats7DaysGrid" style="display: flex; justify-content: space-between; gap: 6px;"></div>
+      </div>
+
+      <!-- TIMING SCHEDULE BREAKDOWN (Hiding 0 Doses) -->
+      <div id="statsScheduleBreakdownCard" style="background: var(--white); border: 1px solid rgba(0,0,0,0.06); padding: 16px; border-radius: 18px; margin-bottom: 18px;">
+        <div style="font-size: 11px; font-weight: 800; color: var(--silver-muted); letter-spacing: 0.8px; margin-bottom: 12px;">TIMING SCHEDULE BREAKDOWN</div>
+        <div id="statsScheduleBreakdownList" style="display: flex; flex-direction: column; gap: 8px;"></div>
+      </div>
+
+      <!-- DOSE LOG HISTORY TIMELINE ("WHEN PATIENT TOOK THEIR PILLS") -->
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <div style="font-size: 11px; font-weight: 800; color: var(--silver-muted); letter-spacing: 0.8px;">WHEN PATIENT TOOK THEIR PILLS</div>
+          <div style="display: flex; gap: 4px;">
+            <button class="nav-pill active" style="font-size: 11px; padding: 4px 10px;" id="statsFilterAllBtn" onclick="filterStatsLogs('all')">All Logs</button>
+            <button class="nav-pill" style="font-size: 11px; padding: 4px 10px;" id="statsFilterDoneBtn" onclick="filterStatsLogs('Done')">✓ Taken</button>
+            <button class="nav-pill" style="font-size: 11px; padding: 4px 10px;" id="statsFilterWaitBtn" onclick="filterStatsLogs('Wait')">⏳ Snoozed/Missed</button>
+          </div>
+        </div>
+
+        <div id="statsLogsTimeline" style="max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px;">
+          <div style="text-align: center; color: var(--silver-muted); padding: 24px; font-size: 13px;">Loading dose log analytics...</div>
+        </div>
+      </div>
+
+      <div style="margin-top: 18px; text-align: right;">
+        <button class="btn-pill btn-secondary" onclick="closeStatsModal()">Close Analytics</button>
+      </div>
     </div>
   </div>
 
@@ -739,6 +827,26 @@
         `).join('');
 
       loadPractitionerChat(id);
+    }
+
+    async function loadPractitionerChat(clientId) {
+      const chatBox = document.getElementById('practitionerChatThread');
+      if (!chatBox) return;
+      try {
+        const res = await fetch(`/api/chat/messages/${clientId}`);
+        const data = await res.json();
+        const messages = data.messages || [];
+        chatBox.innerHTML = messages.length === 0
+          ? `<div style="text-align: center; color: var(--silver-muted); padding: 16px; font-size: 13px;">No consultation messages yet.</div>`
+          : messages.map(m => `
+            <div class="chat-bubble ${m.sender === 'practitioner' ? 'practitioner' : 'client'}">
+              <div style="font-size: 10px; opacity: 0.8; margin-bottom: 2px;">${m.senderName || m.sender}</div>
+              <div>${m.text}</div>
+            </div>
+          `).join('');
+      } catch (err) {
+        console.error("Chat load error:", err);
+      }
     }
 
     async function deleteSupplementItem(itemId) {
@@ -901,6 +1009,11 @@
     async function loadClientDashboard(clientId) {
       if (!currentClientUser) return;
 
+      const hour = new Date().getHours();
+      const timeGreeting = hour < 12 ? 'Good morning' : (hour < 17 ? 'Good afternoon' : 'Good evening');
+      const timeElem = document.getElementById('timeGreetingText');
+      if (timeElem) timeElem.innerText = timeGreeting + ",";
+      
       document.getElementById('clientGreetingName').innerText = currentClientUser.name;
       document.getElementById('clientDobDisplay').innerText = "DOB: " + (currentClientUser.dob || "Not specified");
       document.getElementById('clientPracName').innerText = "Practitioner Luba Vitti";
@@ -1027,6 +1140,9 @@
       });
       alert(`✓ ${itemName || 'Dose'} marked as completed! Adherence streak updated.`);
       loadClientDashboard(currentClientUser.id);
+      if (currentStatsClientId && !document.getElementById('statsModal').classList.contains('hidden')) {
+        openPatientStatsModal(currentStatsClientId);
+      }
     }
 
     async function snoozeDoseAction(itemId, itemName, schedule) {
@@ -1044,6 +1160,9 @@
       });
       alert(`⏳ ${itemName || 'Dose'} snoozed for 15 minutes.`);
       loadClientDashboard(currentClientUser.id);
+      if (currentStatsClientId && !document.getElementById('statsModal').classList.contains('hidden')) {
+        openPatientStatsModal(currentStatsClientId);
+      }
     }
 
     function completeActiveReminder() {
@@ -1135,6 +1254,223 @@
       const symptoms = document.getElementById('signupSymptoms').value.trim();
       await performPatientLogin(name, dob, goal, symptoms);
     });
+
+    // --- PATIENT DOSE STATS & ADHERENCE ANALYTICS MODAL ---
+    let currentStatsClientId = null;
+    let currentStatsLogs = [];
+    let currentStatsFilter = 'all';
+
+    async function openPatientStatsModal(clientId) {
+      const targetId = clientId || (currentClientUser ? currentClientUser.id : selectedClientId);
+      if (!targetId) {
+        alert("Please log in as a patient or select a patient from the roster first.");
+        return;
+      }
+
+      currentStatsClientId = targetId;
+      currentStatsFilter = 'all';
+
+      // Find client profile info
+      let clientObj = clientsData.find(c => c.id === targetId);
+      if (!clientObj && currentClientUser && currentClientUser.id === targetId) {
+        clientObj = currentClientUser;
+      }
+
+      const clientName = clientObj ? clientObj.name : "Patient";
+      const clientDob = (clientObj && clientObj.dob) ? clientObj.dob : "Not specified";
+
+      document.getElementById('statsModalTitle').innerText = `${clientName} — Adherence Analytics`;
+      document.getElementById('statsModalSub').innerText = `DOB: ${clientDob} • Dose Log History & Compliance`;
+
+      document.getElementById('statsModal').classList.remove('hidden');
+      document.getElementById('statsLogsTimeline').innerHTML = `<div style="text-align: center; color: var(--silver-muted); padding: 24px; font-size: 13px;">Loading dose log history...</div>`;
+
+      try {
+        const res = await fetch(`/api/dose-log/${targetId}`);
+        const data = await res.json();
+        currentStatsLogs = data.doseLogs || [];
+        renderStatsModalContent();
+      } catch (err) {
+        console.error("Error fetching dose logs:", err);
+        document.getElementById('statsLogsTimeline').innerHTML = `<div style="text-align:center; color:red; padding:16px;">Failed to load dose logs.</div>`;
+      }
+    }
+
+    function closeStatsModal() {
+      document.getElementById('statsModal').classList.add('hidden');
+    }
+
+    function renderStatsModalContent() {
+      const completedLogs = currentStatsLogs.filter(l => l.status === 'Done');
+      const snoozedLogs = currentStatsLogs.filter(l => l.status === 'Wait' || l.status === 'Snoozed');
+      const missedLogs = currentStatsLogs.filter(l => l.status === 'Missed');
+      
+      const totalLogged = completedLogs.length + snoozedLogs.length + missedLogs.length;
+      const adherenceRate = totalLogged > 0 ? Math.round((completedLogs.length / totalLogged) * 100) : 100;
+
+      document.getElementById('statsAdherencePct').innerText = `${adherenceRate}%`;
+      document.getElementById('statsAdherenceBar').style.width = `${adherenceRate}%`;
+      const labelEl = document.getElementById('statsAdherenceLabel');
+      if (adherenceRate >= 90) {
+        labelEl.innerText = "Excellent Adherence";
+        labelEl.style.color = "var(--sage-muted)";
+      } else if (adherenceRate >= 70) {
+        labelEl.innerText = "Moderate Consistency";
+        labelEl.style.color = "#D97706";
+      } else {
+        labelEl.innerText = "Needs Improvement";
+        labelEl.style.color = "#DC2626";
+      }
+
+      const streakDays = calculateClientStreakDays(currentStatsLogs);
+      document.getElementById('statsStreakDays').innerText = streakDays;
+      document.getElementById('statsDosesBreakdown').innerText = `✓ ${completedLogs.length} Taken • ⚠️ ${snoozedLogs.length + missedLogs.length} Missed/Snoozed`;
+
+      render7DayGrid();
+      renderStatsScheduleBreakdown();
+      renderStatsTimeline();
+    }
+
+    async function renderStatsScheduleBreakdown() {
+      const cardEl = document.getElementById('statsScheduleBreakdownCard');
+      const listEl = document.getElementById('statsScheduleBreakdownList');
+      if (!cardEl || !listEl) return;
+
+      try {
+        const res = await fetch(`/api/protocol/${currentStatsClientId}`);
+        const data = await res.json();
+        const items = (data.protocol && data.protocol.items) ? data.protocol.items : [];
+        
+        const counts = {};
+        items.forEach(i => {
+          if (i.timingSchedule) counts[i.timingSchedule] = (counts[i.timingSchedule] || 0) + 1;
+        });
+
+        const activeScheds = Object.keys(counts).filter(s => counts[s] > 0);
+        if (activeScheds.length === 0) {
+          cardEl.style.display = 'none';
+        } else {
+          cardEl.style.display = 'block';
+          listEl.innerHTML = activeScheds.map(sched => `
+            <div style="display: flex; justify-content: space-between; align-items: center; background: var(--soft-bg); padding: 10px 14px; border-radius: 12px;">
+              <div style="font-size: 13px; font-weight: 700; color: var(--dark-charcoal);">${sched}</div>
+              <div style="font-size: 12px; font-weight: 800; color: var(--ocean-blue);">${counts[sched]} ${counts[sched] === 1 ? 'Dose' : 'Doses'}</div>
+            </div>
+          `).join('');
+        }
+      } catch (err) {
+        cardEl.style.display = 'none';
+      }
+    }
+
+    function calculateClientStreakDays(logs) {
+      if (!logs || logs.length === 0) return 0;
+      const completedDates = new Set(
+        logs.filter(l => l.status === 'Done')
+            .map(l => new Date(l.timestamp).toDateString())
+      );
+      
+      let streak = 0;
+      let checkDate = new Date();
+      while (true) {
+        const dateStr = checkDate.toDateString();
+        if (completedDates.has(dateStr)) {
+          streak++;
+          checkDate.setDate(checkDate.getDate() - 1);
+        } else {
+          if (streak === 0 && checkDate.toDateString() === new Date().toDateString()) {
+            checkDate.setDate(checkDate.getDate() - 1);
+            if (completedDates.has(checkDate.toDateString())) {
+              streak++;
+              checkDate.setDate(checkDate.getDate() - 1);
+              continue;
+            }
+          }
+          break;
+        }
+      }
+      return streak;
+    }
+
+    function render7DayGrid() {
+      const daysGridEl = document.getElementById('stats7DaysGrid');
+      const days = [];
+      const now = new Date();
+      
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(now);
+        d.setDate(d.getDate() - i);
+        const dayName = d.toLocaleDateString('en-US', { weekday: 'narrow' });
+        const dateStr = d.toDateString();
+        
+        const isDone = currentStatsLogs.some(l => l.status === 'Done' && new Date(l.timestamp).toDateString() === dateStr);
+        const isSnoozed = !isDone && currentStatsLogs.some(l => (l.status === 'Wait' || l.status === 'Snoozed' || l.status === 'Missed') && new Date(l.timestamp).toDateString() === dateStr);
+        
+        days.push(`
+          <div style="text-align: center; flex: 1;">
+            <div style="font-size: 11px; font-weight: 800; color: var(--silver-muted); margin-bottom: 6px;">${dayName}</div>
+            <div style="width: 34px; height: 34px; margin: 0 auto; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; ${
+              isDone ? 'background: rgba(92, 139, 125, 0.2); color: var(--sage-muted); border: 1.5px solid var(--sage-muted);' : 
+              (isSnoozed ? 'background: rgba(217, 119, 6, 0.15); color: #B45309; border: 1.5px solid #D97706;' : 'background: var(--soft-bg); color: var(--silver-muted);')
+            }">
+              ${isDone ? '✓' : (isSnoozed ? '⌛' : '-')}
+            </div>
+          </div>
+        `);
+      }
+      daysGridEl.innerHTML = days.join('');
+    }
+
+    function filterStatsLogs(filter) {
+      currentStatsFilter = filter;
+      document.getElementById('statsFilterAllBtn').classList.toggle('active', filter === 'all');
+      document.getElementById('statsFilterDoneBtn').classList.toggle('active', filter === 'Done');
+      document.getElementById('statsFilterWaitBtn').classList.toggle('active', filter === 'Wait');
+      renderStatsTimeline();
+    }
+
+    function renderStatsTimeline() {
+      const timelineEl = document.getElementById('statsLogsTimeline');
+      let filtered = currentStatsLogs;
+      
+      if (currentStatsFilter === 'Done') {
+        filtered = currentStatsLogs.filter(l => l.status === 'Done');
+      } else if (currentStatsFilter === 'Wait') {
+        filtered = currentStatsLogs.filter(l => l.status === 'Wait' || l.status === 'Snoozed' || l.status === 'Missed');
+      }
+
+      if (filtered.length === 0) {
+        timelineEl.innerHTML = `<div style="text-align: center; color: var(--silver-muted); padding: 24px; font-size: 13px; background: var(--soft-bg); border-radius: 14px;">No dose history entries match this filter.</div>`;
+        return;
+      }
+
+      timelineEl.innerHTML = filtered.map(log => {
+        const dateObj = new Date(log.timestamp);
+        const formattedDate = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        const formattedTime = dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        
+        let statusBadge = '';
+        if (log.status === 'Done') {
+          statusBadge = `<span style="font-size: 11px; font-weight: 800; background: rgba(92, 139, 125, 0.15); color: var(--sage-muted); padding: 4px 10px; border-radius: 20px;">✓ Taken</span>`;
+        } else if (log.status === 'Wait' || log.status === 'Snoozed') {
+          statusBadge = `<span style="font-size: 11px; font-weight: 800; background: rgba(217, 119, 6, 0.15); color: #B45309; padding: 4px 10px; border-radius: 20px;">⏳ Snoozed</span>`;
+        } else {
+          statusBadge = `<span style="font-size: 11px; font-weight: 800; background: rgba(220, 38, 38, 0.15); color: #DC2626; padding: 4px 10px; border-radius: 20px;">❌ Missed</span>`;
+        }
+
+        return `
+          <div style="background: var(--soft-bg); padding: 12px 16px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="font-size: 14px; font-weight: 800; color: var(--dark-charcoal);">${log.itemName || 'Supplement Dose'}</div>
+              <div style="font-size: 12px; color: var(--silver-muted); margin-top: 2px;">
+                ${log.timingSchedule ? log.timingSchedule + ' • ' : ''}${formattedDate} at ${formattedTime}
+              </div>
+            </div>
+            <div>${statusBadge}</div>
+          </div>
+        `;
+      }).join('');
+    }
 
     // Initial Load & Start Polling
     restoreSavedWebPatientSession().then(() => {

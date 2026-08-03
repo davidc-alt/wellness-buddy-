@@ -12,15 +12,26 @@ public struct ClientDashboardView: View {
     @ObservedObject var notificationService = NotificationService.shared
     @State private var selectedItemForRefill: ProtocolItem?
     
+    private var timeGreeting: String {
+        let hour = Calendar.current.component(.hour, from: Date())
+        if hour < 12 {
+            return "Good morning"
+        } else if hour < 17 {
+            return "Good afternoon"
+        } else {
+            return "Good evening"
+        }
+    }
+    
     public var body: some View {
         NavigationView {
             ZStack(alignment: .bottom) {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 20) {
-                        // Minimalist Inspiration Greeting Header ("Good morning")
+                        // Minimalist Inspiration Greeting Header (3 lines)
                         HStack(alignment: .top) {
                             VStack(alignment: .leading, spacing: 2) {
-                                Text("Good morning,")
+                                Text("\(timeGreeting),")
                                     .font(.system(size: 28, weight: .bold, design: .rounded))
                                     .foregroundColor(.paletteDark)
                                 
@@ -38,36 +49,19 @@ public struct ClientDashboardView: View {
                             
                             Spacer()
                             
-                            HStack(spacing: 10) {
-                                // Refresh Button
-                                Button(action: {
-                                    viewModel.fetchLiveProtocol()
-                                }) {
-                                    ZStack {
-                                        Circle()
-                                            .fill(Color.white)
-                                            .frame(width: 44, height: 44)
-                                        Image(systemName: "arrow.clockwise")
-                                            .font(.system(size: 16, weight: .medium))
-                                            .foregroundColor(.paletteDark)
-                                    }
-                                    .shadow(color: Color.black.opacity(0.04), radius: 8, x: 0, y: 2)
+                            // Switch Mode / Logout Button
+                            Button(action: {
+                                viewModel.logout()
+                            }) {
+                                ZStack {
+                                    Circle()
+                                        .fill(Color.paletteDark)
+                                        .frame(width: 44, height: 44)
+                                    Image(systemName: "person.crop.circle.badge.xmark")
+                                        .font(.system(size: 16, weight: .semibold))
+                                        .foregroundColor(.white)
                                 }
-                                
-                                // Switch Mode / Logout Button
-                                Button(action: {
-                                    viewModel.logout()
-                                }) {
-                                    ZStack {
-                                        Circle()
-                                            .fill(Color.paletteDark)
-                                            .frame(width: 44, height: 44)
-                                        Image(systemName: "person.crop.circle.badge.xmark")
-                                            .font(.system(size: 16, weight: .semibold))
-                                            .foregroundColor(.white)
-                                    }
-                                    .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 2)
-                                }
+                                .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 2)
                             }
                         }
                         .padding(.horizontal, 20)
@@ -292,6 +286,10 @@ public struct ClientDashboardView: View {
                         Spacer(minLength: 50)
                     }
                     .padding(.top, 4)
+                }
+                .refreshable {
+                    viewModel.fetchLiveProtocol()
+                    viewModel.fetchDoseLogs()
                 }
                 
                 // Floating Toast Notification

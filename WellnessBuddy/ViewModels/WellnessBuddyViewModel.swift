@@ -114,8 +114,14 @@ public class WellnessBuddyViewModel: ObservableObject {
             }
             
             // Restore patient profile & pills to server live so server & practitioner studio get re-populated after deploy!
-            APIService.shared.restoreSessionOnServer(client: restoredProfile, protocolItems: localItems) { [weak self] client, items in
+            APIService.shared.restoreSessionOnServer(client: restoredProfile, protocolItems: localItems) { [weak self] returnedClient, items in
                 guard let self = self else { return }
+                if let returnedClient = returnedClient {
+                    self.activeClientId = returnedClient.id
+                    self.activeClientName = returnedClient.name
+                    self.activeClientProfile = returnedClient
+                    self.saveSession(client: returnedClient)
+                }
                 if !items.isEmpty {
                     self.currentProtocol.items = items
                     self.persistProtocolItemsLocally(items)
@@ -147,13 +153,14 @@ public class WellnessBuddyViewModel: ObservableObject {
         }
     }
     
-    /// Periodically poll server every 5 seconds while logged in so new practitioner prescriptions pop up automatically!
+    /// Periodically poll server every 5 seconds while logged in so new practitioner prescriptions & dose logs pop up automatically!
     public func startLivePolling() {
         pollTimer = Timer.publish(every: 5.0, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in
                 guard let self = self, self.isLoggedIn, !self.activeClientId.isEmpty else { return }
                 self.fetchLiveProtocol()
+                self.fetchDoseLogs()
             }
     }
     

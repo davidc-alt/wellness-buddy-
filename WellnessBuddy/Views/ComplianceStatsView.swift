@@ -120,31 +120,37 @@ public struct ComplianceStatsView: View {
                         .calmCardStyle()
                     }
                     
-                    // Timing Schedule Breakdown
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("TIMING SCHEDULE BREAKDOWN")
-                            .font(.system(size: 11, weight: .bold, design: .rounded))
-                            .foregroundColor(.calmTextSecondary)
-                            .tracking(1.0)
-                        
-                        ForEach(TimingSchedule.allCases) { timing in
-                            let count = viewModel.currentProtocol.items.filter { $0.timingSchedule == timing }.count
+                    // Timing Schedule Breakdown (Only show active schedules with count > 0)
+                    let activeSchedules = TimingSchedule.allCases.filter { timing in
+                        viewModel.currentProtocol.items.contains { $0.timingSchedule == timing }
+                    }
+                    
+                    if !activeSchedules.isEmpty {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("TIMING SCHEDULE BREAKDOWN")
+                                .font(.system(size: 11, weight: .bold, design: .rounded))
+                                .foregroundColor(.calmTextSecondary)
+                                .tracking(1.0)
                             
-                            HStack {
-                                SchedulePillView(schedule: timing, isSelected: false)
+                            ForEach(activeSchedules) { timing in
+                                let count = viewModel.currentProtocol.items.filter { $0.timingSchedule == timing }.count
                                 
-                                Text(timing.description)
-                                    .font(.system(size: 11, weight: .medium))
-                                    .foregroundColor(.calmTextSecondary)
-                                    .lineLimit(1)
-                                
-                                Spacer()
-                                
-                                Text("\(count) Doses")
-                                    .font(.system(size: 12, weight: .bold, design: .rounded))
-                                    .foregroundColor(.calmPine)
+                                HStack {
+                                    SchedulePillView(schedule: timing, isSelected: false)
+                                    
+                                    Text(timing.description)
+                                        .font(.system(size: 11, weight: .medium))
+                                        .foregroundColor(.calmTextSecondary)
+                                        .lineLimit(1)
+                                    
+                                    Spacer()
+                                    
+                                    Text("\(count) \(count == 1 ? "Dose" : "Doses")")
+                                        .font(.system(size: 12, weight: .bold, design: .rounded))
+                                        .foregroundColor(.calmPine)
+                                }
+                                .calmCardStyle(padding: 12, cornerRadius: 14)
                             }
-                            .calmCardStyle(padding: 12, cornerRadius: 14)
                         }
                     }
                     

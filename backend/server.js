@@ -54,6 +54,32 @@ function loadDb() {
 
 loadDb();
 
+function toStableUUID(str) {
+  if (!str) return "";
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (uuidRegex.test(str)) return str.toLowerCase();
+
+  let hash = BigInt(5381);
+  const buf = Buffer.from(String(str), 'utf8');
+  for (let i = 0; i < buf.length; i++) {
+    hash = ((hash << BigInt(5)) + hash + BigInt(buf[i])) & BigInt("0xFFFFFFFFFFFFFFFF");
+  }
+
+  const h32 = Number(hash & BigInt(0xFFFFFFFF)) >>> 0;
+  const h48 = Number((hash >> BigInt(32)) & BigInt(0xFFFF)) >>> 0;
+  const h32b = Number((hash >> BigInt(16)) & BigInt(0xFFFF)) >>> 0;
+  const h16 = Number(hash & BigInt(0xFFFF)) >>> 0;
+  const h64Hex = hash.toString(16).padStart(16, '0');
+
+  const hex1 = h32.toString(16).padStart(8, '0');
+  const hex2 = h48.toString(16).padStart(4, '0');
+  const hex3 = h32b.toString(16).padStart(4, '0');
+  const hex4 = h16.toString(16).padStart(4, '0');
+  const hex5 = h64Hex.slice(-12).padStart(12, '0');
+
+  return `${hex1}-${hex2}-4${hex3.slice(-3)}-${hex4.slice(-4)}-${hex5.slice(-12)}`.toLowerCase();
+}
+
 function getJsonBody(req) {
   return new Promise((resolve) => {
     let body = '';
@@ -425,25 +451,30 @@ const server = http.createServer(async (req, res) => {
     return sendJson(res, 200, { success: true, items: db.protocols[clientId] || [] });
   }
 
-  // 9. LOG DOSE (Done / Wait)
+  // 9. LOG DOSE (Done / Wait / Snoozed)
   if (pathname === '/api/dose-log' && method === 'POST') {
     const body = await getJsonBody(req);
+    const items = db.protocols[body.clientId] || [];
+    const matchedItem = items.find(i => 
+      String(i.id) === String(body.itemId) || 
+      toStableUUID(i.id) === String(body.itemId).toLowerCase()
+    );
+    const canonicalItemId = matchedItem ? matchedItem.id : body.itemId;
+
     const log = {
       id: "log_" + Date.now(),
       clientId: body.clientId,
-      itemId: body.itemId,
-      itemName: body.itemName,
+      itemId: canonicalItemId,
+      itemName: body.itemName || (matchedItem ? matchedItem.name : "Supplement"),
       timingSchedule: body.timingSchedule,
       status: body.status,
       timestamp: new Date().toISOString()
     };
     db.doseLogs.unshift(log);
 
-    if (body.status === "Done" && body.itemId && body.clientId) {
-      const items = db.protocols[body.clientId] || [];
-      const item = items.find(i => String(i.id) === String(body.itemId));
-      if (item && item.totalServingsRemaining > 0) {
-        item.totalServingsRemaining -= 1;
+    if (body.status === "Done" && matchedItem) {
+      if (matchedItem.totalServingsRemaining > 0) {
+        matchedItem.totalServingsRemaining -= 1;
       }
     }
     saveDb();
@@ -480,7 +511,12 @@ const server = http.createServer(async (req, res) => {
     return sendJson(res, 200, { success: true, message: newMsg });
   }
 
-  // 10. SERVE STATIC WEB PORTAL
+  // Fallback for unhandled API endpoints
+  if (pathname.startsWith('/api/')) {
+    return sendJson(res, 404, { success: false, message: `API endpoint ${pathname} not found` });
+  }
+
+  // 12. SERVE STATIC WEB PORTAL
   let filePath = path.join(__dirname, 'public', pathname === '/' ? 'index.html' : pathname);
   if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
     const ext = path.extname(filePath);

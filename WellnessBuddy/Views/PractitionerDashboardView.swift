@@ -21,14 +21,7 @@ public struct PractitionerDashboardView: View {
                     // Practitioner Profile Header
                     VStack(alignment: .leading, spacing: 12) {
                         HStack(spacing: 12) {
-                            ZStack {
-                                Circle()
-                                    .fill(Color.paletteDark)
-                                    .frame(width: 48, height: 48)
-                                Image(systemName: "stethoscope")
-                                    .font(.system(size: 22, weight: .bold))
-                                    .foregroundColor(.white)
-                            }
+                            WellnessBuddyLogoView(size: 46)
                             
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(viewModel.currentProtocol.practitionerName)

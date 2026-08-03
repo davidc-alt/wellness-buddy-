@@ -8,9 +8,214 @@
       "password": "password123"
     }
   ],
-  "clients": [],
-  "protocols": {},
-  "doseLogs": [],
+  "clients": [
+    {
+      "id": "cli_1785716306000",
+      "name": "James",
+      "dob": "Test",
+      "email": "james@wellnessclient.com",
+      "password": "password123",
+      "goal": "Optimize energy, cellular health & recovery",
+      "symptoms": "None reported",
+      "currentSupplements": "None",
+      "registeredAt": "2026-08-03T00:18:26.000Z",
+      "streakDays": 0,
+      "adherenceRate": 100,
+      "practitionerNote": "Waiting for your practitioner to prescribe your custom protocol."
+    },
+    {
+      "id": "cli_1785705456801",
+      "name": "Zach d",
+      "dob": "00000000",
+      "email": "zach.d@wellnessclient.com",
+      "password": "password123",
+      "goal": "Optimize energy, cellular health & recovery",
+      "symptoms": "None reported",
+      "currentSupplements": "None",
+      "registeredAt": "2026-08-03T00:17:39.003Z",
+      "streakDays": 0,
+      "adherenceRate": 100,
+      "practitionerNote": "Waiting for your practitioner to prescribe your custom protocol."
+    },
+    {
+      "id": "cli_1785715938859",
+      "name": "Jhon Doe",
+      "dob": "1990-01-01",
+      "email": "jhon.doe@wellnessclient.com",
+      "password": "password123",
+      "goal": "Optimize energy, cellular health & recovery",
+      "symptoms": "None reported",
+      "currentSupplements": "None",
+      "registeredAt": "2026-08-03T00:12:18.860Z",
+      "streakDays": 0,
+      "adherenceRate": 100,
+      "practitionerNote": "Waiting for your practitioner to prescribe your custom protocol."
+    },
+    {
+      "id": "cli_1785708069569",
+      "name": "Test User",
+      "dob": "1995-05-05",
+      "email": "test.user@wellnessclient.com",
+      "password": "password123",
+      "goal": "Optimize energy, cellular health & recovery",
+      "symptoms": "None reported",
+      "currentSupplements": "None",
+      "registeredAt": "2026-08-02T22:01:09.569Z",
+      "streakDays": 0,
+      "adherenceRate": 100,
+      "practitionerNote": "Waiting for your practitioner to prescribe your custom protocol."
+    },
+    {
+      "id": "cli_1785698436533",
+      "name": "david b",
+      "dob": "02242007",
+      "email": "david.b@wellnessclient.com",
+      "password": "password123",
+      "goal": "Optimize energy, cellular health & recovery",
+      "symptoms": "None reported",
+      "currentSupplements": "None",
+      "registeredAt": "2026-08-02T19:20:36.533Z",
+      "streakDays": 0,
+      "adherenceRate": 100,
+      "practitionerNote": "Waiting for your practitioner to prescribe your custom protocol."
+    },
+    {
+      "id": "cli_1785648478575",
+      "name": "James",
+      "dob": "2222222",
+      "email": "james@wellnessclient.com",
+      "password": "password123",
+      "goal": "Optimize energy, cellular health & recovery",
+      "symptoms": "None reported",
+      "currentSupplements": "None",
+      "registeredAt": "2026-08-02T05:27:58.575Z",
+      "streakDays": 0,
+      "adherenceRate": 100,
+      "practitionerNote": "Waiting for your practitioner to prescribe your custom protocol."
+    },
+    {
+      "id": "cli_1785648278102",
+      "name": "David Bobdarescu",
+      "dob": "02242007",
+      "email": "david.bobdarescu@wellnessclient.com",
+      "password": "password123",
+      "goal": "Optimize energy, cellular health & recovery",
+      "symptoms": "None reported",
+      "currentSupplements": "None",
+      "registeredAt": "2026-08-02T05:24:38.102Z",
+      "streakDays": 0,
+      "adherenceRate": 100,
+      "practitionerNote": "Waiting for your practitioner to prescribe your custom protocol."
+    },
+    {
+      "id": "cli_1785647719698",
+      "name": "david bondarescu",
+      "dob": "02242007",
+      "email": "david.bondarescu@wellnessclient.com",
+      "password": "password123",
+      "goal": "Optimize energy, cellular health & recovery",
+      "symptoms": "None reported",
+      "currentSupplements": "None",
+      "registeredAt": "2026-08-02T05:15:19.698Z",
+      "streakDays": 0,
+      "adherenceRate": 100,
+      "practitionerNote": "Waiting for your practitioner to prescribe your custom protocol."
+    },
+    {
+      "id": "cli_1785633947973",
+      "name": "Todd V",
+      "dob": "09111980",
+      "email": "todd.v@wellnessclient.com",
+      "password": "password123",
+      "goal": "Optimize energy, cellular health & recovery",
+      "symptoms": "None reported",
+      "currentSupplements": "None",
+      "registeredAt": "2026-08-02T01:25:47.973Z",
+      "streakDays": 0,
+      "adherenceRate": 100,
+      "practitionerNote": "Waiting for your practitioner to prescribe your custom protocol."
+    }
+  ],
+  "protocols": {
+    "cli_1785633947973": [
+      {
+        "id": "supp_1785633976585",
+        "name": "sterioids",
+        "brand": "pure",
+        "category": "Supplement",
+        "dosageValue": 1,
+        "dosageUnit": "capsule",
+        "timingSchedule": "Empty Stomach",
+        "frequencyDescription": "in the morning",
+        "practitionerNotes": "Take as directed.",
+        "totalServingsRemaining": 30,
+        "maxServings": 30,
+        "fullscriptRefillUrl": "https://fullscript.com"
+      },
+      {
+        "id": "supp_1785633999004",
+        "name": "sterioids",
+        "brand": "pure",
+        "category": "Supplement",
+        "dosageValue": 1,
+        "dosageUnit": "capsule",
+        "timingSchedule": "Empty Stomach",
+        "frequencyDescription": "in the morning",
+        "practitionerNotes": "Take as directed.",
+        "totalServingsRemaining": 30,
+        "maxServings": 30,
+        "fullscriptRefillUrl": "https://fullscript.com"
+      },
+      {
+        "id": "supp_1785634014135",
+        "name": "vitamin b",
+        "brand": "pure",
+        "category": "Supplement",
+        "dosageValue": 1,
+        "dosageUnit": "capsule",
+        "timingSchedule": "Empty Stomach",
+        "frequencyDescription": "in the morning",
+        "practitionerNotes": "Take as directed.",
+        "totalServingsRemaining": 30,
+        "maxServings": 30,
+        "fullscriptRefillUrl": "https://fullscript.com"
+      }
+    ],
+    "cli_1785647719698": [],
+    "cli_1785648278102": [],
+    "cli_1785648478575": [],
+    "cli_1785698436533": [],
+    "cli_1785708069569": [],
+    "cli_1785715938859": [
+      {
+        "id": "supp_1001",
+        "name": "NAD+ Liposomal Concentrate",
+        "brand": "Practitioner Direct",
+        "category": "Supplement",
+        "dosageValue": 2,
+        "dosageUnit": "sprays",
+        "timingSchedule": "Empty Stomach",
+        "frequencyDescription": "Daily",
+        "intervalHours": 24,
+        "practitionerNotes": "Take as directed.",
+        "totalServingsRemaining": 29,
+        "maxServings": 30,
+        "fullscriptRefillUrl": "https://us.fullscript.com/welcome/lvitti/signup"
+      }
+    ],
+    "cli_1785716306000": []
+  },
+  "doseLogs": [
+    {
+      "id": "log_1785716047745",
+      "clientId": "cli_1785715938859",
+      "itemId": "supp_1001",
+      "itemName": "NAD+ Liposomal Concentrate",
+      "timingSchedule": "Empty Stomach",
+      "status": "Done",
+      "timestamp": "2026-08-03T00:14:07.745Z"
+    }
+  ],
   "messages": [],
   "refills": []
 }

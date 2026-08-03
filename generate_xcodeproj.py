@@ -43,11 +43,19 @@ def generate_pbxproj():
     info_plist_id = make_id("INFOPLIST")
     file_refs.append(f'		{info_plist_id} /* Info.plist */ = {{isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info.plist"; sourceTree = "<group>"; }};')
     
+    assets_id = make_id("FILE_Assets.xcassets")
+    assets_build_id = make_id("BUILD_Assets.xcassets")
+    file_refs.append(f'		{assets_id} /* Assets.xcassets */ = {{isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Assets.xcassets"; sourceTree = "<group>"; }};')
+    build_files.append(f'		{assets_build_id} /* Assets.xcassets in Resources */ = {{isa = PBXBuildFile; fileRef = {assets_id} /* Assets.xcassets */; }};')
+    
     all_file_ids_in_group = [f'		{make_id("FILE_" + r[0])} /* {r[1]} */,' for r in sources]
     all_file_ids_in_group.append(f'		{info_plist_id} /* Info.plist */,')
+    all_file_ids_in_group.append(f'		{assets_id} /* Assets.xcassets */,')
 
     sources_build_phase_id = make_id("PBXSourcesBuildPhase")
     sources_build_files = [f'		{b_id} /* {name} in Sources */,' for b_id, name in source_ref_ids]
+
+    resources_build_phase_id = make_id("PBXResourcesBuildPhase")
 
     app_target_id = make_id("PBXNativeTarget")
     app_product_id = make_id("PBXFileReferenceApp")
@@ -100,6 +108,7 @@ def generate_pbxproj():
 			buildConfigurationList = {config_list_target_id} /* Build configuration list for PBXNativeTarget "WellnessBuddy" */;
 			buildPhases = (
 				{sources_build_phase_id} /* Sources */,
+				{resources_build_phase_id} /* Resources */,
 			);
 			buildRules = (
 			);
@@ -111,6 +120,17 @@ def generate_pbxproj():
 			productType = "com.apple.product-type.application";
 		}};
 /* End PBXNativeTarget section */
+
+/* Begin PBXResourcesBuildPhase section */
+		{resources_build_phase_id} /* Resources */ = {{
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				{assets_build_id} /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		}};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXProject section */
 		{make_id("PBXProject")} /* Project object */ = {{
@@ -186,7 +206,8 @@ def generate_pbxproj():
 			buildSettings = {{
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development";
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGNING_ALLOWED = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = WellnessBuddy/Info.plist;
@@ -215,7 +236,8 @@ def generate_pbxproj():
 			buildSettings = {{
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development";
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGNING_ALLOWED = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = WellnessBuddy/Info.plist;

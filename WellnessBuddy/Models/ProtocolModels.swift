@@ -229,7 +229,23 @@ public struct DoseLogEntry: Identifiable, Codable {
 public enum DoseStatus: String, Codable {
     case completed = "Done"
     case snoozed = "Wait"
+    case missed = "Missed"
     case skipped = "Skipped"
+    
+    public init(fromRaw raw: String) {
+        let s = raw.trimmingCharacters(in: .whitespaces)
+        if s == "Done" || s == "Completed" || s == "completed" {
+            self = .completed
+        } else if s == "Wait" || s == "Snoozed" || s == "snoozed" {
+            self = .snoozed
+        } else if s == "Missed" || s == "missed" {
+            self = .missed
+        } else if s == "Skipped" || s == "skipped" {
+            self = .skipped
+        } else {
+            self = .completed
+        }
+    }
 }
 
 /// Full protocol prescribed by a practitioner to a client

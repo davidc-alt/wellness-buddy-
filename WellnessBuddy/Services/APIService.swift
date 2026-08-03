@@ -11,11 +11,14 @@ import Combine
 public class APIService: ObservableObject {
     public static let shared = APIService()
     
-    // Primary Server URL (defaults to live Render server)
-    @Published public var baseURLString: String = "https://wellness-buddy-vduz.onrender.com"
+    // Primary Server URL
+    @Published public var baseURLString: String = "http://localhost:3000"
     
-    // Candidate URLs to try (Live Production Server)
+    // Candidate URLs to try (Local Dev Server & Live Production Server)
     public var candidateURLs: [String] = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://Davids-MacBook-Air-2.local:3000",
         "https://wellness-buddy-vduz.onrender.com"
     ]
     
@@ -32,9 +35,9 @@ public class APIService: ObservableObject {
         
         func tryNextURL(index: Int) {
             guard index < urlsToTry.count else {
-                if retryCount < 3 {
-                    print("🔄 APIService: Retrying connection to live server (attempt \(retryCount + 1))...")
-                    DispatchQueue.global().asyncAfter(deadline: .now() + 2.0) {
+                if retryCount < 2 {
+                    print("🔄 APIService: Retrying connection to backend server (attempt \(retryCount + 1))...")
+                    DispatchQueue.global().asyncAfter(deadline: .now() + 1.5) {
                         self.performRequest(endpoint: endpoint, method: method, bodyData: bodyData, retryCount: retryCount + 1, completion: completion)
                     }
                     return
@@ -52,8 +55,8 @@ public class APIService: ObservableObject {
             
             var request = URLRequest(url: url)
             request.httpMethod = method
-            // Allow 45s timeout for Render free tier cold starts
-            request.timeoutInterval = 45.0
+            // Fast 5s timeout for local server check, 30s for remote cloud server
+            request.timeoutInterval = base.hasPrefix("https://") ? 30.0 : 5.0
             if let bodyData = bodyData {
                 request.setValue("application/json", forHTTPHeaderField: "Content-Type")
                 request.httpBody = bodyData
@@ -61,15 +64,19 @@ public class APIService: ObservableObject {
             
             URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
                 if let httpResp = response as? HTTPURLResponse, (200...299).contains(httpResp.statusCode), let data = data {
-                    print("✅ APIService: Connected successfully to \(base)\(endpoint)")
-                    DispatchQueue.main.async {
-                        self?.baseURLString = base
+                    let mimeType = httpResp.mimeType ?? ""
+                    let isJson = mimeType.contains("json") || (try? JSONSerialization.jsonObject(with: data)) != nil
+                    if isJson {
+                        print("✅ APIService: Connected successfully to \(base)\(endpoint)")
+                        DispatchQueue.main.async {
+                            self?.baseURLString = base
+                        }
+                        completion(data)
+                        return
                     }
-                    completion(data)
-                } else {
-                    print("🔄 APIService: Failed \(base)\(endpoint), trying next URL/retry...")
-                    tryNextURL(index: index + 1)
                 }
+                print("🔄 APIService: Failed \(base)\(endpoint), trying next URL/retry...")
+                tryNextURL(index: index + 1)
             }.resume()
         }
         
@@ -126,11 +133,21 @@ public class APIService: ObservableObject {
             do {
                 if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
                    let success = json["success"] as? Bool, success {
+                    
+                    var updatedClient = client
+                    if let clientDict = json["client"] as? [String: Any],
+                       let rawClientData = try? JSONSerialization.data(withJSONObject: clientDict),
+                       let decodedClient = try? JSONDecoder().decode(ClientProfile.self, from: rawClientData) {
+                        updatedClient = decodedClient
+                    }
+                    
                     if let rawProtoData = try? JSONSerialization.data(withJSONObject: json["protocolItems"] ?? []),
                        let items = try? JSONDecoder().decode([ProtocolItem].self, from: rawProtoData) {
-                        DispatchQueue.main.async { completion(client, items) }
+                        DispatchQueue.main.async { completion(updatedClient, items) }
                         return
                     }
+                    DispatchQueue.main.async { completion(updatedClient, protocolItems) }
+                    return
                 }
                 DispatchQueue.main.async { completion(client, protocolItems) }
             } catch {
@@ -241,7 +258,7 @@ public class APIService: ObservableObject {
                             ?? Date()
                     
                     let timing = TimingSchedule(rawValue: apiItem.timingSchedule) ?? .emptyStomach
-                    let status = DoseStatus(rawValue: apiItem.status) ?? .completed
+                    let status = DoseStatus(fromRaw: apiItem.status)
                     let itemId = apiItem.itemId != nil ? apiItem.itemId!.toStableUUID : UUID()
                     let id = apiItem.id.toStableUUID
                     

@@ -217,13 +217,16 @@ public struct PillDoneAnimationButton: View {
 /// Aesthetic Wellness Buddy Blue/Green Gradient Circle Logo
 public struct WellnessBuddyLogoView: View {
     public var size: CGFloat
+    public var showShadow: Bool
     
-    public init(size: CGFloat = 38) {
+    public init(size: CGFloat = 38, showShadow: Bool = true) {
         self.size = size
+        self.showShadow = showShadow
     }
     
     public var body: some View {
         ZStack {
+            // Main Blue-to-Green Gradient Circle (#5C8B7D Sage to #2F6B87 Ocean Slate)
             Circle()
                 .fill(
                     LinearGradient(
@@ -236,13 +239,31 @@ public struct WellnessBuddyLogoView: View {
                     )
                 )
                 .frame(width: size, height: size)
-                .shadow(color: Color.paletteOcean.opacity(0.3), radius: size * 0.15, x: 0, y: size * 0.08)
+                .shadow(color: showShadow ? Color.paletteOcean.opacity(0.35) : Color.clear, radius: size * 0.18, x: 0, y: size * 0.08)
             
+            // Subtle Top Inner Glass Highlight Ring
+            Circle()
+                .stroke(
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            Color.white.opacity(0.4),
+                            Color.white.opacity(0.05)
+                        ]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: max(1.5, size * 0.035)
+                )
+                .frame(width: max(2, size - max(1, size * 0.035)), height: max(2, size - max(1, size * 0.035)))
+            
+            // Clean "wb" Typography Centered
             Text("wb")
                 .font(.system(size: size * 0.44, weight: .bold, design: .rounded))
                 .foregroundColor(.white)
+                .tracking(-size * 0.02)
                 .offset(y: -size * 0.02)
         }
     }
 }
+
 
