@@ -10,6 +10,7 @@ const url = require('url');
 
 const PORT = process.env.PORT || 3000;
 const DATA_FILE = path.join(__dirname, 'data.json');
+const CLIENTS_BACKUP_FILE = path.join(__dirname, 'clients_backup.json');
 const UPLOADS_DIR = path.join(__dirname, 'public', 'uploads');
 
 if (!fs.existsSync(UPLOADS_DIR)) {
@@ -31,6 +32,9 @@ let db = {
 function saveDb() {
   try {
     fs.writeFileSync(DATA_FILE, JSON.stringify(db, null, 2));
+    if (db.clients && db.clients.length > 0) {
+      fs.writeFileSync(CLIENTS_BACKUP_FILE, JSON.stringify({ clients: db.clients, protocols: db.protocols }, null, 2));
+    }
   } catch (e) {
     console.error("Save error:", e);
   }
@@ -49,6 +53,20 @@ function loadDb() {
     } catch (e) {
       console.log("Starting fresh database.");
     }
+  }
+
+  // Backup restore check: If db.clients is 0, check if backup has persistent clients
+  if ((!db.clients || db.clients.length === 0) && fs.existsSync(CLIENTS_BACKUP_FILE)) {
+    try {
+      const backupData = JSON.parse(fs.readFileSync(CLIENTS_BACKUP_FILE, 'utf8'));
+      if (backupData.clients && backupData.clients.length > 0) {
+        db.clients = backupData.clients;
+        if (backupData.protocols) {
+          db.protocols = { ...backupData.protocols, ...db.protocols };
+        }
+        console.log(`Restored ${db.clients.length} patients from backup file.`);
+      }
+    } catch (e) {}
   }
 }
 
@@ -332,6 +350,9 @@ const server = http.createServer(async (req, res) => {
     db.messages = [];
     db.doseLogs = [];
     db.refills = [];
+    if (fs.existsSync(CLIENTS_BACKUP_FILE)) {
+      try { fs.unlinkSync(CLIENTS_BACKUP_FILE); } catch(e) {}
+    }
     saveDb();
     return sendJson(res, 200, { success: true, message: "Roster cleared. Database now has 0 clients." });
   }

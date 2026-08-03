@@ -722,7 +722,35 @@
       try {
         const res = await fetch('/api/practitioner/clients');
         const data = await res.json();
-        clientsData = data.clients || [];
+        let fetchedClients = data.clients || [];
+
+        if (fetchedClients.length > 0) {
+          localStorage.setItem('wb_cached_clients', JSON.stringify(fetchedClients));
+          clientsData = fetchedClients;
+        } else {
+          const cached = localStorage.getItem('wb_cached_clients');
+          if (cached) {
+            try {
+              const parsedCached = JSON.parse(cached);
+              if (Array.isArray(parsedCached) && parsedCached.length > 0) {
+                clientsData = parsedCached;
+                // Auto re-sync cached patients to server
+                for (const c of parsedCached) {
+                  fetch('/api/auth/restore-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(c)
+                  }).catch(() => {});
+                }
+              } else {
+                clientsData = [];
+              }
+            } catch (e) { clientsData = []; }
+          } else {
+            clientsData = [];
+          }
+        }
+
         document.getElementById('rosterCount').innerText = clientsData.length + (clientsData.length === 1 ? " Patient" : " Patients");
 
         renderPractitionerClientList();
@@ -783,6 +811,8 @@
     async function deletePatient(clientId, name) {
       if (!confirm(`Are you sure you want to delete patient "${name}"? This will permanently remove their profile and assigned protocol.`)) return;
       await fetch(`/api/practitioner/delete-client/${clientId}`, { method: 'DELETE' });
+      clientsData = clientsData.filter(c => c.id !== clientId);
+      localStorage.setItem('wb_cached_clients', JSON.stringify(clientsData));
       if (selectedClientId === clientId) selectedClientId = null;
       if (currentClientUser && currentClientUser.id === clientId) currentClientUser = null;
       loadPractitionerDashboard();
@@ -896,6 +926,7 @@
 
     async function clearRoster() {
       if (confirm("Are you sure you want to clear the roster to 0 patients?")) {
+        localStorage.removeItem('wb_cached_clients');
         await fetch('/api/practitioner/reset', { method: 'POST' });
         selectedClientId = null;
         currentClientUser = null;

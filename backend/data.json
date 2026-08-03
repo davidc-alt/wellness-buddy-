@@ -8,8 +8,25 @@
       "password": "password123"
     }
   ],
-  "clients": [],
-  "protocols": {},
+  "clients": [
+    {
+      "id": "cli_1785717959740",
+      "name": "James Bond",
+      "dob": "1985-06-15",
+      "email": "james.bond@wellnessclient.com",
+      "password": "password123",
+      "goal": "Optimize peak vitality & performance",
+      "symptoms": "Fatigue",
+      "currentSupplements": "Multivitamin",
+      "registeredAt": "2026-08-03T00:45:59.740Z",
+      "streakDays": 0,
+      "adherenceRate": 100,
+      "practitionerNote": "Waiting for your practitioner to prescribe your custom protocol."
+    }
+  ],
+  "protocols": {
+    "cli_1785717959740": []
+  },
   "doseLogs": [],
   "messages": [],
   "refills": []
