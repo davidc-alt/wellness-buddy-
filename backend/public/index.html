@@ -920,6 +920,13 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ practitionerNote: note })
       });
+
+      const cli = clientsData.find(c => c.id === selectedClientId);
+      if (cli) {
+        cli.practitionerNote = note;
+      }
+      localStorage.setItem('wb_cached_clients', JSON.stringify(clientsData));
+
       alert('Practitioner guidance note saved and sent to Patient App!');
       loadPractitionerDashboard();
     }

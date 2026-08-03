@@ -452,12 +452,14 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (body.practitionerNote !== undefined) {
-      const cli = db.clients.find(c => c.id === clientId);
-      if (cli) cli.practitionerNote = body.practitionerNote;
+      const cli = db.clients.find(c => c.id === clientId || toStableUUID(c.id) === clientId.toLowerCase() || c.id.toLowerCase() === toStableUUID(clientId));
+      if (cli) {
+        cli.practitionerNote = body.practitionerNote;
+      }
     }
 
     saveDb();
-    return sendJson(res, 200, { success: true, items: db.protocols[clientId] });
+    return sendJson(res, 200, { success: true, items: db.protocols[clientId] || [] });
   }
 
   // 8. DELETE PROTOCOL ITEM

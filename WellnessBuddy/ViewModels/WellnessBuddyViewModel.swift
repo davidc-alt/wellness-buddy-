@@ -175,18 +175,24 @@ public class WellnessBuddyViewModel: ObservableObject {
         APIService.shared.fetchProtocol(for: activeClientId) { [weak self] liveProto in
             guard let self = self, let liveProto = liveProto else { return }
             
-            // Only mutate state and trigger SwiftUI view updates if the protocol actually changed!
-            if self.currentProtocol != liveProto {
-                // Detect practitioner updates to protocol or guidance note
-                if self.lastKnownItemCount > 0 {
-                    if liveProto.items.count > self.lastKnownItemCount || liveProto.practitionerNoteToClient != self.lastKnownPractitionerNote {
-                        NotificationService.shared.sendDirectNotification(
-                            title: "🌿 Prescription Updated",
-                            subtitle: "Practitioner Luba Vitti",
-                            body: "Your practitioner has updated your prescribed supplement protocol and guidance notes."
-                        )
-                        self.triggerToast("🌿 Prescription updated live by Practitioner Luba Vitti!")
-                    }
+            let noteChanged = liveProto.practitionerNoteToClient != self.currentProtocol.practitionerNoteToClient
+            let itemsChanged = liveProto.items != self.currentProtocol.items
+            
+            if noteChanged || itemsChanged {
+                if noteChanged && !self.lastKnownPractitionerNote.isEmpty {
+                    NotificationService.shared.sendDirectNotification(
+                        title: "🌿 Guidance Note Updated",
+                        subtitle: "Practitioner Luba Vitti",
+                        body: "“\(liveProto.practitionerNoteToClient)”"
+                    )
+                    self.triggerToast("🌿 Practitioner guidance note updated!")
+                } else if itemsChanged && self.lastKnownItemCount > 0 {
+                    NotificationService.shared.sendDirectNotification(
+                        title: "🌿 Prescription Updated",
+                        subtitle: "Practitioner Luba Vitti",
+                        body: "Your practitioner has updated your prescribed supplement protocol."
+                    )
+                    self.triggerToast("🌿 Prescription updated live by Practitioner Luba Vitti!")
                 }
                 
                 self.lastKnownItemCount = liveProto.items.count

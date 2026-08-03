@@ -199,6 +199,7 @@ public class APIService: ObservableObject {
                 let decoded = try JSONDecoder().decode(ProtocolResponse.self, from: data)
                 let p = decoded.protocolData
                 let proto = PractitionerProtocol(
+                    id: clientId.toStableUUID,
                     title: p.title,
                     practitionerName: p.practitionerName,
                     practitionerTitle: "Integrative Health Specialist",

@@ -1,13 +1,4 @@
 {
-  "practitioners": [
-    {
-      "id": "prac_1",
-      "name": "Practitioner Luba Vitti",
-      "title": "Integrative Health Specialist",
-      "email": "practitioner@wellnessbuddy.com",
-      "password": "password123"
-    }
-  ],
   "clients": [
     {
       "id": "cli_1785717959740",
@@ -26,8 +17,5 @@
   ],
   "protocols": {
     "cli_1785717959740": []
-  },
-  "doseLogs": [],
-  "messages": [],
-  "refills": []
+  }
 }
