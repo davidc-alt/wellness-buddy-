@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Wellness Buddy — Practitioner Studio & Patient Portal</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='wbGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%235C8B7D'/%3E%3Cstop offset='100%25' stop-color='%232F6B87'/%3E%3C/linearGradient%3E%3ClinearGradient id='wbHighlight' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23FFFFFF' stop-opacity='0.4'/%3E%3Cstop offset='100%25' stop-color='%23FFFFFF' stop-opacity='0.05'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='50' cy='50' r='48' fill='url(%23wbGrad)'/%3E%3Ccircle cx='50' cy='50' r='46.5' fill='none' stroke='url(%23wbHighlight)' stroke-width='3'/%3E%3Ctext x='50' y='62' font-family='-apple-system, system-ui, BlinkMacSystemFont, SF Pro Display, sans-serif' font-size='44' font-weight='800' fill='%23FFFFFF' text-anchor='middle' letter-spacing='-2'%3Ewb%3C/text%3E%3C/svg%3E">
   <style>
     :root {
@@ -181,7 +182,7 @@
 
     .supp-title { font-size: 16px; font-weight: 800; }
     .supp-sub { font-size: 13px; color: var(--silver-muted); margin-top: 2px; font-weight: 600; }
-    .supp-notes { font-size: 13px; margin-top: 6px; color: var(--dark-charcoal); background: var(--soft-bg); padding: 8px 12px; border-radius: 10px; font-style: italic; }
+    .supp-notes { font-size: 13px; margin-top: 6px; color: var(--dark-charcoal); background: var(--soft-bg); padding: 8px 12px; border-radius: 10px; font-style: italic; white-space: pre-wrap; line-height: 1.5; }
 
     .schedule-badge {
       font-size: 11px;
@@ -367,9 +368,11 @@
           <div class="card-header" style="margin-bottom: 10px;">
             <div class="card-title">Practitioner Guidance Note</div>
           </div>
-          <div style="display: flex; gap: 10px; margin-bottom: 24px;">
-            <input type="text" id="practitionerNoteInput" class="form-input" placeholder="e.g. Take NAD+ on empty stomach right after waking up...">
-            <button class="btn-pill btn-sage" onclick="savePractitionerNote()">Save Note</button>
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px;">
+            <textarea id="practitionerNoteInput" class="form-input" rows="4" style="resize: vertical; min-height: 100px; white-space: pre-wrap; font-family: inherit; line-height: 1.5; padding: 12px 16px;" placeholder="Type or paste multi-line practitioner guidance notes, instructions, and protocol guidelines here..."></textarea>
+            <div style="display: flex; justify-content: flex-end;">
+              <button class="btn-pill btn-sage" onclick="savePractitionerNote()">Save Note</button>
+            </div>
           </div>
 
           <!-- PROTOCOL BUILDER -->
@@ -498,7 +501,7 @@
           <div style="font-size: 10px; font-weight: 800; color: var(--silver-muted); letter-spacing: 1px;">PRACTITIONER GUIDANCE</div>
           <div style="font-size: 12px; font-weight: 700; color: var(--sage-muted);" id="clientPracName">Practitioner Luba Vitti</div>
         </div>
-        <div style="font-size: 14px; font-weight: 600; font-style: italic; color: var(--dark-charcoal);" id="clientPractitionerNote">
+        <div style="font-size: 14px; font-weight: 600; font-style: italic; color: var(--dark-charcoal); white-space: pre-wrap; line-height: 1.5;" id="clientPractitionerNote">
           “Follow your timing schedule strictly for maximum absorption.”
         </div>
       </div>
@@ -695,6 +698,61 @@
   </div>
 
   <script>
+    const SUPABASE_URL = "https://umfhzompkgtmwxehgmvd.supabase.co";
+    const SUPABASE_KEY = atob("c2Jfc2VjcmV0XzQ3aVBvenF1NVFPNWx4NkNSYnRMT1FfQklDeC1CMXA=");
+    let supabaseClient = null;
+    try {
+      if (window.supabase) {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      }
+    } catch (e) { console.error("Supabase CDN init error:", e); }
+
+    const SUPABASE_BUCKET = "wellness_db";
+    const SUPABASE_STATE_FILE = "db_state.json";
+
+    async function saveStateToSupabase(customState) {
+      if (!supabaseClient) return;
+      try {
+        let clients = clientsData || [];
+        let protocols = {};
+        try { protocols = JSON.parse(localStorage.getItem('wb_cached_protocols') || '{}'); } catch(e){}
+        let deletedClients = [];
+        try { deletedClients = JSON.parse(localStorage.getItem('wb_deleted_clients') || '[]'); } catch(e){}
+
+        const stateToSave = customState || {
+          clients: clients,
+          protocols: protocols,
+          deletedClients: deletedClients,
+          lastUpdated: new Date().toISOString()
+        };
+
+        await supabaseClient.storage
+          .from(SUPABASE_BUCKET)
+          .upload(SUPABASE_STATE_FILE, JSON.stringify(stateToSave, null, 2), {
+            contentType: 'application/json',
+            upsert: true
+          });
+      } catch (e) {
+        console.error("Supabase web save exception:", e.message);
+      }
+    }
+
+    async function fetchStateFromSupabase() {
+      if (!supabaseClient) return null;
+      try {
+        const { data, error } = await supabaseClient.storage
+          .from(SUPABASE_BUCKET)
+          .download(SUPABASE_STATE_FILE);
+        if (data) {
+          const text = await data.text();
+          return JSON.parse(text);
+        }
+      } catch (e) {
+        console.error("Supabase web fetch exception:", e.message);
+      }
+      return null;
+    }
+
     let activeTab = 'practitioner';
     let clientsData = [];
     let selectedClientId = null;
@@ -720,36 +778,85 @@
     // --- PRACTITIONER DASHBOARD & LIVE POLLING ---
     async function loadPractitionerDashboard() {
       try {
-        const res = await fetch('/api/practitioner/clients');
-        const data = await res.json();
-        let fetchedClients = data.clients || [];
+        let fetchedClients = [];
+        try {
+          const res = await fetch('/api/practitioner/clients');
+          const data = await res.json();
+          fetchedClients = data.clients || [];
+        } catch (e) {}
 
-        if (fetchedClients.length > 0) {
-          localStorage.setItem('wb_cached_clients', JSON.stringify(fetchedClients));
-          clientsData = fetchedClients;
-        } else {
+        // Load Supabase persistent state
+        const supabaseState = await fetchStateFromSupabase();
+        let supabaseClients = (supabaseState && supabaseState.clients) ? supabaseState.clients : [];
+        let supabaseProtocols = (supabaseState && supabaseState.protocols) ? supabaseState.protocols : {};
+        let supabaseDeleted = (supabaseState && supabaseState.deletedClients) ? supabaseState.deletedClients : [];
+
+        // Deleted clients filter array from localStorage & Supabase
+        let deletedClientIds = [];
+        try {
+          deletedClientIds = JSON.parse(localStorage.getItem('wb_deleted_clients') || '[]');
+        } catch (e) { deletedClientIds = []; }
+
+        supabaseDeleted.forEach(d => {
+          const idStr = typeof d === 'object' ? (d.id || d.name) : d;
+          if (idStr && !deletedClientIds.includes(idStr)) deletedClientIds.push(idStr);
+        });
+        localStorage.setItem('wb_deleted_clients', JSON.stringify(deletedClientIds));
+
+        let cachedProtocols = {};
+        try { cachedProtocols = JSON.parse(localStorage.getItem('wb_cached_protocols') || '{}'); } catch(e){}
+        cachedProtocols = { ...supabaseProtocols, ...cachedProtocols };
+        localStorage.setItem('wb_cached_protocols', JSON.stringify(cachedProtocols));
+
+        const isDeleted = c => c && (
+          deletedClientIds.includes(c.id) ||
+          (c.name && deletedClientIds.includes(c.name.toLowerCase().trim()))
+        );
+
+        const isJamesBond = c => c && (
+          (c.name && c.name.toLowerCase().includes("james bond")) ||
+          (c.email && c.email.toLowerCase().includes("james.bond")) ||
+          c.id === "cli_1785717959740"
+        );
+
+        // Filter out deleted clients & James Bond
+        fetchedClients = fetchedClients.filter(c => c && c.id && !isDeleted(c) && !isJamesBond(c));
+        supabaseClients = supabaseClients.filter(c => c && c.id && !isDeleted(c) && !isJamesBond(c));
+
+        let cachedClients = [];
+        try {
           const cached = localStorage.getItem('wb_cached_clients');
-          if (cached) {
-            try {
-              const parsedCached = JSON.parse(cached);
-              if (Array.isArray(parsedCached) && parsedCached.length > 0) {
-                clientsData = parsedCached;
-                // Auto re-sync cached patients to server
-                for (const c of parsedCached) {
-                  fetch('/api/auth/restore-session', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(c)
-                  }).catch(() => {});
-                }
-              } else {
-                clientsData = [];
-              }
-            } catch (e) { clientsData = []; }
-          } else {
-            clientsData = [];
+          if (cached) cachedClients = JSON.parse(cached) || [];
+        } catch (e) { cachedClients = []; }
+        cachedClients = cachedClients.filter(c => c && c.id && !isDeleted(c) && !isJamesBond(c));
+
+        // Merge all client data sources deterministically (cached, Supabase, and fetched server clients)
+        const clientMap = new Map();
+        for (const c of cachedClients) clientMap.set(c.id, c);
+        for (const c of supabaseClients) {
+          if (clientMap.has(c.id)) clientMap.set(c.id, { ...clientMap.get(c.id), ...c });
+          else clientMap.set(c.id, c);
+        }
+        for (const c of fetchedClients) {
+          if (clientMap.has(c.id)) clientMap.set(c.id, { ...clientMap.get(c.id), ...c });
+          else clientMap.set(c.id, c);
+        }
+
+        // Re-sync any client & protocol from Supabase to server that is missing from fetchedClients (e.g. after server sleep/restart)
+        const fetchedIds = new Set(fetchedClients.map(c => c.id));
+        for (const c of supabaseClients) {
+          if (!fetchedIds.has(c.id)) {
+            const items = c.items || cachedProtocols[c.id] || [];
+            fetch('/api/auth/restore-session', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ ...c, items: items })
+            }).catch(() => {});
           }
         }
+
+        clientsData = Array.from(clientMap.values());
+        localStorage.setItem('wb_cached_clients', JSON.stringify(clientsData));
 
         document.getElementById('rosterCount').innerText = clientsData.length + (clientsData.length === 1 ? " Patient" : " Patients");
 
@@ -811,10 +918,22 @@
     async function deletePatient(clientId, name) {
       if (!confirm(`Are you sure you want to delete patient "${name}"? This will permanently remove their profile and assigned protocol.`)) return;
       await fetch(`/api/practitioner/delete-client/${clientId}`, { method: 'DELETE' });
-      clientsData = clientsData.filter(c => c.id !== clientId);
+      clientsData = clientsData.filter(c => c.id !== clientId && (!name || c.name.toLowerCase().trim() !== name.toLowerCase().trim()));
       localStorage.setItem('wb_cached_clients', JSON.stringify(clientsData));
+
+      let deletedClientIds = [];
+      try { deletedClientIds = JSON.parse(localStorage.getItem('wb_deleted_clients') || '[]'); } catch (e) {}
+      if (!deletedClientIds.includes(clientId)) {
+        deletedClientIds.push(clientId);
+      }
+      if (name && !deletedClientIds.includes(name.toLowerCase().trim())) {
+        deletedClientIds.push(name.toLowerCase().trim());
+      }
+      localStorage.setItem('wb_deleted_clients', JSON.stringify(deletedClientIds));
+      await saveStateToSupabase();
+
       if (selectedClientId === clientId) selectedClientId = null;
-      if (currentClientUser && currentClientUser.id === clientId) currentClientUser = null;
+      if (currentClientUser && (currentClientUser.id === clientId || (name && currentClientUser.name.toLowerCase().trim() === name.toLowerCase().trim()))) currentClientUser = null;
       loadPractitionerDashboard();
     }
 
@@ -847,7 +966,25 @@
 
       const res = await fetch(`/api/protocol/${id}`);
       const data = await res.json();
-      const items = data.protocol.items || [];
+      let items = data.protocol.items || [];
+
+      let cachedProtocols = {};
+      try { cachedProtocols = JSON.parse(localStorage.getItem('wb_cached_protocols') || '{}'); } catch(e){}
+
+      if (items.length > 0) {
+        cachedProtocols[id] = items;
+        localStorage.setItem('wb_cached_protocols', JSON.stringify(cachedProtocols));
+        if (c) c.items = items;
+        localStorage.setItem('wb_cached_clients', JSON.stringify(clientsData));
+        saveStateToSupabase();
+      } else if (cachedProtocols[id] && cachedProtocols[id].length > 0) {
+        items = cachedProtocols[id];
+        fetch(`/api/practitioner/assign-protocol/${id}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items: items })
+        }).catch(() => {});
+      }
       currentProtocolItems = items;
 
       // Update PDF status in practitioner studio safely
@@ -910,6 +1047,7 @@
       await fetch(`/api/practitioner/delete-protocol-item/${selectedClientId}/${itemId}`, { method: 'DELETE' });
       await loadPractitionerDashboard();
       if (selectedClientId) await selectClientForPractitioner(selectedClientId);
+      await saveStateToSupabase();
     }
 
     async function savePractitionerNote() {
@@ -926,6 +1064,7 @@
         cli.practitionerNote = note;
       }
       localStorage.setItem('wb_cached_clients', JSON.stringify(clientsData));
+      await saveStateToSupabase();
 
       alert('Practitioner guidance note saved and sent to Patient App!');
       loadPractitionerDashboard();
@@ -934,7 +1073,9 @@
     async function clearRoster() {
       if (confirm("Are you sure you want to clear the roster to 0 patients?")) {
         localStorage.removeItem('wb_cached_clients');
+        localStorage.removeItem('wb_deleted_clients');
         await fetch('/api/practitioner/reset', { method: 'POST' });
+        await saveStateToSupabase({ clients: [], protocols: {}, deletedClients: [], lastUpdated: new Date().toISOString() });
         selectedClientId = null;
         currentClientUser = null;
         loadPractitionerDashboard();
@@ -1294,7 +1435,8 @@
           localStorage.setItem('wb_client_user', JSON.stringify(data.client));
           switchTab('client');
           loadClientDashboard(data.client.id);
-          loadPractitionerDashboard();
+          await loadPractitionerDashboard();
+          await saveStateToSupabase();
         } else {
           alert(data.message || "Failed to log in. Please check your credentials.");
         }

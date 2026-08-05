@@ -12,10 +12,11 @@ public class APIService: ObservableObject {
     public static let shared = APIService()
     
     // Primary Server URL
-    @Published public var baseURLString: String = "https://wellness-buddy-vduz.onrender.com"
+    @Published public var baseURLString: String = "https://wellness-buddy2.onrender.com"
     
-    // Candidate URLs to try (Live Production Server & Local Dev Server)
+    // Candidate URLs to try (Live Production Servers & Local Dev Servers)
     public var candidateURLs: [String] = [
+        "https://wellness-buddy2.onrender.com",
         "https://wellness-buddy-vduz.onrender.com",
         "http://localhost:3000",
         "http://127.0.0.1:3000",
@@ -55,8 +56,8 @@ public class APIService: ObservableObject {
             
             var request = URLRequest(url: url)
             request.httpMethod = method
-            // Fast 5s timeout for local server check, 30s for remote cloud server
-            request.timeoutInterval = base.hasPrefix("https://") ? 30.0 : 5.0
+            // Fast 4s-8s timeout to prevent network stalling or UI lag
+            request.timeoutInterval = base.hasPrefix("https://") ? 8.0 : 4.0
             if let bodyData = bodyData {
                 request.setValue("application/json", forHTTPHeaderField: "Content-Type")
                 request.httpBody = bodyData

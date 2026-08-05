@@ -2,47 +2,61 @@
 //  StreakCelebrationView.swift
 //  WellnessBuddy
 //
-//  Cute Flame Mascot Streak Celebration Modal
+//  Cute Flame Mascot Streak Celebration Modal (Duolingo-Inspired Fire Mascot)
 //
 
 import SwiftUI
 
-/// Custom teardrop flame mascot shape matching the cute flame character
+/// Outer multi-peak flame body shape with dynamic flickers (Duolingo Fire style)
 public struct FlameTeardropShape: Shape {
     public func path(in rect: CGRect) -> Path {
         var path = Path()
         let w = rect.width
         let h = rect.height
         
-        // Start near the top curved tip
-        path.move(to: CGPoint(x: w * 0.58, y: h * 0.05))
+        // Start near top curved flame tip
+        path.move(to: CGPoint(x: w * 0.52, y: h * 0.02))
         
-        // Curve to top right peak
+        // Curve down right top flicker peak
         path.addCurve(
-            to: CGPoint(x: w * 0.88, y: h * 0.42),
-            control1: CGPoint(x: w * 0.75, y: h * 0.12),
-            control2: CGPoint(x: w * 0.92, y: h * 0.28)
+            to: CGPoint(x: w * 0.78, y: h * 0.28),
+            control1: CGPoint(x: w * 0.68, y: h * 0.08),
+            control2: CGPoint(x: w * 0.82, y: h * 0.18)
         )
         
-        // Curve down around bottom right bulb
+        // Right side wing flame flicker
         path.addCurve(
-            to: CGPoint(x: w * 0.50, y: h * 0.96),
-            control1: CGPoint(x: w * 0.85, y: h * 0.72),
-            control2: CGPoint(x: w * 0.72, y: h * 0.96)
+            to: CGPoint(x: w * 0.94, y: h * 0.56),
+            control1: CGPoint(x: w * 0.88, y: h * 0.38),
+            control2: CGPoint(x: w * 0.98, y: h * 0.48)
         )
         
-        // Curve around bottom left bulb
+        // Bottom right bulbous curve
         path.addCurve(
-            to: CGPoint(x: w * 0.12, y: h * 0.52),
-            control1: CGPoint(x: w * 0.28, y: h * 0.96),
-            control2: CGPoint(x: w * 0.10, y: h * 0.78)
+            to: CGPoint(x: w * 0.50, y: h * 0.98),
+            control1: CGPoint(x: w * 0.90, y: h * 0.80),
+            control2: CGPoint(x: w * 0.74, y: h * 0.98)
         )
         
-        // Swoop up left flank back to top peak
+        // Bottom left bulbous curve
         path.addCurve(
-            to: CGPoint(x: w * 0.58, y: h * 0.05),
-            control1: CGPoint(x: w * 0.14, y: h * 0.28),
-            control2: CGPoint(x: w * 0.38, y: h * 0.10)
+            to: CGPoint(x: w * 0.06, y: h * 0.56),
+            control1: CGPoint(x: w * 0.26, y: h * 0.98),
+            control2: CGPoint(x: w * 0.10, y: h * 0.80)
+        )
+        
+        // Left side wing flame flicker
+        path.addCurve(
+            to: CGPoint(x: w * 0.22, y: h * 0.28),
+            control1: CGPoint(x: w * 0.02, y: h * 0.48),
+            control2: CGPoint(x: w * 0.12, y: h * 0.38)
+        )
+        
+        // Swoop back up left flank to top flame tip
+        path.addCurve(
+            to: CGPoint(x: w * 0.52, y: h * 0.02),
+            control1: CGPoint(x: w * 0.18, y: h * 0.18),
+            control2: CGPoint(x: w * 0.36, y: h * 0.08)
         )
         
         path.closeSubpath()
@@ -50,37 +64,37 @@ public struct FlameTeardropShape: Shape {
     }
 }
 
-/// Inner face inset shape
-public struct FlameFaceShape: Shape {
+/// Inner glowing flame core inset shape
+public struct FlameCoreShape: Shape {
     public func path(in rect: CGRect) -> Path {
         var path = Path()
         let w = rect.width
         let h = rect.height
         
-        path.move(to: CGPoint(x: w * 0.55, y: h * 0.20))
+        path.move(to: CGPoint(x: w * 0.50, y: h * 0.16))
         
         path.addCurve(
-            to: CGPoint(x: w * 0.78, y: h * 0.50),
-            control1: CGPoint(x: w * 0.68, y: h * 0.26),
-            control2: CGPoint(x: w * 0.80, y: h * 0.38)
+            to: CGPoint(x: w * 0.82, y: h * 0.58),
+            control1: CGPoint(x: w * 0.72, y: h * 0.26),
+            control2: CGPoint(x: w * 0.86, y: h * 0.44)
         )
         
         path.addCurve(
-            to: CGPoint(x: w * 0.50, y: h * 0.88),
-            control1: CGPoint(x: w * 0.76, y: h * 0.72),
-            control2: CGPoint(x: w * 0.68, y: h * 0.88)
+            to: CGPoint(x: w * 0.50, y: h * 0.92),
+            control1: CGPoint(x: w * 0.78, y: h * 0.80),
+            control2: CGPoint(x: w * 0.68, y: h * 0.92)
         )
         
         path.addCurve(
-            to: CGPoint(x: w * 0.22, y: h * 0.55),
-            control1: CGPoint(x: w * 0.32, y: h * 0.88),
-            control2: CGPoint(x: w * 0.20, y: h * 0.72)
+            to: CGPoint(x: w * 0.18, y: h * 0.58),
+            control1: CGPoint(x: w * 0.32, y: h * 0.92),
+            control2: CGPoint(x: w * 0.22, y: h * 0.80)
         )
         
         path.addCurve(
-            to: CGPoint(x: w * 0.55, y: h * 0.20),
-            control1: CGPoint(x: w * 0.24, y: h * 0.38),
-            control2: CGPoint(x: w * 0.42, y: h * 0.24)
+            to: CGPoint(x: w * 0.50, y: h * 0.16),
+            control1: CGPoint(x: w * 0.14, y: h * 0.44),
+            control2: CGPoint(x: w * 0.28, y: h * 0.26)
         )
         
         path.closeSubpath()
@@ -88,102 +102,207 @@ public struct FlameFaceShape: Shape {
     }
 }
 
-/// Animated Cute Flame Mascot Component
+/// Cute happy mouth smile path
+public struct CuteSmileShape: Shape {
+    public func path(in rect: CGRect) -> Path {
+        var path = Path()
+        let w = rect.width
+        let h = rect.height
+        
+        path.move(to: CGPoint(x: 0, y: h * 0.1))
+        path.addQuadCurve(to: CGPoint(x: w, y: h * 0.1), control: CGPoint(x: w * 0.5, y: h * 1.3))
+        path.closeSubpath()
+        
+        return path
+    }
+}
+
+/// Animated Cute Flame Mascot Component (Duolingo Fire Inspired)
 public struct CuteFlameMascotView: View {
-    @State private var swayAngle: Double = -3.0
+    @State private var swayAngle: Double = -3.5
+    @State private var floatOffset: CGFloat = -6.0
     @State private var eyeBlinkScale: CGFloat = 1.0
     @State private var sparkOffset: CGFloat = 0
-    @State private var sparkOpacity: Double = 0.8
-    @State private var pulseScale: CGFloat = 1.0
+    @State private var sparkOpacity: Double = 0.9
+    @State private var auraPulse: CGFloat = 1.0
+    @State private var coreFlicker: CGFloat = 0.96
     
     public init() {}
     
     public var body: some View {
         ZStack {
-            // Glowing Backdrop Aura
+            // Radiant Fire Aura Glow Backdrop
             Circle()
                 .fill(
                     RadialGradient(
-                        colors: [Color.paletteOcean.opacity(0.35), Color.paletteSage.opacity(0.12), Color.clear],
+                        colors: [
+                            Color(red: 1.0, green: 0.6, blue: 0.1).opacity(0.40),
+                            Color(red: 1.0, green: 0.35, blue: 0.0).opacity(0.18),
+                            Color.clear
+                        ],
                         center: .center,
                         startRadius: 20,
-                        endRadius: 110
+                        endRadius: 120
                     )
                 )
-                .frame(width: 220, height: 220)
-                .scaleEffect(pulseScale)
+                .frame(width: 230, height: 230)
+                .scaleEffect(auraPulse)
 
-            // Floating Spark / Ember Particles
-            ForEach(0..<6, id: \.self) { i in
+            // Floating Spark / Ember Fire Particles
+            ForEach(0..<8, id: \.self) { i in
                 Circle()
-                    .fill(i % 2 == 0 ? Color.paletteOcean : Color.paletteSage)
-                    .frame(width: CGFloat.random(in: 6...10), height: CGFloat.random(in: 6...10))
+                    .fill(
+                        LinearGradient(
+                            colors: [Color(red: 1.0, green: 0.85, blue: 0.3), Color(red: 1.0, green: 0.4, blue: 0.1)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .frame(width: CGFloat(i % 2 == 0 ? 8 : 6), height: CGFloat(i % 2 == 0 ? 8 : 6))
                     .offset(
-                        x: CGFloat(sin(Double(i) * 1.2) * 50.0),
-                        y: -40.0 - sparkOffset - CGFloat(i * 18)
+                        x: CGFloat(sin(Double(i) * 0.9) * 55.0),
+                        y: -30.0 - sparkOffset - CGFloat(i * 16)
                     )
                     .opacity(sparkOpacity)
+                    .scaleEffect(1.0 - (sparkOffset / 120.0))
             }
 
-            // Main Flame Teardrop Body
+            // Main Duolingo-style Fire Character Stack
             ZStack {
-                // Outer Flame Body
+                // 1. Outer Warm Fire Body
                 FlameTeardropShape()
                     .fill(
                         LinearGradient(
                             colors: [
-                                Color(red: 0.18, green: 0.56, blue: 0.98), // Bright Flame Blue
-                                Color(red: 0.12, green: 0.38, blue: 0.82)  // Deep Ocean Blue
+                                Color(red: 1.0, green: 0.78, blue: 0.18), // Electric Flame Gold
+                                Color(red: 1.0, green: 0.45, blue: 0.05), // Fire Orange
+                                Color(red: 0.92, green: 0.18, blue: 0.05)  // Crimson Red Base
                             ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
+                            startPoint: .top,
+                            endPoint: .bottom
                         )
                     )
-                    .shadow(color: Color(red: 0.18, green: 0.56, blue: 0.98).opacity(0.4), radius: 16, x: 0, y: 8)
+                    .shadow(color: Color(red: 1.0, green: 0.45, blue: 0.05).opacity(0.55), radius: 20, x: 0, y: 10)
 
-                // Soft White Inner Face Inset
-                FlameFaceShape()
-                    .fill(Color.white)
-                    .padding(14)
+                // 2. Inner Glowing Core Flame
+                FlameCoreShape()
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                Color(red: 1.0, green: 0.98, blue: 0.75), // Bright Golden Yellow Core
+                                Color(red: 1.0, green: 0.82, blue: 0.25)  // Warm Yellow Inner Base
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .scaleEffect(coreFlicker)
+                    .padding(12)
 
-                // Cute Oval Eyes
-                HStack(spacing: 22) {
-                    Ellipse()
-                        .fill(Color(red: 0.22, green: 0.18, blue: 0.14)) // Dark warm brown/charcoal
-                        .frame(width: 10, height: 16)
+                // 3. Cute Expressive Face Features
+                VStack(spacing: 4) {
+                    // Eye & Blush Line
+                    HStack(spacing: 24) {
+                        // Left Eye
+                        ZStack {
+                            Ellipse()
+                                .fill(Color(red: 0.15, green: 0.12, blue: 0.10))
+                                .frame(width: 14, height: 20)
+                            
+                            // Top Eye Catchlight Shine
+                            Circle()
+                                .fill(Color.white)
+                                .frame(width: 5, height: 5)
+                                .offset(x: -2, y: -4)
+                            
+                            // Bottom Eye Catchlight
+                            Circle()
+                                .fill(Color.white.opacity(0.8))
+                                .frame(width: 2.5, height: 2.5)
+                                .offset(x: 2, y: 3)
+                        }
                         .scaleEffect(y: eyeBlinkScale, anchor: .center)
 
-                    Ellipse()
-                        .fill(Color(red: 0.22, green: 0.18, blue: 0.14))
-                        .frame(width: 10, height: 16)
+                        // Right Eye
+                        ZStack {
+                            Ellipse()
+                                .fill(Color(red: 0.15, green: 0.12, blue: 0.10))
+                                .frame(width: 14, height: 20)
+                            
+                            Circle()
+                                .fill(Color.white)
+                                .frame(width: 5, height: 5)
+                                .offset(x: -2, y: -4)
+                            
+                            Circle()
+                                .fill(Color.white.opacity(0.8))
+                                .frame(width: 2.5, height: 2.5)
+                                .offset(x: 2, y: 3)
+                        }
                         .scaleEffect(y: eyeBlinkScale, anchor: .center)
+                    }
+                    
+                    // Soft Rosy Cheeks & Cute Mouth Stack
+                    ZStack {
+                        // Rosy Cheek Blushes
+                        HStack(spacing: 38) {
+                            Circle()
+                                .fill(Color(red: 1.0, green: 0.35, blue: 0.35).opacity(0.45))
+                                .frame(width: 12, height: 12)
+                            Circle()
+                                .fill(Color(red: 1.0, green: 0.35, blue: 0.35).opacity(0.45))
+                                .frame(width: 12, height: 12)
+                        }
+                        
+                        // Happy Smile Mouth with Tongue Inset
+                        ZStack(alignment: .bottom) {
+                            CuteSmileShape()
+                                .fill(Color(red: 0.15, green: 0.12, blue: 0.10))
+                                .frame(width: 14, height: 10)
+                            
+                            Circle()
+                                .fill(Color(red: 1.0, green: 0.45, blue: 0.55))
+                                .frame(width: 7, height: 6)
+                                .offset(y: 1)
+                        }
+                        .offset(y: 3)
+                    }
                 }
-                .offset(x: -2, y: 6)
+                .offset(y: 14)
             }
-            .frame(width: 140, height: 160)
+            .frame(width: 150, height: 175)
             .rotationEffect(.degrees(swayAngle))
+            .offset(y: floatOffset)
         }
         .onAppear {
-            // Sway animation
-            withAnimation(Animation.easeInOut(duration: 1.8).repeatForever(autoreverses: true)) {
-                swayAngle = 3.0
-            }
-            // Backdrop aura pulse
+            // Floating up/down bobbing motion
             withAnimation(Animation.easeInOut(duration: 1.4).repeatForever(autoreverses: true)) {
-                pulseScale = 1.12
+                floatOffset = 6.0
             }
-            // Spark particles floating up
-            withAnimation(Animation.linear(duration: 2.2).repeatForever(autoreverses: false)) {
-                sparkOffset = 60
-                sparkOpacity = 0.1
+            // Flame sway animation
+            withAnimation(Animation.easeInOut(duration: 1.6).repeatForever(autoreverses: true)) {
+                swayAngle = 3.5
+            }
+            // Radiant fire aura pulse
+            withAnimation(Animation.easeInOut(duration: 1.2).repeatForever(autoreverses: true)) {
+                auraPulse = 1.14
+            }
+            // Core flame flicker pulse
+            withAnimation(Animation.easeInOut(duration: 0.7).repeatForever(autoreverses: true)) {
+                coreFlicker = 1.04
+            }
+            // Spark embers floating upwards
+            withAnimation(Animation.linear(duration: 2.0).repeatForever(autoreverses: false)) {
+                sparkOffset = 70
+                sparkOpacity = 0.05
             }
             // Cute eye blinking timer
-            Timer.scheduledTimer(withTimeInterval: 2.8, repeats: true) { _ in
-                withAnimation(.easeIn(duration: 0.12)) {
+            Timer.scheduledTimer(withTimeInterval: 2.5, repeats: true) { _ in
+                withAnimation(.easeIn(duration: 0.10)) {
                     eyeBlinkScale = 0.1
                 }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.14) {
-                    withAnimation(.easeOut(duration: 0.12)) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
+                    withAnimation(.easeOut(duration: 0.10)) {
                         eyeBlinkScale = 1.0
                     }
                 }
@@ -208,61 +327,63 @@ public struct StreakCelebrationView: View {
     public var body: some View {
         ZStack {
             // Blurred Translucent Overlay Background
-            Color.black.opacity(0.25)
+            Color.black.opacity(0.35)
                 .ignoresSafeArea()
                 .onTapGesture {
                     dismissModal()
                 }
 
             // Central Translucent Celebration Card
-            VStack(spacing: 20) {
+            VStack(spacing: 18) {
                 // Top Flame Badge
                 HStack(spacing: 6) {
                     Text("🔥")
                         .font(.system(size: 16))
                     Text("\(streakDays)-DAY STREAK!")
-                        .font(.system(size: 13, weight: .black, design: .rounded))
-                        .foregroundColor(.paletteOcean)
-                        .tracking(0.8)
+                        .font(.system(size: 14, weight: .black, design: .rounded))
+                        .foregroundColor(Color(red: 1.0, green: 0.45, blue: 0.05))
+                        .tracking(1.0)
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(Color.paletteOcean.opacity(0.12))
+                .padding(.horizontal, 18)
+                .padding(.vertical, 9)
+                .background(Color(red: 1.0, green: 0.45, blue: 0.05).opacity(0.12))
                 .clipShape(Capsule())
 
-                // Cute Animated Flame Mascot
+                // Animated Cute Duolingo Fire Mascot
                 CuteFlameMascotView()
-                    .frame(height: 180)
-                    .padding(.top, 4)
+                    .frame(height: 190)
+                    .padding(.top, 2)
 
                 // Headline & Encouragement Text
-                VStack(spacing: 8) {
-                    Text("Streak Started!")
-                        .font(.system(size: 26, weight: .bold, design: .rounded))
+                VStack(spacing: 6) {
+                    Text("Streak Active!")
+                        .font(.system(size: 26, weight: .black, design: .rounded))
                         .foregroundColor(.paletteDark)
 
-                    Text("You've completed all your prescribed doses for today! Come back tomorrow to keep the flame alive.")
+                    Text("You've completed all your prescribed doses for today! Come back tomorrow to keep the flame burning.")
                         .font(.system(size: 14, weight: .medium, design: .rounded))
                         .foregroundColor(.paletteSilver)
                         .multilineTextAlignment(.center)
                         .lineSpacing(3)
-                        .padding(.horizontal, 12)
+                        .padding(.horizontal, 10)
                 }
             }
-            .padding(28)
+            .padding(26)
             .background(
                 RoundedRectangle(cornerRadius: 32, style: .continuous)
-                    .fill(Color.white.opacity(0.88))
+                    .fill(Color.white.opacity(0.92))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 32, style: .continuous)
-                    .stroke(Color.white.opacity(0.6), lineWidth: 1.5)
+                    .stroke(LinearGradient(colors: [Color.white, Color(red: 1.0, green: 0.7, blue: 0.3).opacity(0.4)], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 2)
             )
-            .shadow(color: Color.black.opacity(0.12), radius: 20, x: 0, y: 10)
+            .shadow(color: Color(red: 1.0, green: 0.45, blue: 0.05).opacity(0.25), radius: 25, x: 0, y: 12)
             .padding(.horizontal, 28)
             .scaleEffect(cardScale)
             .opacity(cardOpacity)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .ignoresSafeArea()
         .onAppear {
             #if os(iOS)
             let success = UINotificationFeedbackGenerator()

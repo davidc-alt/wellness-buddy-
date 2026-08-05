@@ -1,0 +1,14 @@
+{
+  "name": "wellness-buddy-backend",
+  "version": "1.0.0",
+  "description": "Wellness Buddy Backend Server with PostgreSQL persistence",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.112.0",
+    "pg": "^8.11.5"
+  }
+}

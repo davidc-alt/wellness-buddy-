@@ -200,6 +200,8 @@ public struct ClientDashboardView: View {
                             Text("“\(viewModel.currentProtocol.practitionerNoteToClient)”")
                                 .font(.system(size: 13, weight: .medium, design: .rounded))
                                 .foregroundColor(.paletteDark)
+                                .lineSpacing(4)
+                                .fixedSize(horizontal: false, vertical: true)
                         }
                         .calmCardStyle(padding: 16, cornerRadius: 20)
                         .padding(.horizontal, 20)

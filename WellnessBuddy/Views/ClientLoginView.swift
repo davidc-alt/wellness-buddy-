@@ -18,156 +18,131 @@ public struct ClientLoginView: View {
     @State private var errorMessage: String?
     
     public var body: some View {
-        VStack(spacing: 24) {
-            Spacer()
-            
-            // Header Logo & Branding
-            VStack(spacing: 12) {
-                WellnessBuddyLogoView(size: 64)
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 28) {
+                Spacer(minLength: 40)
                 
-                Text("Wellness Buddy")
-                    .font(.system(size: 28, weight: .bold, design: .rounded))
-                    .foregroundColor(.paletteDark)
-                
-                Text("Patient Protocol & Reminder Portal")
-                    .font(.system(size: 14, weight: .medium, design: .rounded))
-                    .foregroundColor(.paletteSilver)
-            }
-            
-            // Login Form Box
-            VStack(spacing: 16) {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("FULL NAME")
-                        .font(.system(size: 11, weight: .bold, design: .rounded))
-                        .foregroundColor(.paletteSilver)
-                    TextField("Last Name First Name", text: $nameInput)
-                        .padding(14)
-                        .background(Color.paletteSoftBg)
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
-                }
-                
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("DATE OF BIRTH (MM-DD-YYYY)")
-                        .font(.system(size: 11, weight: .bold, design: .rounded))
-                        .foregroundColor(.paletteSilver)
-                    TextField("MM-DD-YYYY", text: $dobInput)
-                        .padding(14)
-                        .background(Color.paletteSoftBg)
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
-                }
-                
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("PRIMARY HEALTH GOAL (OPTIONAL)")
-                        .font(.system(size: 11, weight: .bold, design: .rounded))
-                        .foregroundColor(.paletteSilver)
-                    TextField("Primary health goal (optional)...", text: $goalInput)
-                        .padding(14)
-                        .background(Color.paletteSoftBg)
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
-                }
-                
-                if let err = errorMessage {
-                    Text(err)
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(.red)
-                }
-                
-                // Submit Button
-                Button(action: handleAuth) {
-                    if isProcessing {
-                        ProgressView().tint(.white)
-                    } else {
-                        Text("Log In & Send DOB to Practitioner")
-                            .font(.system(size: 15, weight: .bold, design: .rounded))
-                    }
-                }
-                .buttonStyle(TactileButtonStyle(backgroundColor: .paletteDark))
-                .padding(.top, 8)
-            }
-            .calmCardStyle(padding: 24, cornerRadius: 26)
-            .padding(.horizontal, 20)
-            
-            // Quick Demo Accounts Chips
-            VStack(spacing: 8) {
-                Text("QUICK DEMO PATIENT LOGINS")
-                    .font(.system(size: 10, weight: .bold, design: .rounded))
-                    .foregroundColor(.paletteSilver)
-                    .tracking(1.0)
-                
-                HStack(spacing: 8) {
-                    Button("Jhon Doe") {
-                        nameInput = "Jhon Doe"
-                        dobInput = "1990-01-01"
-                        handleAuth()
-                    }
-                    .font(.system(size: 11, weight: .bold, design: .rounded))
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(Color.paletteSoftBg)
-                    .foregroundColor(.paletteDark)
-                    .clipShape(Capsule())
+                // Header Logo & Branding
+                VStack(spacing: 14) {
+                    WellnessBuddyLogoView(size: 68)
                     
-                    Button("Alex Mercer") {
-                        nameInput = "Alex Mercer"
-                        dobInput = "1992-08-20"
-                        handleAuth()
-                    }
-                    .font(.system(size: 11, weight: .bold, design: .rounded))
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(Color.paletteSoftBg)
-                    .foregroundColor(.paletteDark)
-                    .clipShape(Capsule())
+                    Text("Wellness Buddy")
+                        .font(.system(size: 30, weight: .bold, design: .rounded))
+                        .foregroundColor(.paletteDark)
                     
-                    Button("David Miller") {
-                        nameInput = "David Miller"
-                        dobInput = "1990-03-10"
-                        handleAuth()
-                    }
-                    .font(.system(size: 11, weight: .bold, design: .rounded))
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(Color.paletteSoftBg)
-                    .foregroundColor(.paletteDark)
-                    .clipShape(Capsule())
+                    Text("Patient Protocol & Reminder Portal")
+                        .font(.system(size: 14, weight: .medium, design: .rounded))
+                        .foregroundColor(.paletteSilver)
                 }
+                
+                // Login Form Card
+                VStack(spacing: 18) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("FULL NAME")
+                            .font(.system(size: 11, weight: .bold, design: .rounded))
+                            .foregroundColor(.paletteSilver)
+                            .tracking(0.8)
+                        
+                        TextField("Full Name (e.g. John Doe)", text: $nameInput)
+                            .padding(15)
+                            .background(Color.paletteSoftBg)
+                            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("DATE OF BIRTH (MM-DD-YYYY)")
+                            .font(.system(size: 11, weight: .bold, design: .rounded))
+                            .foregroundColor(.paletteSilver)
+                            .tracking(0.8)
+                        
+                        TextField("MM-DD-YYYY", text: $dobInput)
+                            .padding(15)
+                            .background(Color.paletteSoftBg)
+                            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("PRIMARY HEALTH GOAL (OPTIONAL)")
+                            .font(.system(size: 11, weight: .bold, design: .rounded))
+                            .foregroundColor(.paletteSilver)
+                            .tracking(0.8)
+                        
+                        TextField("e.g. Optimize energy & recovery", text: $goalInput)
+                            .padding(15)
+                            .background(Color.paletteSoftBg)
+                            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    }
+                    
+                    if let err = errorMessage {
+                        Text(err)
+                            .font(.system(size: 13, weight: .semibold, design: .rounded))
+                            .foregroundColor(.red)
+                            .multilineTextAlignment(.center)
+                            .padding(.top, 2)
+                    }
+                    
+                    // Submit Button
+                    Button(action: handleAuth) {
+                        if isProcessing {
+                            ProgressView()
+                                .tint(.white)
+                                .frame(height: 22)
+                        } else {
+                            Text("Log In / Register")
+                                .font(.system(size: 16, weight: .bold, design: .rounded))
+                        }
+                    }
+                    .buttonStyle(TactileButtonStyle(backgroundColor: .paletteDark))
+                    .padding(.top, 10)
+                    .disabled(isProcessing)
+                }
+                .calmCardStyle(padding: 24, cornerRadius: 28)
+                .padding(.horizontal, 22)
+                
+                Spacer(minLength: 40)
             }
-            
-            Spacer()
         }
         .background(Color.paletteSoftBg.ignoresSafeArea())
     }
     
     private func handleAuth() {
-        guard !nameInput.trimmingCharacters(in: .whitespaces).isEmpty,
-              !dobInput.trimmingCharacters(in: .whitespaces).isEmpty else {
-            errorMessage = "Please enter Full Name and Date of Birth."
+        let trimmedName = nameInput.trimmingCharacters(in: .whitespaces)
+        let trimmedDob = dobInput.trimmingCharacters(in: .whitespaces)
+        
+        guard !trimmedName.isEmpty, !trimmedDob.isEmpty else {
+            withAnimation(.easeOut(duration: 0.2)) {
+                errorMessage = "Please enter your Full Name and Date of Birth."
+            }
             return
         }
         
         NotificationService.shared.requestAuthorization()
         
-        isProcessing = true
-        errorMessage = nil
+        withAnimation(.easeOut(duration: 0.2)) {
+            isProcessing = true
+            errorMessage = nil
+        }
         
         APIService.shared.registerClient(
-            name: nameInput.trimmingCharacters(in: .whitespaces),
-            dob: dobInput.trimmingCharacters(in: .whitespaces),
+            name: trimmedName,
+            dob: trimmedDob,
             email: "",
             password: "",
             goal: goalInput
         ) { client in
-            isProcessing = false
-            if let client = client {
-                viewModel.activeClientProfile = client
-                viewModel.activeClientName = client.name
-                viewModel.activeClientId = client.id
-                viewModel.saveSession(client: client)
-                viewModel.isLoggedIn = true
-                viewModel.fetchLiveProtocol()
-                viewModel.fetchDoseLogs()
-            } else {
-                errorMessage = "Could not connect to live server. Please tap Log In again while server finishes waking up."
+            withAnimation(.easeOut(duration: 0.25)) {
+                isProcessing = false
+                if let client = client {
+                    viewModel.activeClientProfile = client
+                    viewModel.activeClientName = client.name
+                    viewModel.activeClientId = client.id
+                    viewModel.saveSession(client: client)
+                    viewModel.isLoggedIn = true
+                    viewModel.fetchLiveProtocol()
+                    viewModel.fetchDoseLogs()
+                } else {
+                    errorMessage = "Could not connect to server. Please check connection and try again."
+                }
             }
         }
     }

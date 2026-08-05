@@ -1,21 +1,5 @@
 {
-  "clients": [
-    {
-      "id": "cli_1785717959740",
-      "name": "James Bond",
-      "dob": "1985-06-15",
-      "email": "james.bond@wellnessclient.com",
-      "password": "password123",
-      "goal": "Optimize peak vitality & performance",
-      "symptoms": "Fatigue",
-      "currentSupplements": "Multivitamin",
-      "registeredAt": "2026-08-03T00:45:59.740Z",
-      "streakDays": 0,
-      "adherenceRate": 100,
-      "practitionerNote": "Take NAD+ on empty stomach right after waking up."
-    }
-  ],
-  "protocols": {
-    "cli_1785717959740": []
-  }
+  "clients": [],
+  "protocols": {},
+  "deletedClients": []
 }

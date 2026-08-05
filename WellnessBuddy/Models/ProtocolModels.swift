@@ -206,7 +206,7 @@ public struct ProtocolItem: Identifiable, Codable, Hashable {
 }
 
 /// Represents a dose log entry recorded by the client
-public struct DoseLogEntry: Identifiable, Codable {
+public struct DoseLogEntry: Identifiable, Codable, Equatable {
     public var id: UUID
     public var itemId: UUID
     public var itemName: String

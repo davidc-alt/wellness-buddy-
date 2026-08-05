@@ -152,8 +152,10 @@ public class WellnessBuddyViewModel: ObservableObject {
         guard !activeClientId.isEmpty else { return }
         APIService.shared.fetchDoseLogs(for: activeClientId) { [weak self] logs in
             guard let self = self else { return }
-            self.doseLogs = logs
-            self.evaluateAndScheduleReminders()
+            if self.doseLogs != logs {
+                self.doseLogs = logs
+                self.evaluateAndScheduleReminders()
+            }
         }
     }
     
@@ -337,28 +339,46 @@ public class WellnessBuddyViewModel: ObservableObject {
         // Re-evaluate active reminder state (banner disappears for this item!)
         evaluateAndScheduleReminders()
         
-        let items = currentProtocol.items
-        let remainingDue = items.filter { isDoseDue(for: $0) }
+        // Check and trigger blue flame streak celebration ONLY when ALL pills are completed for the FIRST time today!
+        checkAndTriggerStreakCelebration()
         
-        // Trigger streak celebration ONLY when ALL pills are completed for the FIRST time today!
-        if !items.isEmpty && remainingDue.isEmpty {
-            let todayKey = "lastStreakCelebrationDate_\(activeClientId)"
-            let todayStr = DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .none)
+        let countdownStr = formattedTimeUntilNextDose(for: item) ?? "in \(Int(item.intervalHoursCalculated))h"
+        triggerToast("✓ \(item.name) logged! Next dose in \(countdownStr).")
+    }
+    
+    public func checkAndTriggerStreakCelebration() {
+        let items = currentProtocol.items
+        guard !items.isEmpty else { return }
+        
+        let calendar = Calendar.current
+        let todayCompletedLogs = doseLogs.filter { calendar.isDateInToday($0.timestamp) && $0.status == .completed }
+        let completedItemIds = Set(todayCompletedLogs.map { $0.itemId })
+        
+        // Check if every prescribed item in protocol has at least one completed dose today
+        let allCompletedToday = items.allSatisfy { item in
+            completedItemIds.contains(item.id) || completedItemIds.contains(item.id.uuidString.toStableUUID)
+        }
+        
+        if allCompletedToday {
+            let clientId = activeClientId.isEmpty ? "default_client" : activeClientId
+            let todayKey = "lastStreakCelebrationDate_\(clientId)"
+            
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd"
+            let todayStr = formatter.string(from: Date())
+            
             let lastDateStr = UserDefaults.standard.string(forKey: todayKey)
             
             if lastDateStr != todayStr {
                 UserDefaults.standard.set(todayStr, forKey: todayKey)
                 self.celebrationStreakDays = max(1, currentStreakDays)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                     withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
                         self.showStreakCelebration = true
                     }
                 }
             }
         }
-        
-        let countdownStr = formattedTimeUntilNextDose(for: item) ?? "in \(Int(item.intervalHoursCalculated))h"
-        triggerToast("✓ \(item.name) logged! Next dose in \(countdownStr).")
     }
     
     public func snoozeDose(for item: ProtocolItem, minutes: Int, timing: TimingSchedule) {
