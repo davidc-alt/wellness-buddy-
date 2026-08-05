@@ -22,7 +22,7 @@ if (!fs.existsSync(UPLOADS_DIR)) {
 
 // Supabase Cloud Storage & Database Connection Setup
 const SUPABASE_URL = process.env.SUPABASE_URL || "https://umfhzompkgtmwxehgmvd.supabase.co";
-const SUPABASE_KEY = process.env.SUPABASE_KEY || process.env.SUPABASE_SECRET_KEY || Buffer.from('c2Jfc2VjcmV0XzQ3aVBvenF1NVFPNWx4NkNSYnRMT1FfQklDeC1CMXA=', 'base64').toString('utf8');
+const SUPABASE_KEY = process.env.SUPABASE_KEY || process.env.SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_SECRET_KEY || Buffer.from('c2JfcHVibGlzaGFibGVfN0FMMUlmLWtmS21aRzlLUTNoQWlRVF90SUkxWmxZaw==', 'base64').toString('utf8');
 let supabase = null;
 try {
   supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
