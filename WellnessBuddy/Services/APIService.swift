@@ -36,7 +36,7 @@ public class APIService: ObservableObject {
         
         func tryNextURL(index: Int) {
             guard index < urlsToTry.count else {
-                if retryCount < 2 {
+                if retryCount < 4 {
                     print("🔄 APIService: Retrying connection to backend server (attempt \(retryCount + 1))...")
                     DispatchQueue.global().asyncAfter(deadline: .now() + 1.5) {
                         self.performRequest(endpoint: endpoint, method: method, bodyData: bodyData, retryCount: retryCount + 1, completion: completion)
@@ -56,8 +56,8 @@ public class APIService: ObservableObject {
             
             var request = URLRequest(url: url)
             request.httpMethod = method
-            // Fast 4s-8s timeout to prevent network stalling or UI lag
-            request.timeoutInterval = base.hasPrefix("https://") ? 8.0 : 4.0
+            // 25s timeout for production Render cold starts
+            request.timeoutInterval = base.hasPrefix("https://") ? 25.0 : 5.0
             if let bodyData = bodyData {
                 request.setValue("application/json", forHTTPHeaderField: "Content-Type")
                 request.httpBody = bodyData

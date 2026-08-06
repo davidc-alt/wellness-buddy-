@@ -89,11 +89,15 @@ public class WellnessBuddyViewModel: ObservableObject {
 
     public func restoreSessionIfAvailable() {
         let defaults = UserDefaults.standard
-        if defaults.bool(forKey: "wb_is_logged_in"),
-           let clientId = defaults.string(forKey: "wb_active_client_id"),
-           !clientId.isEmpty {
-            let name = defaults.string(forKey: "wb_active_client_name") ?? "Patient"
-            let dob = defaults.string(forKey: "wb_active_client_dob")
+        let isLoggedInSaved = defaults.bool(forKey: "wb_is_logged_in")
+        let savedClientId = defaults.string(forKey: "wb_active_client_id") ?? ""
+        let savedName = defaults.string(forKey: "wb_active_client_name") ?? ""
+        let savedDob = defaults.string(forKey: "wb_active_client_dob") ?? ""
+        
+        if isLoggedInSaved || !savedName.isEmpty || !savedClientId.isEmpty {
+            let clientId = !savedClientId.isEmpty ? savedClientId : "cli_\(savedName.lowercased().replacingOccurrences(of: " ", with: "."))"
+            let name = !savedName.isEmpty ? savedName : "Patient"
+            let dob = !savedDob.isEmpty ? savedDob : "Not specified"
             let email = defaults.string(forKey: "wb_active_client_email") ?? ""
             let goal = defaults.string(forKey: "wb_active_client_goal")
             let note = defaults.string(forKey: "wb_active_client_practitioner_note")
@@ -117,7 +121,7 @@ public class WellnessBuddyViewModel: ObservableObject {
                 self.currentProtocol.items = localItems
             }
             
-            // Restore patient profile & pills to server live so server & practitioner studio get re-populated after deploy!
+            // Restore patient profile & protocol items to server live so server and web dashboard sync automatically!
             APIService.shared.restoreSessionOnServer(client: restoredProfile, protocolItems: localItems) { [weak self] returnedClient, items in
                 guard let self = self else { return }
                 if let returnedClient = returnedClient {

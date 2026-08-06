@@ -35,6 +35,8 @@ struct WellnessBuddyApp: App {
         UITabBar.appearance().scrollEdgeAppearance = tabAppearance
     }
     
+    @Environment(\.scenePhase) private var scenePhase
+    
     var body: some Scene {
         WindowGroup {
             Group {
@@ -47,8 +49,18 @@ struct WellnessBuddyApp: App {
                 }
             }
             .onAppear {
+                viewModel.restoreSessionIfAvailable()
+                viewModel.fetchLiveProtocol()
+                viewModel.fetchDoseLogs()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     notificationService.requestAuthorization()
+                }
+            }
+            .onChange(of: scenePhase) { newPhase in
+                if newPhase == .active {
+                    viewModel.restoreSessionIfAvailable()
+                    viewModel.fetchLiveProtocol()
+                    viewModel.fetchDoseLogs()
                 }
             }
         }
