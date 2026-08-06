@@ -14,10 +14,9 @@ public class APIService: ObservableObject {
     // Primary Server URL
     @Published public var baseURLString: String = "https://wellness-buddy2.onrender.com"
     
-    // Candidate URLs to try (Live Production Servers & Local Dev Servers)
+    // Candidate URLs to try (Live Production Server & Local Dev Fallbacks)
     public var candidateURLs: [String] = [
         "https://wellness-buddy2.onrender.com",
-        "https://wellness-buddy-vduz.onrender.com",
         "http://localhost:3000",
         "http://127.0.0.1:3000",
         "http://Davids-MacBook-Air-2.local:3000"
@@ -27,7 +26,7 @@ public class APIService: ObservableObject {
     
     /// Helper to perform HTTP request to live server with retry mechanism for Render cold starts
     private func performRequest(endpoint: String, method: String = "GET", bodyData: Data? = nil, retryCount: Int = 0, completion: @escaping (Data?) -> Void) {
-        var urlsToTry = [baseURLString]
+        var urlsToTry = ["https://wellness-buddy2.onrender.com"]
         for url in candidateURLs {
             if !urlsToTry.contains(url) {
                 urlsToTry.append(url)
@@ -36,9 +35,9 @@ public class APIService: ObservableObject {
         
         func tryNextURL(index: Int) {
             guard index < urlsToTry.count else {
-                if retryCount < 4 {
+                if retryCount < 5 {
                     print("🔄 APIService: Retrying connection to backend server (attempt \(retryCount + 1))...")
-                    DispatchQueue.global().asyncAfter(deadline: .now() + 1.5) {
+                    DispatchQueue.global().asyncAfter(deadline: .now() + 2.0) {
                         self.performRequest(endpoint: endpoint, method: method, bodyData: bodyData, retryCount: retryCount + 1, completion: completion)
                     }
                     return

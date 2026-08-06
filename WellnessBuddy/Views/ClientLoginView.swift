@@ -138,8 +138,10 @@ public struct ClientLoginView: View {
                     viewModel.activeClientId = client.id
                     viewModel.saveSession(client: client)
                     viewModel.isLoggedIn = true
+                    viewModel.startLivePolling()
                     viewModel.fetchLiveProtocol()
                     viewModel.fetchDoseLogs()
+                    APIService.shared.restoreSessionOnServer(client: client, protocolItems: []) { _, _ in }
                 } else {
                     errorMessage = "Could not connect to server. Please check connection and try again."
                 }

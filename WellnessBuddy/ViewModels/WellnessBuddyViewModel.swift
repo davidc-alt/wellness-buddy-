@@ -136,6 +136,7 @@ public class WellnessBuddyViewModel: ObservableObject {
                 }
                 self.fetchLiveProtocol()
                 self.fetchDoseLogs()
+                self.startLivePolling()
             }
         }
     }
